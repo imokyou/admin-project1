@@ -1,0 +1,16 @@
+[uwsgi]
+chdir           = /home/lupt/flighting/GIT/admin-project1
+daemonize       = /var/log/uwsgi/app/admin-project1.log
+module          = config.wsgi:application
+# the virtualenv (full path)
+virtualenv      = /home/lupt/.virtualenvs/admin-project1
+master          = true
+processes       = 4
+socket          = 127.0.0.1:12301
+vacuum          = true
+plugins = python
+max-requests=5000
+logformat = %(host)[%(addr)] "%(proto) %(status) %(method) %[[0;32m%(uri)%[[0m" %[[0;31m%(msecs)%[[0mms
+
+post-buffering=1
+buffer-size=65535
