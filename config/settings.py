@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for mytest project.
 
@@ -86,7 +87,15 @@ DEFAULT_PORT = 3306
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'admin_project1',
+        'NAME': 'zibenguodu',
+        'USER': DEFAULT_USER,
+        'PASSWORD': DEFAULT_PSW,
+        'HOST': DEFAULT_HOST,
+        'PORT': DEFAULT_PORT,
+    },
+    'zibenguodu': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'zibenguodu',
         'USER': DEFAULT_USER,
         'PASSWORD': DEFAULT_PSW,
         'HOST': DEFAULT_HOST,
