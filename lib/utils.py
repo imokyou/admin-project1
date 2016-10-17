@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+import string
 import json
 from urlparse import urlparse
 from django.http import HttpResponse
@@ -58,3 +60,10 @@ def redirect_to(request, next=None):
     if next:
         return HttpResponseRedirect(next)
     return redirect_to_previous(request)
+
+
+def activation_code(id, length=10):
+    prefix = hex(int(id))[2:] + 'L'
+    length = length - len(prefix)
+    chars = string.ascii_letters + string.digits
+    return prefix + ''.join([random.choice(chars) for i in range(length)])

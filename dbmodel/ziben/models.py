@@ -9,7 +9,7 @@ class UserInfo(models.Model):
     nickname = models.CharField(max_length=64, default='')
     reg_time = models.DateTimeField(auto_add_now=True)
     reg_code = models.CharField(max_length=10)
-    reg_type = models.SmallIntegerField(max_length=4)
+    reg_type = models.SmallIntegerField(max_length=4, default=1)
     reg_ip = models.CharField(max_length=15, default='')
     reg_location = models.CharField(max_length=128, default='')
     invite_code = models.CharField(max_length=10)
@@ -21,6 +21,9 @@ class UserInfo(models.Model):
         1: '自由注册',
         2: '推荐注册'
     }
+
+    def save(self, *args, **kwargs):
+        super(UserInfo, self).save(*args, **kwargs)
 
     class Meta:
         managed = False
@@ -202,3 +205,23 @@ class Statics(models.Model):
     class Meta:
         managed = False
         table = 'statics'
+
+
+class InviteCode(models.Model):
+    '''注册邀请码表'''
+    category = models.ForeignKey(NewsCategory)
+    publisher = models.ForeignKey(auth_models.User)
+    title = models.CharField(max_length=1024)
+    content = models.TextField()
+    status = models.SmallIntegerField(max_length=4, default=1)
+    create_time = models.DateTimeField(auto_add_now=True)
+
+    # 定义状态
+    STATUS = {
+        0: '未使用',
+        1: '已使用'
+    }
+
+    class Meta:
+        managed = False
+        table = 'invite_code'

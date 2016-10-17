@@ -9,4 +9,5 @@ urlpatterns = [
     # 改成下面这种分APP的形式了.
     url(r'^$', include('app.site.urls')),
     url(r'^data/', include('app.data.urls')),
+    url(r'^backend/', include('app.backend.urls')),
 ]
