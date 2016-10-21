@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import pytz
+import traceback
 import random
 import string
 import json
@@ -6,6 +8,7 @@ from urlparse import urlparse
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils.http import is_safe_url
+from django.utils import timezone
 
 
 # 响应相关
@@ -29,6 +32,7 @@ def ExcepResp(e, c=-1024):
     """
     请求异常的响应
     """
+    traceback.print_exc()
     return HttpJSONResponse({'c': c,
                              'm': e.message})
 
@@ -67,3 +71,19 @@ def activation_code(id, length=10):
     length = length - len(prefix)
     chars = string.ascii_letters + string.digits
     return prefix + ''.join([random.choice(chars) for i in range(length)])
+
+
+def page_url(request):
+    url = request.get_full_path
+    return url
+
+
+def dt_field_to_local(dt):  # 数据库中字段转成本地
+    utcdt = dt.replace(tzinfo=pytz.utc)
+    current_timezone = timezone.get_current_timezone()
+    localdt = utcdt.astimezone(current_timezone)
+    return localdt
+
+
+def debug():
+    traceback.print_exc()

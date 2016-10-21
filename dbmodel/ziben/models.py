@@ -1,13 +1,42 @@
 # coding=utf-8
+from datetime import datetime
 from django.db import models
 from django.contrib.auth import models as auth_models
+
+
+class InviteCodeQuerySet(models.QuerySet):
+
+    def pop(self):
+        q = self.filter(status=0).order_by('-id').first()
+        q.status = 1
+        q.update_time = datetime.now()
+        q.save()
+        return q.code
+
+
+class InviteCode(models.Model):
+    '''注册邀请码表'''
+    code = models.CharField(max_length=15)
+    status = models.SmallIntegerField(max_length=4, default=1)
+    update_time = models.DateTimeField()
+
+    objects = InviteCodeQuerySet.as_manager()
+    # 定义状态
+    STATUS = {
+        0: '未使用',
+        1: '已使用'
+    }
+
+    class Meta:
+        managed = False
+        db_table = 'invite_code'
 
 
 class UserInfo(models.Model):
     '''用户信息表'''
     user = models.ForeignKey(auth_models.User)
     nickname = models.CharField(max_length=64, default='')
-    reg_time = models.DateTimeField(auto_add_now=True)
+    reg_time = models.DateTimeField(auto_now_add=True)
     reg_code = models.CharField(max_length=10)
     reg_type = models.SmallIntegerField(max_length=4, default=1)
     reg_ip = models.CharField(max_length=15, default='')
@@ -22,12 +51,25 @@ class UserInfo(models.Model):
         2: '推荐注册'
     }
 
+    # 用户状态
+    STATUS = {
+        0: '不可用',
+        1: '正常'
+    }
+
+    # 用户角色
+    ROLE = {
+        0: '普通用户',
+        1: '后台管理员'
+    }
+
     def save(self, *args, **kwargs):
+        self.invite_code = InviteCode.objects.pop()
         super(UserInfo, self).save(*args, **kwargs)
 
     class Meta:
         managed = False
-        table = 'user_info'
+        db_table = 'user_info'
 
 
 class UserConnection(models.Model):
@@ -35,12 +77,12 @@ class UserConnection(models.Model):
     parent = models.ForeignKey(auth_models.User)
     user = models.ForeignKey(auth_models.User)
     depth = models.SmallIntegerField(max_length=4, default=0)
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
     ratio = models.DecimalField(max_digits=7, decimal_places=3, default=0)
 
     class Meta:
         managed = False
-        table = 'user_connection'
+        db_table = 'user_connection'
 
 
 class UserBalance(models.Model):
@@ -52,7 +94,7 @@ class UserBalance(models.Model):
 
     class Meta:
         managed = False
-        table = 'user_balance'
+        db_table = 'user_balance'
 
 
 class UserRevenue(models.Model):
@@ -60,7 +102,7 @@ class UserRevenue(models.Model):
     user = models.ForeignKey(auth_models.User)
     revenue_type = models.SmallIntegerField(max_length=4)
     revenue = models.DecimalField(max_digits=14, decimal_places=3, default=0)
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义流水记录类型
     REVENUE_TYPE = {
@@ -71,7 +113,7 @@ class UserRevenue(models.Model):
 
     class Meta:
         managed = False
-        table = 'user_revenue'
+        db_table = 'user_revenue'
 
 
 class UserOplog(models.Model):
@@ -81,7 +123,7 @@ class UserOplog(models.Model):
     content = models.CharField(max_length=1024)
     ip = models.CharField(max_length=15, default='')
     location = models.CharField(max_length=128, default='')
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义操作类型
     OPTYPE = {
@@ -97,7 +139,7 @@ class UserOplog(models.Model):
 
     class Meta:
         managed = False
-        table = 'user_oplog'
+        db_table = 'user_oplog'
 
 
 class Bank(models.Model):
@@ -107,7 +149,7 @@ class Bank(models.Model):
 
     class Meta:
         managed = False
-        table = 'bank'
+        db_table = 'bank'
 
 
 class UserPayment(models.Model):
@@ -117,11 +159,11 @@ class UserPayment(models.Model):
     pay_type = models.SmallIntegerField(max_length=4)
     payout = models.DecimalField(max_digits=14, decimal_places=3)
     account = models.CharField(max_length=64, default='')
-    bank = models.ForeignKey(Bank)
+    bank_id = models.IntegerField()
     bank_card = models.CharField(max_length=64, default='')
     ip = models.CharField(max_length=15, default='')
     location = models.CharField(max_length=128, default='')
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义充值类型
     PAY_TYPE = {
@@ -131,7 +173,7 @@ class UserPayment(models.Model):
 
     class Meta:
         managed = False
-        table = 'user_payment'
+        db_table = 'user_payment'
 
 
 class UserMessage(models.Model):
@@ -140,7 +182,7 @@ class UserMessage(models.Model):
     to_user = models.ForeignKey(auth_models.User)
     content = models.CharField(max_length=1024)
     status = models.SmallIntegerField(max_length=4)
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
     read_time = models.DateTimeField()
 
     # 定义状态
@@ -151,14 +193,14 @@ class UserMessage(models.Model):
 
     class Meta:
         managed = False
-        table = 'user_message'
+        db_table = 'user_message'
 
 
 class NewsCategory(models.Model):
     '''新闻资讯分类表'''
     name = models.CharField(max_length=1024)
     status = models.SmallIntegerField(max_length=4, default=1)
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义状态
     STATUS = {
@@ -168,7 +210,7 @@ class NewsCategory(models.Model):
 
     class Meta:
         managed = False
-        table = 'news_category'
+        db_table = 'news_category'
 
 
 class News(models.Model):
@@ -178,7 +220,7 @@ class News(models.Model):
     title = models.CharField(max_length=1024)
     content = models.TextField()
     status = models.SmallIntegerField(max_length=4, default=1)
-    create_time = models.DateTimeField(auto_add_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义状态
     STATUS = {
@@ -188,7 +230,7 @@ class News(models.Model):
 
     class Meta:
         managed = False
-        table = 'news'
+        db_table = 'news'
 
 
 class Statics(models.Model):
@@ -196,7 +238,7 @@ class Statics(models.Model):
     members = models.IntegerField()
     onlines = models.IntegerField()
     hits = models.IntegerField()
-    total_paid = models.DecimalField(max_digit=14, decimal_places=3)
+    total_paid = models.DecimalField(max_digits=14, decimal_places=3)
     offers = models.IntegerField()
     pts_value = models.IntegerField()
     ptc_value = models.IntegerField()
@@ -204,24 +246,23 @@ class Statics(models.Model):
 
     class Meta:
         managed = False
-        table = 'statics'
+        db_table = 'statics'
 
 
-class InviteCode(models.Model):
-    '''注册邀请码表'''
-    category = models.ForeignKey(NewsCategory)
-    publisher = models.ForeignKey(auth_models.User)
-    title = models.CharField(max_length=1024)
-    content = models.TextField()
-    status = models.SmallIntegerField(max_length=4, default=1)
-    create_time = models.DateTimeField(auto_add_now=True)
+class Projects(models.Model):
+    name = models.CharField(max_length=256)
+    description = models.CharField(max_length=1024)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.IntegerField()
+    status = models.SmallIntegerField()
+    create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义状态
     STATUS = {
-        0: '未使用',
-        1: '已使用'
+        1: '正常',
+        2: '删除'
     }
 
     class Meta:
         managed = False
-        table = 'invite_code'
+        db_table = 'project'

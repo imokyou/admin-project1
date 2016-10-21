@@ -1,6 +1,6 @@
 {% extends "backend/base.html" %}
 
-{% block title %}注册码列表{% endblock %}
+{% block title %}会员充值记录{% endblock %}
 {% block body %}
 <div class="wrapper">
     <div class="container">
@@ -8,7 +8,7 @@
         <!-- Page-Title -->
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="page-title">注册码列表</h4>
+                <h4 class="page-title">会员充值记录</h4>
             </div>
         </div>
 
@@ -27,24 +27,16 @@
                             下一页
                         </a>
                     {% endif %}
-
-                        <form action="" class="inline mar-left-10">
-                            快速跳转到第{{ quick_jump_form.p }}页
-                            {{ quick_jump_form.code }}
-                            {{ quick_jump_form.status }}
-                            {{ quick_jump_form.n }}
-                            <input type="submit" value="跳转" />
-                        </form>
                     </div>
                     <div>
                         <form class="form-inline">
                             <div class="form-group m-r-10">
-                                <label for="code">激活码: </label>
-                                {{ forms.code }}
+                                <label for="username">账号: </label>
+                                {{ forms.username }}
                             </div>
                             <div class="form-group m-r-10">
-                                <label for="status">状态: </label>
-                                {{ forms.status }}
+                                <label for="pay_type">类型: </label>
+                                {{ forms.pay_type }}
                             </div>
                             <button type="submit" class="btn btn-default waves-effect waves-light btn-md">
                                 点击查询
@@ -55,19 +47,27 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>CODE</th>
-                                <th>状态</th>
-                                <th>使用時間</th>
+                                <th>账号</th>
+                                <th>充值类型</th>
+                                <th>充值银行信息</th>
+                                <th>充值账号</th>
+                                <th>金额</th>
+                                <th>时间</th>
+                                <th>IP</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                        {% for code in code_list.data %}
+                        {% for payment in payment_list.data %}
                             <tr>
-                                <td>{{ code.id }}</td>
-                                <td>{{ code.code }}</td>
-                                <td class="{% if code.status = 0 %}font-red{% endif %}">{{ code.status_name }}</td>
-                                <td>{{ code.update_time }}</td>
+                                <td>{{ payment.id }}</td>
+                                <td>{{ payment.username }}</td>
+                                <td>{{ payment.pay_type }}</td>
+                                <td>{{ payment.bank_name }}-{{ payment.bank_code }}: {{ payment.bank_card }}</td>
+                                <td>{{ payment.account }}</td>
+                                <td>{{ payment.payout }}</td>
+                                <td>{{ payment.create_time }}</td>
+                                <td>{{ payment.ip }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -84,14 +84,6 @@
                             下一页
                         </a>
                     {% endif %}
-
-                        <form action="" class="inline mar-left-10">
-                            快速跳转到第{{ quick_jump_form.p }}页
-                            {{ quick_jump_form.code }}
-                            {{ quick_jump_form.status }}
-                            {{ quick_jump_form.n }}
-                            <input type="submit" value="跳转" />
-                        </form>
                     </div>
                 </div>
             </div><!-- end col -->

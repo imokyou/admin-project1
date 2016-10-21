@@ -1,6 +1,6 @@
 {% extends "backend/base.html" %}
 
-{% block title %}注册码列表{% endblock %}
+{% block title %}项目列表{% endblock %}
 {% block body %}
 <div class="wrapper">
     <div class="container">
@@ -8,7 +8,7 @@
         <!-- Page-Title -->
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="page-title">注册码列表</h4>
+                <h4 class="page-title">项目列表</h4>
             </div>
         </div>
 
@@ -27,20 +27,12 @@
                             下一页
                         </a>
                     {% endif %}
-
-                        <form action="" class="inline mar-left-10">
-                            快速跳转到第{{ quick_jump_form.p }}页
-                            {{ quick_jump_form.code }}
-                            {{ quick_jump_form.status }}
-                            {{ quick_jump_form.n }}
-                            <input type="submit" value="跳转" />
-                        </form>
                     </div>
                     <div>
                         <form class="form-inline">
                             <div class="form-group m-r-10">
-                                <label for="code">激活码: </label>
-                                {{ forms.code }}
+                                <label for="name">项目名称: </label>
+                                {{ forms.name }}
                             </div>
                             <div class="form-group m-r-10">
                                 <label for="status">状态: </label>
@@ -49,25 +41,38 @@
                             <button type="submit" class="btn btn-default waves-effect waves-light btn-md">
                                 点击查询
                             </button>
+                            <a href="/backend/project/create" class="btn btn-default waves-effect waves-light btn-md">
+                                创建新项目
+                            </a>
                         </form>
                     </div>
                     <table id="datatable" class="table table-striped table-bordered">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>CODE</th>
+                                <th>名称</th>
+                                <th>单价</th>
+                                <th>总份数</th>
                                 <th>状态</th>
-                                <th>使用時間</th>
+                                <th>创建時間</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                        {% for code in code_list.data %}
+                        {% for p in project_list.data %}
                             <tr>
-                                <td>{{ code.id }}</td>
-                                <td>{{ code.code }}</td>
-                                <td class="{% if code.status = 0 %}font-red{% endif %}">{{ code.status_name }}</td>
-                                <td>{{ code.update_time }}</td>
+                                <td>{{ p.id }}</td>
+                                <td>{{ p.name }}</td>
+                                <td>{{ p.price }}</td>
+                                <td>{{ p.total }}</td>
+                                <td class="{% if code.status = 2 %}font-red{% endif %}">{{ p.status_name }}</td>
+                                <td>{{ p.create_time }}</td>
+                                <td>
+                                    <a href="/backend/project/edit?id={{ p.id }}" class="btn btn-default waves-effect waves-light btn-sm">
+                                        编辑
+                                    </a>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -84,14 +89,6 @@
                             下一页
                         </a>
                     {% endif %}
-
-                        <form action="" class="inline mar-left-10">
-                            快速跳转到第{{ quick_jump_form.p }}页
-                            {{ quick_jump_form.code }}
-                            {{ quick_jump_form.status }}
-                            {{ quick_jump_form.n }}
-                            <input type="submit" value="跳转" />
-                        </form>
                     </div>
                 </div>
             </div><!-- end col -->
