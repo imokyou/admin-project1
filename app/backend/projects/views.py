@@ -103,7 +103,7 @@ def create(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def edit(request):
     try:
         project_id = request.GET.get('id', '')

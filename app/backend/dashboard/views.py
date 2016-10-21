@@ -6,7 +6,7 @@ from lib import utils
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def home(request):
     data = {
         'msg': 'Hello World!',

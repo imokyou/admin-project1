@@ -23,7 +23,7 @@ def test(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -109,7 +109,7 @@ def home(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def create(request):
     try:
         data = {
@@ -168,7 +168,7 @@ def create(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def edit(request):
     try:
         user_id = request.GET.get('id', '')
@@ -233,7 +233,7 @@ def edit(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def detail(request):
     try:
         data = {
@@ -289,8 +289,9 @@ def detail(request):
         return utils.ErrResp(errors.FuncFailed)
     return render(request, 'backend/user/detail.html', data)
 
+
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def oplog(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -348,7 +349,7 @@ def oplog(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def revenue(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -405,7 +406,7 @@ def revenue(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def payment(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -473,7 +474,7 @@ def payment(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def relation(request):
     try:
         user_id = int(request.GET.get('id', 0))

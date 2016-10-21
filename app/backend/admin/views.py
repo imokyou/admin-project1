@@ -21,7 +21,7 @@ def test(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -107,7 +107,7 @@ def home(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def create(request):
     try:
         data = {
@@ -164,7 +164,7 @@ def create(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def edit(request):
     try:
         user_id = request.GET.get('id', '')
@@ -229,7 +229,7 @@ def edit(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def detail(request):
     try:
         data = {
@@ -322,7 +322,7 @@ def logout(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/backend/login/')
 def change_password(request):
     try:
         data = {
