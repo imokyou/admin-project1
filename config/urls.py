@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^$', include('app.site.urls')),
     url(r'^data/', include('app.data.urls')),
     url(r'^backend/', include('app.backend.urls')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ]

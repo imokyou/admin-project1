@@ -2,6 +2,7 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth import models as auth_models
+from ckeditor.fields import RichTextField
 
 
 class InviteCodeQuerySet(models.QuerySet):
@@ -208,6 +209,9 @@ class NewsCategory(models.Model):
         2: '删除'
     }
 
+    def __str__(self):
+        return self.name.encode('utf-8')
+
     class Meta:
         managed = False
         db_table = 'news_category'
@@ -216,9 +220,9 @@ class NewsCategory(models.Model):
 class News(models.Model):
     '''新闻资讯表'''
     category = models.ForeignKey(NewsCategory)
-    publisher = models.ForeignKey(auth_models.User)
+    # publisher = models.ForeignKey(auth_models.User)
     title = models.CharField(max_length=1024)
-    content = models.TextField()
+    content = RichTextField()
     status = models.SmallIntegerField(max_length=4, default=1)
     create_time = models.DateTimeField(auto_now_add=True)
 

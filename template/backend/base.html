@@ -137,8 +137,8 @@
                             <li class="has-submenu" {% if index = 'news' %}active{% endif %}>
                                 <a href="#"><i class="zmdi zmdi-collection-text"></i><span> 新闻资讯 </span> </a>
                                 <ul class="submenu">
-                                    <li><a href="form-elements.html">资讯分类</a></li>
-                                    <li><a href="form-advanced.html">资讯列表</a></li>
+                                    <li><a href="/backend/news/category/">资讯分类</a></li>
+                                    <li><a href="/backend/news/">资讯列表</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -184,5 +184,6 @@
         <script src="/static/js/jquery.core.js"></script>
         <script src="/static/js/jquery.app.js"></script>
 
+        {% block script %}{% endblock %}
     </body>
 </html>

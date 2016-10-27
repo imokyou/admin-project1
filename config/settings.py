@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'ckeditor',
+    'ckeditor_uploader',
     'dbmodel',
     'app'
 ]
@@ -152,6 +154,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+STATIC_ROOT = '/static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
@@ -159,3 +162,5 @@ STATICFILES_DIRS = [
 
 BACKEND_INDEX = '/backend/'
 LOGIN_URL = '/backend/login/'
+
+CKEDITOR_UPLOAD_PATH = "/uploads/"
