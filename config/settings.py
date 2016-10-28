@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'ckeditor',
-    'ckeditor_uploader',
+    'redactor',
     'dbmodel',
     'app'
 ]
@@ -154,13 +153,28 @@ SESSION_SAVE_EVERY_REQUEST = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_ROOT = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+# STATICFILES_DIRS = [
+#     STATIC_ROOT,
+# ]
 
 BACKEND_INDEX = '/backend/'
 LOGIN_URL = '/backend/login/'
 
 CKEDITOR_UPLOAD_PATH = "/uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 'auto',
+    },
+}
+
+REDACTOR_OPTIONS = {
+    'lang': 'en',
+    'minHeight': 400,
+}
+REDACTOR_UPLOAD = 'uploads/'
+REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.UUIDUploader'
+REDACTOR_AUTH_DECORATOR = 'django.contrib.auth.decorators.login_required'

@@ -1,6 +1,13 @@
 {% extends "backend/base.html" %}
 
 {% block title %}创建新资讯{% endblock %}
+
+{% block css%}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static "redactor/css/redactor.css" %}" />
+
+{% endblock %}
+
 {% block body %}
 <div class="wrapper">
     <div class="container">
@@ -159,6 +166,6 @@
 {% block script %}
 
 {% load staticfiles %}
-<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "redactor/jquery.redactor.init.js" %}"></script>
+<script type="text/javascript" src="{% static "redactor/redactor.min.js" %}"></script>
 {% endblock %}

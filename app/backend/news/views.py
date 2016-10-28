@@ -6,7 +6,7 @@ from dbmodel.ziben.models import News, NewsCategory
 from config import errors
 from lib import utils
 from lib.pagination import Pagination
-from forms import CateCreateForm, CateSearchForm, CateEditForm, SearchForm, CreateForm
+from forms import CateCreateForm, CateSearchForm, CateEditForm, SearchForm, CreateForm, EditForm
 
 
 @csrf_exempt
@@ -113,6 +113,67 @@ def create(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+def edit(request):
+    try:
+        data = {
+            'msg': '',
+            'index': 'news',
+            'form': '',
+            'news_id': ''
+        }
+        if request.method == 'POST':
+            news_id = request.POST.get('id', '')
+            title = request.POST.get('title', '')
+            content = request.POST.get('content', '')
+            try:
+                status = int(request.POST.get('status', 1))
+            except:
+                status = 1
+            try:
+                category = int(request.POST.get('category', 1))
+            except:
+                category = 0
+            if not title:
+                data['msg'] = '标题不能为空'
+            else:
+                u_exists = News.objects.filter(id=news_id).exists()
+                if not u_exists:
+                    data['msg'] = '资讯不存在'
+                else:
+                    u = News.objects.get(id=news_id)
+                    u.title = title
+                    u.content = content
+                    if not category:
+                        u.category = category
+                    u.status = status
+                    u.save()
+                    data['msg'] = '修改成功'
+        news_id = request.GET.get('id', '')
+        if news_id:
+            form = EditForm()
+            try:
+                u = News.objects.get(id=news_id)
+                form_initial = {
+                    'id': u.id,
+                    'title': u.title,
+                    'category': u.category_id,
+                    'content': u.content,
+                    'status': u.status,
+                }
+                form = EditForm(initial=form_initial)
+            except:
+                pass
+            data['form'] = form
+            data['news_id'] = news_id
+
+    except:
+        utils.debug()
+        return utils.ErrResp(errors.FuncFailed)
+    return render(request, 'backend/news/edit.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
 def category_home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -188,25 +249,14 @@ def category_create(request):
 @login_required(login_url='/backend/login/')
 def category_edit(request):
     try:
-        cate_id = request.GET.get('id', '')
-        form = CateEditForm()
-        if cate_id:
-            try:
-                u = NewsCategory.objects.get(id=cate_id)
-                form_initial = {
-                    'name': u.name,
-                    'status': u.status,
-                }
-                form = CateEditForm(initial=form_initial)
-            except:
-                pass
         data = {
             'msg': '',
             'index': 'news',
-            'form': form,
-            'cate_id': cate_id
+            'form': '',
+            'cate_id': ''
         }
         if request.method == 'POST':
+            cate_id = int(request.POST.get('id', ''))
             name = request.POST.get('name', '')
             try:
                 status = int(request.POST.get('status', 1))
@@ -215,14 +265,31 @@ def category_edit(request):
             if not name:
                 data['msg'] = '名称不能为空'
             else:
-                u_exists = NewsCategory.objects.filter(name=name).exists()
+                u_exists = NewsCategory.objects.filter(id=cate_id).exists()
                 if not u_exists:
                     data['msg'] = '分类不存在'
                 else:
-                    u = NewsCategory.objects.get(name=name)
+                    u = NewsCategory.objects.get(id=cate_id)
+                    u.name = name
                     u.status = status
                     u.save()
                     data['msg'] = '修改成功'
+
+        cate_id = request.GET.get('id', '')
+        form = CateEditForm()
+        if cate_id:
+            try:
+                u = NewsCategory.objects.get(id=cate_id)
+                form_initial = {
+                    'id': u.id,
+                    'name': u.name,
+                    'status': u.status,
+                }
+                form = CateEditForm(initial=form_initial)
+            except:
+                pass
+        data['form'] = form
+        data['cate_id'] = cate_id
     except:
         utils.debug()
         return utils.ErrResp(errors.FuncFailed)

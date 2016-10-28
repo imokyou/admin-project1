@@ -2,7 +2,7 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth import models as auth_models
-from ckeditor.fields import RichTextField
+from redactor.fields import RedactorField
 
 
 class InviteCodeQuerySet(models.QuerySet):
@@ -222,7 +222,7 @@ class News(models.Model):
     category = models.ForeignKey(NewsCategory)
     # publisher = models.ForeignKey(auth_models.User)
     title = models.CharField(max_length=1024)
-    content = RichTextField()
+    content = RedactorField()
     status = models.SmallIntegerField(max_length=4, default=1)
     create_time = models.DateTimeField(auto_now_add=True)
 
