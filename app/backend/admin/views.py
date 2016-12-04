@@ -11,6 +11,7 @@ from django.conf import settings
 from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, InviteCode
 from lib import utils
 from lib.pagination import Pagination
+from lib.permissions import staff_required
 from config import errors
 from forms import SearchForm, QuickJumpForm, CreateForm, EditForm
 
@@ -22,6 +23,7 @@ def test(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -108,6 +110,7 @@ def home(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def create(request):
     try:
         data = {
@@ -165,6 +168,7 @@ def create(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def edit(request):
     try:
         user_id = request.GET.get('id', '')
@@ -230,6 +234,7 @@ def edit(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def detail(request):
     try:
         data = {
@@ -287,9 +292,14 @@ def detail(request):
 
 
 @csrf_exempt
+@staff_required()
 def login(request):
     try:
         next_url = request.GET.get('next', '')
+        if request.user.is_authenticated():
+            if not next_url:
+                next_url = settings.BACKEND_INDEX
+            return HttpResponseRedirect(next_url)
         data = {
             'error_msg': '',
             'next_url': next_url
@@ -298,10 +308,18 @@ def login(request):
             account = request.POST.get('account', '')
             password = request.POST.get('password', '')
             user = authenticate(username=account, password=password)
-            if user is not None:
+            if user is not None and user.is_staff and user.is_active:
                 auth_login(request, user)
                 if not next_url:
                     next_url = settings.BACKEND_INDEX
+
+                log = UserOplog(
+                    user_id=user.id,
+                    optype=1,
+                    content=request.META['HTTP_USER_AGENT'],
+                    ip=get_ip(request),
+                )
+                log.save()
                 return HttpResponseRedirect(next_url)
             else:
                 data['error_msg'] = '账号或密码错误, 请输新输入'
@@ -312,6 +330,7 @@ def login(request):
 
 @csrf_exempt
 @login_required
+@staff_required()
 def logout(request):
     try:
         next_url = request.GET.get('next', settings.LOGIN_URL)
@@ -323,6 +342,7 @@ def logout(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def change_password(request):
     try:
         data = {

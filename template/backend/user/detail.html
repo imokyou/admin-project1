@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">真实姓名: </label>
                         <div class="col-md-10">
-                            {{ user_info.first_name }}
+                            {{ user_info.last_name }} {{ user_info.first_name }}
                         </div>
                     </div>
                     <div class="form-group">
@@ -58,7 +58,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-2 control-label">邀请码: </label>
+                        <label class="col-md-2 control-label">注册码: </label>
                         <div class="col-md-10">
                             {{ user_info.reg_code }}
                         </div>
@@ -67,6 +67,14 @@
                         <label class="col-md-2 control-label">用户来源: </label>
                         <div class="col-md-10">
                             {{ user_info.reg_type }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">邀请码: </label>
+                        <div class="col-md-10">
+                            {{ user_info.invite_code }}
+
+                            <p>{{ user_info.invite_url }}</p>
                         </div>
                     </div>
                     <div class="form-group">

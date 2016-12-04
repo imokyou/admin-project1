@@ -15,3 +15,4 @@ django_extensions==1.7.2
 django-ckeditor
 django-wysiwyg-redactor
 Pillow
+django-crontab==0.7.1

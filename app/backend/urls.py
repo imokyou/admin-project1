@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^user/', include('app.backend.user.urls')),
     url(r'^project/', include('app.backend.projects.urls')),
     url(r'^news/', include('app.backend.news.urls')),
+    url(r'^statics/', include('app.backend.statics.urls')),
 ]

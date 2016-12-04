@@ -1,0 +1,44 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}资本国度-会员登陆{% endblock %}
+{% block body %}
+
+<!--main content-->
+<div class="middle">
+    <h1 class="side_tit">登录</h1>
+    <div class="login_box">
+        <form name="loginform" method="POST">
+            {% csrf_token %}
+            <ul class="login_ul">
+                <li>
+                    <h4>用户名<a href="#">忘记用户名?</a></h4>
+                    {{ form.username }}
+
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </li>
+                <li>
+                    <h4>密码<a href="#">忘记密码?</a></h4>
+                    {{ form.password }}
+
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </li>
+                <!-- <li>
+                    <h5>安全码<a href="#">可听代码</a></h5>
+                    <input class="w150" type="text" required>
+                    <div class="captcha"><img src="/static/pic/verfiry.png"></div>
+                </li> -->
+                <!-- <li><input type="checkbox">记住我</li> -->
+                <li><button class="btn_globe">登录</button></li>
+            </ul>
+        </form>
+    </div>
+</div><!--end of middle-->
+{% endblock %}

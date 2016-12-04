@@ -6,6 +6,7 @@ from dbmodel.ziben.models import News, NewsCategory
 from config import errors
 from lib import utils
 from lib.pagination import Pagination
+from lib.permissions import staff_required
 from forms import CateCreateForm, CateSearchForm, CateEditForm, SearchForm, CreateForm, EditForm
 
 
@@ -16,6 +17,7 @@ def test(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -78,6 +80,7 @@ def home(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def create(request):
     try:
         data = {
@@ -113,6 +116,7 @@ def create(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def edit(request):
     try:
         data = {
@@ -132,7 +136,7 @@ def edit(request):
             try:
                 category = int(request.POST.get('category', 1))
             except:
-                category = 0
+                category = 1
             if not title:
                 data['msg'] = '标题不能为空'
             else:
@@ -143,8 +147,7 @@ def edit(request):
                     u = News.objects.get(id=news_id)
                     u.title = title
                     u.content = content
-                    if not category:
-                        u.category = category
+                    u.category_id = category
                     u.status = status
                     u.save()
                     data['msg'] = '修改成功'
@@ -174,6 +177,7 @@ def edit(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def category_home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -222,6 +226,7 @@ def category_home(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def category_create(request):
     try:
         data = {
@@ -247,6 +252,7 @@ def category_create(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def category_edit(request):
     try:
         data = {

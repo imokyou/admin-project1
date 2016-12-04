@@ -1,0 +1,131 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度首页{% endblock %}
+{% block body %}
+
+<div class="main_middle middle_box02">
+    <!--<h2 class="middle_tit_h2">交易所</h2>-->
+    <div class="introduce">
+        <h1>introduction</h1>
+        <p>Capital is made up of Rod kingdom founded the company leading the, new financial ideas, inspiration origins from the currency combination had led to build the SIMS, second life and a series of games and set up a virtual community.</p>
+        <p>Rod company has nearly 20 years of rich experience in game development, as the Linden Lab's chief executive, and participated in more than 200 of game development.</p>
+    </div>
+    <div class="link_box">
+        <img src="/static/images/link.png">
+        <p>Recommended links:<span>>>Http://www.gpt1.com/user/<<</span></p>
+    </div>
+    <div class="measure">
+        <h1>●STEP 1: Pre-Enroll For FREE </h1>
+        <h1>●STEP 2: Let Us Help Grow Your Team!</h1>
+    </div>
+
+    <div class="table_container">
+        <div class="table_item mr30">
+            <h2>Enrollment</h2>
+            <div id="surface01" class="surface">
+            </div>
+        </div>
+
+        <div class="table_item">
+            <h2>Price&nbsp;&nbsp;Trend</h2>
+            <div id="surface02" class="surface">
+            </div>
+        </div>
+    </div>
+</div><!--end of middle-->
+{% endblock %}
+
+{% block script %}
+<script>
+var Chart01 = echarts.init(document.getElementById('surface01'));
+option = {
+    backgroundColor: '#fff',
+    grid: {
+        left: '0',
+        right: '10px',
+        top:'10px',
+        bottom: '0',
+        containLabel: true
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    xAxis:  {
+        type: 'category',
+        boundaryGap: false,
+        data: ['08:00', '12:00', '16:00', '20:00']
+    },
+    yAxis : [
+        {
+            type : 'value'
+   /*         axisLabel : {
+                formatter: '{value}万元'
+            }*/
+        }
+    ],
+    series: [
+        {
+            name:'人数',
+            type:'line',
+            itemStyle : {
+                normal : {
+                    color:'#0070bf',
+                    lineStyle:{
+                        color:'#0070bf'
+                    }
+                }
+            },
+            data:[13, 55, 152, 35],
+        }
+    ]
+};
+Chart01.setOption(option);
+
+var Chart02 = echarts.init(document.getElementById('surface02'));
+option = {
+    backgroundColor: '#fff',
+    grid: {
+        left: '0',
+        right: '10px',
+        top:'10px',
+        bottom: '0',
+        containLabel: true
+    },
+    tooltip : {
+        trigger: 'axis'
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            data : ['周一','周二','周三','周四','周五','周六','周日']
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+            axisLabel : {
+                formatter: '{value}万元'
+            }
+        }
+    ],
+    series: [
+        {
+            name:'数值',
+            type:'line',
+            itemStyle : {
+                normal : {
+                    color:'#f5bf58',
+                    lineStyle:{
+                        color:'#000'
+                    }
+                }
+            },
+            data:[0, 2, 4, 0.15, 2, 5, 10],
+            formatter: '{data}万元'
+        }
+    ]
+};
+Chart02.setOption(option);
+</script>
+{% endblock %}

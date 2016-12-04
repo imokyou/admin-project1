@@ -67,14 +67,12 @@
                                 <th>ID</th>
                                 <th>账号</th>
                                 <th>邮箱</th>
-                                <th>状态</th>
-                                <th>角色</th>
+                                <th>姓名</th>
                                 <th>最后登陆时间</th>
-                                <th>注册时间</th>
-                                <th>注册IP</th>
-                                <th>来源</th>
-                                <th>注册码</th>
-                                <th>邀请码</th>
+                                <th>注册信息</th>
+                                <th>地址</th>
+                                <th>推广链接</th>
+                                <th>状态</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -85,14 +83,22 @@
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.email }}</td>
-                                <td class="{% if user.status = 0 %}font-red{% endif %}">{{ user.status_name }}</td>
-                                <td class="{% if user.role = 1 %}font-red{% endif %}">{{ user.role_name }}</td>
+                                <td>{{ user.first_name }}{{ user.last_name }}</td>
                                 <td>{{ user.last_login }}</td>
-                                <td>{{ user.date_joined }}</td>
-                                <td>{{ user.reg_ip }}</td>
-                                <td>{{ user.reg_type }}</td>
-                                <td>{{ user.reg_code }}</td>
-                                <td>{{ user.invite_code }}</td>
+                                <td>
+                                    时间：{{ user.date_joined }}<br>
+                                    IP：{{ user.reg_ip }}<br>
+                                    注册码：{{ user.reg_code }}
+                                </td>
+                                <td>
+                                    国家：{{ user.country }}<br>
+                                    省/州：{{ user.provincy }}<br>
+                                    城市：{{ user.city }}<br>
+                                    {{ user.address1 }}<br>
+                                    {{ user.address2 }}<br>
+                                </td>
+                                <td>{{ user.invite_url }}</td>
+                                <td class="{% if user.status = 0 %}font-red{% endif %}">{{ user.status_name }}</td>
                                 <td>
                                     <a href="/backend/user/edit?id={{ user.id }}" class="btn btn-default waves-effect waves-light btn-sm">
                                         编辑

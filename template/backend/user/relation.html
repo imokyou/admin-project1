@@ -44,7 +44,7 @@
                             <td>{{ user_info.id }}</td>
                             <td>{{ user_info.username }}</td>
                             <td>{{ user_info.email }}</td>
-                            <td>{{ user_info.first_name }}</td>
+                            <td>{{ user_info.last_name }} {{ user_info.first_name }}</td>
                             <td>{{ user_info.last_login }}</td>
                             <td>{{ user_info.date_joined }}</td>
                             <td>{{ user_info.reg_ip }}</td>
@@ -81,7 +81,7 @@
                            <td>{{ parent_info.id }}</td>
                            <td>{{ parent_info.username }}</td>
                            <td>{{ parent_info.email }}</td>
-                           <td>{{ parent_info.first_name }}</td>
+                           <td>{{ user_info.last_name }} {{ user_info.first_name }}</td>
                            <td>{{ parent_info.last_login }}</td>
                            <td>{{ parent_info.date_joined }}</td>
                            <td>{{ parent_info.reg_ip }}</td>
@@ -122,7 +122,7 @@
                            <td>{{ children.id }}</td>
                            <td>{{ children.username }}</td>
                            <td>{{ children.email }}</td>
-                           <td>{{ children.first_name }}</td>
+                           <td>{{ user_info.last_name }} {{ user_info.first_name }}</td>
                            <td>{{ children.last_login }}</td>
                            <td>{{ children.date_joined }}</td>
                            <td>{{ children.reg_ip }}</td>

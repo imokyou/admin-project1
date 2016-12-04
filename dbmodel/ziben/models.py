@@ -5,6 +5,39 @@ from django.contrib.auth import models as auth_models
 from redactor.fields import RedactorField
 
 
+class StaticsQuerySet(models.QuerySet):
+
+    def member_counter(self):
+        q = self.order_by('-id').first()
+        q.members += 1
+        q.online += 1
+        q.save()
+        return True
+
+
+class Statics(models.Model):
+    '''配置表之首页数据'''
+    members = models.IntegerField()
+    online = models.IntegerField()
+    hits = models.IntegerField()
+    total_paid = models.DecimalField(max_digits=14, decimal_places=3)
+    offers = models.DecimalField(max_digits=14, decimal_places=3)
+    pts_value = models.DecimalField(max_digits=10, decimal_places=3)
+    ptc_value = models.DecimalField(max_digits=10, decimal_places=3)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    objects = StaticsQuerySet.as_manager()
+
+    class Meta:
+        managed = False
+        db_table = 'statics'
+
+    def counter(self):
+        q = self.objects.order_by('-id').first()
+        q.members += 1
+        q.save()
+
+
 class InviteCodeQuerySet(models.QuerySet):
 
     def pop(self):
@@ -36,7 +69,16 @@ class InviteCode(models.Model):
 class UserInfo(models.Model):
     '''用户信息表'''
     user = models.ForeignKey(auth_models.User)
-    nickname = models.CharField(max_length=64, default='')
+    phone_number = models.CharField(max_length=64, default='')
+    address1 = models.CharField(max_length=256, default='')
+    address2 = models.CharField(max_length=256, default='')
+    city = models.CharField(max_length=64, default='')
+    provincy = models.CharField(max_length=128, default='')
+    country = models.CharField(max_length=128, default='')
+    zip_code = models.CharField(max_length=32, default='')
+    sexal = models.CharField(max_length=32, default='')
+    age = models.CharField(max_length=32, default='')
+    recommend_user = models.CharField(max_length=64, default='')
     reg_time = models.DateTimeField(auto_now_add=True)
     reg_code = models.CharField(max_length=10)
     reg_type = models.SmallIntegerField(max_length=4, default=1)
@@ -45,6 +87,7 @@ class UserInfo(models.Model):
     invite_code = models.CharField(max_length=10)
     bank_code = models.CharField(max_length=16, default='')
     bank_card = models.CharField(max_length=64, default='')
+    status = models.SmallIntegerField(default=1)
 
     # 定义注册类型
     REG_TYPE = {
@@ -68,6 +111,8 @@ class UserInfo(models.Model):
         self.invite_code = InviteCode.objects.pop()
         super(UserInfo, self).save(*args, **kwargs)
 
+        Statics.objects.member_counter()
+
     class Meta:
         managed = False
         db_table = 'user_info'
@@ -90,8 +135,11 @@ class UserBalance(models.Model):
     '''用户账户表'''
     user = models.ForeignKey(auth_models.User)
     cash = models.DecimalField(max_digits=14, decimal_places=3, default=0)
-    invite_benifit = models.DecimalField(max_digits=14, decimal_places=3, default=0)
+    invite_benifit = models.DecimalField(max_digits=14,
+                                         decimal_places=3,
+                                         default=0)
     total = models.DecimalField(max_digits=14, decimal_places=3, default=0)
+    point = models.IntegerField(default=0)
 
     class Meta:
         managed = False
@@ -138,6 +186,10 @@ class UserOplog(models.Model):
         8: '读信'
     }
 
+    OPTYPE_CODES = {
+        'login': 1
+    }
+
     class Meta:
         managed = False
         db_table = 'user_oplog'
@@ -181,6 +233,7 @@ class UserMessage(models.Model):
     '''用户信箱'''
     from_user = models.ForeignKey(auth_models.User)
     to_user = models.ForeignKey(auth_models.User)
+    title = models.CharField(max_length=256)
     content = models.CharField(max_length=1024)
     status = models.SmallIntegerField(max_length=4)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -235,22 +288,6 @@ class News(models.Model):
     class Meta:
         managed = False
         db_table = 'news'
-
-
-class Statics(models.Model):
-    '''配置表之首页数据'''
-    members = models.IntegerField()
-    onlines = models.IntegerField()
-    hits = models.IntegerField()
-    total_paid = models.DecimalField(max_digits=14, decimal_places=3)
-    offers = models.IntegerField()
-    pts_value = models.IntegerField()
-    ptc_value = models.IntegerField()
-    create_time = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'statics'
 
 
 class Projects(models.Model):

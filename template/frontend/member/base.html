@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="/static/css/stage.css">
+    <title>{% block title %}会员中心{% endblock %}</title>
+    <!--[if lt IE 9]>
+    <script src="/static/js/html5shiv.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        p.err-msg {
+            margin-top: 5px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<!--Big container-->
+<div class="container bg_hei mt70 fillet_lr">
+    <div class="header prl30 clearfloat">
+        <a href="/" class="logo"><img src="/static/images/logo.png"> </a>
+        <ul class="nav_bar">
+            <li>
+                <a href="/member/" {% if index == 'member' %}class="om"{% endif %}>
+                    <i class="icon_nav02 icon_01"></i>家
+                </a>
+            </li>
+            <li>
+                <a href="商家.html">
+                    <i class="icon_nav01 icon_02"></i>商家
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="icon_nav01 icon_03"></i>投票
+                </a>
+            </li>
+            <li>
+                <a href="店.html">
+                    <i class="icon_nav01 icon_04"></i>店
+                </a>
+            </li>
+            <li>
+                <a href="/member/chat/" {% if index == 'member_chat' %}class="om"{% endif %}>
+                    <i class="icon_nav01 icon_05"></i>聊天
+                </a>
+            </li>
+            <li>
+                <a href="/member/mailbox/received/" {% if index == 'member_mailbox' %}class="om"{% endif %}>
+                    <i class="icon_nav01 icon_06"></i>收件箱
+                </a>
+            </li>
+        </ul>
+        <ul class="flag_ul">
+            <li><img src="/static/images/flag_usa.png"></li>
+            <li class="ml15"><img src="/static/images/flag_china.png"></li>
+        </ul>
+    </div>  <!--end of header-->
+    <!--main Content-->
+    <div class="content clearfloat">
+        <!--left slide-->
+        <div class="left_slide">
+            <div class="user">
+                <h1 class="user_pic"><img src="/static/images/tx_01.jpg"></h1>
+                <h2>{{ user.first_name }} {{ user.last_name }} </h2>
+                <p>账户 {{ user.id }}</p>
+            </div>
+            <ul class="left_slide_ul">
+                <li><img src="/static/images/icon_user.png"><span>{{ statics.recommend_users }}</span></li>
+                <li><img src="/static/images/icon_dollar.png"><span>${{ statics.balance }}</span></li>
+                <li><img src="/static/images/icon_b.png"><span>${{ statics.point }}</span></li>
+            </ul>
+            <ul class="left_nav">
+                <li><h5 {% if sub_index == 'home' %}class="in"{% endif %}>菜单</h5>
+                    <dl>
+                        <dd><a href="比赛.html">比赛</a></dd>
+                        <dd><a href="出租介绍人.html">出租介绍人</a></dd>
+                        <dd><a href="购买下线.html">购买下线</a></dd>
+                        <dd><a href="寄存器.html">寄存器</a></dd>
+                        <dd><a href="">你的下线</a></dd>
+                        <dd><a href="直接推荐.html">直接推荐</a></dd>
+                        <dd><a href="转介.html" >转介</a></dd>
+                        <dd><a href="设置.html">设置</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'balance' %}class="in"{% endif %}>盈利平衡统计</h5>
+                    <dl>
+                        <dd><a href="为了莱杰.html">为了莱杰</a></dd>
+                        <dd><a href="仪盘表.html">仪盘表</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'exchange' %}class="in"{% endif %}>存款交易所</h5>
+                    <dl>
+                        <dd><a href="增加资金.html">增加资金</a></dd>
+                        <dd><a href="收回.html">收回</a></dd>
+                    </dl>
+                </li>
+                <li><h5>交易所</h5></li>
+                <li><h5 {% if sub_index == 'deposite' %}class="in"{% endif %}>存款交易所</h5>
+                <li><h5 {% if sub_index == 'log' %}class="in"{% endif %}>日志</h5>
+                    <dl>
+                        <dd><a href="/member/news/">新闻公告</a></dd>
+                        <dd><a href="/member/mailbox/sended/">发件箱</a></dd>
+                        <dd><a href="/member/mailbox/received/">收件箱</a></dd>
+                        <dd><a href="/member/log/deposit/">存款历史记录</a></dd>
+                        <dd><a href="/member/log/retreat/">收回历史记录</a></dd>
+                        <dd><a href="/member/log/login/">登录历史记录</a></dd>
+                    </dl>
+                </li>
+                <li><h5>登出</h5>
+                    <dl>
+                        <dd><a href="/logout/">登出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div><!--end of left_slide-->
+        <!--middle-->
+        {% block body %} {% endblock %}
+        <!--right slide-->
+        <div class="right_slide">
+            <div class="right_slide_box">
+                <h1><img src="/static/images/icon_stats.png">STATS</h1>
+                <ul class="stats_ul">
+                    <li><span>-online members:</span><p>{{ statics.online }}</p></li>
+                    <li><span>-regist. members:</span><p>{{ statics.member }}</p></li>
+                    <li><span>-already paid:</span><p>{{ statics.total_paid }}</p></li>
+                </ul>
+            </div>
+            <div class="right_slide_box mt10">
+                <h1><img src="/static/images/icon_news.png">NEW</h1>
+                <ul class="new_ul">
+                    {% for ne in news %}
+                    <li><a href="#">{{ ne.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="right_slide_box mt10">
+                <h1><img src="/static/images/icon_sponsors.png">sponsors</h1>
+                <ul class="sponsors_ul">
+                    <li><a href="http://www.racehost.com/" target="_blank"><img src="/static/images/sponsors001.png"></a></li>
+                    <li><a href="http://poker.williamhill.com/" target="_blank"><img src="/static/images/sponsors002.png"></a></li>
+                </ul>
+            </div>
+        </div><!--end of right slide-->
+    </div> <!--end of main Content-->
+</div>
+<!--footer-->
+<div class="footer">
+    <h6>您的120x60的旗帜在这里低至5分钱每一天！</h6>
+    <p>Copyright © 2012-2016 capitalrev.com .All rights reserved.</p>
+</div>
+<script src="/static/js/jquery-2.1.3.min.js"></script>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/echarts.min.js"></script>
+{% block script %} {% endblock %}
+</body>
+</html>

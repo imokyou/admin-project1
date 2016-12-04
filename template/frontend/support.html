@@ -1,0 +1,86 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}资本国度-支持{% endblock %}
+{% block body %}
+
+<div class="middle" style="background-color: transparent;">
+    <div class="support_box">
+        <ul class="support_ul">
+            <li><a href=""><img src="/static/pic/support001.png"></a></li>
+            <li class="mt10"><a href=""><img src="/static/pic/support002.png"></a></li>
+            <li class="mt10"><a href=""><img src="/static/pic/support003.png"></a></li>
+        </ul>
+    </div>
+    <div class="ticket">
+        <h1 class="side_tit">创建门票</h1>
+        <div class="ticket_box">
+            <div class="create_ticket">
+                <div class="create_top">
+                    <h2>创建门票</h2>
+                    <select name="" id="">
+                        <option value="">浏览门票</option>
+                        <option value="">浏览门票</option>
+                        <option value="">浏览门票</option>
+                    </select>
+                </div>
+                <p>您的账户当前被标记为”您已切换地理位置自登记，清寻求帮助管理员。”如过您需要任何帮助，请随时发送给我们的帮助车票。</p>
+            </div>
+        </div>
+        <div class="tik_table">
+            <h4>学科记录：</h4>
+            <table class="referral_table">
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>问题</td>
+                    <td>创建问题</td>
+                    <td>状态</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Miase001</td>
+                    <td>我的账号解锁？</td>
+                    <td>16/04/10</td>
+                    <td>已发送</td>
+                </tr>
+                <tr>
+                    <td>Miase001</td>
+                    <td>我的账号解锁？</td>
+                    <td>16/04/10</td>
+                    <td>已发送</td>
+                </tr>
+                <tr>
+                    <td class="no_border">Miase001</td>
+                    <td class="no_border">我的账号解锁？</td>
+                    <td class="no_border">16/04/10</td>
+                    <td class="no_border">已发送</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="info_box">
+            <ul class="create_info">
+                <li>
+                    <span>学科</span>
+                    <input type="text">
+                </li>
+                <li>
+                    <span>部</span>
+                    <select name="" >
+                        <option value="">1</option>
+                        <option value="">2</option>
+                        <option value="">3</option>
+                    </select>
+                </li>
+                <li>
+                    <span>信息</span>
+                    <textarea rows="6"></textarea>
+                </li>
+            </ul>
+            <p>请输入您所遇到的问题的简短消息，您将尽快得到答复。</p>
+            <button class="btn_globe mauto">提交</button>
+        </div>
+    </div>
+</div><!--end of middle-->
+{% endblock %}

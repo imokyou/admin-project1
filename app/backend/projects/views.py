@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from lib import utils
 from lib.pagination import Pagination
+from lib.permissions import staff_required
 from config import errors
 from dbmodel.ziben.models import Projects
 from forms import SearchForm, CreateForm, EditForm
@@ -16,6 +17,7 @@ def test(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -66,6 +68,7 @@ def home(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def create(request):
     try:
         data = {
@@ -104,6 +107,7 @@ def create(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def edit(request):
     try:
         project_id = request.GET.get('id', '')

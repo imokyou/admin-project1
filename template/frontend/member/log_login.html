@@ -1,0 +1,44 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-登录历史记录{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="min-height:828px;">
+    <div class="middle_tit_h2">登录历史记录
+        <div class="page">
+            {% if paging.has_previous %}
+                <a href="{{paging.prev_url}}">
+                    上一页
+                </a>
+            {% endif %}
+
+            {% if paging.has_next %}
+                <a href="{{paging.next_url}}">
+                    下一页
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+        <table class="referral_table mt20" style="table-layout: auto;">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td class="w250">用户代理</td>
+                    <td>IP地址</td>
+                    <td>日期</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in loglist.data %}
+                <tr>
+                    <td><img src="/static/images/check.png"></td>
+                    <td class="w250">{{ log.content }}</td>
+                    <td>{{ log.ip }}</td>
+                    <td>{{ log.create_time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div><!--end of middle-->
+{% endblock %}

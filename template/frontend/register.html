@@ -1,0 +1,214 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}资本国度-会员注册{% endblock %}
+{% block body %}
+
+<!--main content-->
+<div class="middle">
+    <h1 class="side_tit">寄存器</h1>
+    <p>{{ errmsg }}</p>
+    <form name="regform" method="POST">
+        {% csrf_token %}
+        <ul class="setting_ul mt30" style="padding-left:15px;">
+            <li>
+                <span>名字</span>
+                {{ form.first_name }}
+
+                {% if form.first_name.errors %}
+                    {% for error in form.first_name.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>姓</span>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    {% for error in form.last_name.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>用户名</span>
+                {{ form.username }}
+                <b>4-25个字符</b>
+
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>密码</span>
+                {{ form.password }}
+                <b>6-16个字符</b>
+
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>确认密码</span>
+                {{ form.confirm_password }}
+                <b>6-16个字符</b>
+
+                {% if form.confirm_password.errors %}
+                    {% for error in form.confirm_password.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+
+            </li>
+            <li>
+                <span>电子邮件</span>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>电话号码</span>
+                {{ form.phone_number }}
+                {% if form.phone_number.errors %}
+                    {% for error in form.phone_number.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+
+            <li class="mt30">
+                <span></span>
+                <h2>邮寄地址</h2>
+            </li>
+            <li>
+                <span>地址1</span>
+                {{ form.address1 }}
+                {% if form.address1.errors %}
+                    {% for error in form.address1.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>地址2</span>
+                {{ form.address2 }}
+                {% if form.address2.errors %}
+                    {% for error in form.address2.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>市</span>
+                {{ form.city }}
+                {% if form.city.errors %}
+                    {% for error in form.city.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>州/省</span>
+                {{ form.provincy }}
+
+                {% if form.provincy.errors %}
+                    {% for error in form.provincy.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>国家</span>
+                {{ form.country }}
+
+                {% if form.country.errors %}
+                    {% for error in form.country.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>邮政编码</span>
+                {{ form.zip_code }}
+
+                {% if form.zip_code.errors %}
+                    {% for error in form.zip_code.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li class="mt30">
+                <span></span>
+                <h2>附加字段</h2>
+            </li>
+            <li>
+                <span>性别</span>
+                {{ form.sexal }}
+
+                {% if form.sexal.errors %}
+                    {% for error in form.sexal.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>年龄</span>
+                {{ form.age }}
+
+                {% if form.age.errors %}
+                    {% for error in form.age.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <!-- <li>
+                <span>您正在使用什么类型的网络</span>
+                {{ form.network_type }}
+            </li> -->
+            <li>
+                <span>您的真实信息</span>
+                <label>{{ form.is_info_real }}<i>是的，我明白，如果我不使用自己的真实信息，我将不<br>会支付和付款被发送之前所有账户都Verifyed</i></label>
+
+                {% if form.is_info_real.errors %}
+                    {% for error in form.is_info_real.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>推荐人会员#</span>
+                {{ form.recommend_user }}
+
+                {% if form.recommend_user.errors %}
+                    {% for error in form.recommend_user.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <!-- <li>
+                <span>安全码</span>
+                <input class="w120" type="text">
+                <div class="verfiry_code"><img src="/static/pic/verfiry.png"></div>
+                <a href="#" class="listen_code">可听代码</a>
+            </li> -->
+            <li>
+                <span></span>
+                <label>{{ form.is_agree }}<i>我已阅读并同意 条款和条件与全球行动现金</i></label>
+
+                {% if form.is_agree.errors %}
+                    {% for error in form.is_agree.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+        </ul>
+        <button class="btn_jicun mt40 mauto" type="submit"></button>
+    </form>
+</div><!--end of middle-->
+{% endblock %}

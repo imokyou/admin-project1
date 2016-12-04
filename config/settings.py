@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'redactor',
+    'django_crontab',
     'dbmodel',
     'app'
 ]
@@ -149,6 +149,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 60 * 60
 SESSION_SAVE_EVERY_REQUEST = True
 
+SITE_URL = 'http://admin-project1/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
@@ -178,3 +179,8 @@ REDACTOR_OPTIONS = {
 REDACTOR_UPLOAD = 'uploads/'
 REDACTOR_UPLOAD_HANDLER = 'redactor.handlers.UUIDUploader'
 REDACTOR_AUTH_DECORATOR = 'django.contrib.auth.decorators.login_required'
+
+CRONJOBS = [
+    ('* * */1 * *', 'django.core.management.call_command', ['static_refresh'], {}, '> /tmp/static_refresh.log'),
+    ('*/30 * * * *', 'django.core.management.call_command', ['online_refresh'], {}, '> /tmp/online_refresh.log'),
+]

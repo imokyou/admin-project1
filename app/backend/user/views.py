@@ -12,6 +12,7 @@ from django.conf import settings
 from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank
 from lib import utils
 from lib.pagination import Pagination
+from lib.permissions import staff_required
 from config import errors
 from forms import SearchForm, QuickJumpForm, CreateForm, EditForm, OplogSearchForm, RevenueSearchForm, PaymentSearchForm, RelationSearchForm
 import services
@@ -24,6 +25,7 @@ def test(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def home(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -81,19 +83,27 @@ def home(request):
                 'last_login': last_login,
                 'status': u.is_active,
                 'status_name': UserInfo.STATUS[u.is_active],
-                'role': u.is_superuser,
-                'role_name': UserInfo.ROLE[u.is_superuser],
                 'date_joined': date_joined,
                 'reg_ip': '',
                 'reg_type': '',
                 'reg_code': '',
-                'invite_code': ''
+                'invite_code': '',
+                'invite_url': '',
+                'first_name': u.first_name,
+                'last_name': u.last_name,
             }
             try:
                 userinfo = UserInfo.objects.get(user_id=u.id)
                 d['reg_ip'] = userinfo.reg_ip
                 d['reg_code'] = userinfo.reg_code
                 d['invite_code'] = userinfo.invite_code
+                d['invite_url'] = '%sregister/?invite_code=%s' % \
+                    (settings.SITE_URL, userinfo.invite_code)
+                d['country'] = userinfo.country
+                d['provincy'] = userinfo.provincy
+                d['city'] = userinfo.city
+                d['address1'] = userinfo.address1
+                d['address2'] = userinfo.address2
                 try:
                     d['reg_type'] = UserInfo.REG_TYPE[userinfo.reg_type]
                 except:
@@ -110,6 +120,7 @@ def home(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def create(request):
     try:
         data = {
@@ -169,6 +180,7 @@ def create(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def edit(request):
     try:
         user_id = request.GET.get('id', '')
@@ -234,6 +246,7 @@ def edit(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def detail(request):
     try:
         data = {
@@ -255,6 +268,7 @@ def detail(request):
                 'username': u.username,
                 'email': u.email,
                 'first_name': u.first_name,
+                'last_name': u.last_name,
                 'role': UserInfo.ROLE[u.is_superuser],
                 'status': UserInfo.STATUS[u.is_active],
                 'date_joined': date_joined,
@@ -262,6 +276,7 @@ def detail(request):
                 'reg_ip': '',
                 'reg_code': '',
                 'reg_type': '',
+                'invite_code': '',
                 'bank_code': '',
                 'bank_card': '',
                 'cash': 0,
@@ -275,6 +290,9 @@ def detail(request):
                 data['user_info']['reg_type'] = UserInfo.REG_TYPE[uinfo.reg_type]
                 data['user_info']['bank_code'] = uinfo.bank_code
                 data['user_info']['bank_card'] = uinfo.bank_card
+                data['user_info']['invite_code'] = uinfo.invite_code
+                data['user_info']['invite_url'] = '%sregister/?invite_code=%s' % \
+                    (settings.SITE_URL, uinfo.invite_code)
             except:
                 pass
             try:
@@ -292,6 +310,7 @@ def detail(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def oplog(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -328,19 +347,19 @@ def oplog(request):
         for o in oplogs:
             try:
                 optime = utils.dt_field_to_local(o.create_time) \
-                .strftime('%Y-%m-%d %H:%M:%S')
+                    .strftime('%Y-%m-%d %H:%M:%S')
             except:
                 optime = ''
             d = {
                 'id': o.id,
                 'user_id': o.user.id,
-                'username': o.username,
+                'username': o.user.username,
                 'optype': UserOplog.OPTYPE[o.optype],
                 'content': o.content,
-                'create_time': optime,
+                'optime': optime,
                 'ip': o.ip
             }
-            data['user_list']['data'].append(d)
+            data['oplog_list']['data'].append(d)
         return render(request, 'backend/user/oplog.html', data)
     except:
         import traceback
@@ -350,6 +369,7 @@ def oplog(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def revenue(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -407,6 +427,7 @@ def revenue(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def payment(request):
     try:
         p = int(request.GET.get('p', 1))
@@ -475,6 +496,7 @@ def payment(request):
 
 @csrf_exempt
 @login_required(login_url='/backend/login/')
+@staff_required()
 def relation(request):
     try:
         user_id = int(request.GET.get('id', 0))

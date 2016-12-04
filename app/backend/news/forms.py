@@ -1,6 +1,5 @@
 # coding=utf-8
 from django import forms
-from redactor.widgets import RedactorEditor
 from dbmodel.ziben.models import NewsCategory
 
 
@@ -83,7 +82,7 @@ class CreateForm(forms.Form):
                                       widget=forms.Select(attrs=formcontrol),
                                       required=False)
     content = forms.CharField(label="",
-                              widget=RedactorEditor(),
+                              widget=forms.Textarea(attrs=formcontrol),
                               required=False)
 
 
@@ -103,7 +102,7 @@ class EditForm(forms.Form):
                                       queryset=category_queryset,
                                       widget=forms.Select(attrs=formcontrol))
     content = forms.CharField(label="",
-                              widget=RedactorEditor(),
+                              widget=forms.Textarea(attrs=formcontrol),
                               required=False)
     status = forms.ChoiceField(label="",
                                choices=CHOICES,

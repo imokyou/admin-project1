@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {% block keywords %}<meta name="keywords" content="your tags">{% endblock %}
+    {% block description %}<meta name="description" content="150 words">{% endblock %}
+    <meta name="renderer" content="webkit">
+    <meta name="x5-orientation" content="portrait">
+    <link rel="stylesheet" href="/static/css/stage.css">
+    <title>{% block title %}资本国度{% endblock %}</title>
+    <!--[if lt IE 9]>
+        <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        p.err-msg {
+            margin-left:  110px;
+            margin-top: 5px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container_re bg_hei">
+    <div class="top_ad"><a href="#"><img src="/static/pic/support001.png"></a></div>
+    <div class="top_pic"></div>
+    <div class="header_re clearfloat">
+        <a href="#" class="logo_re"><img src="/static/pic/logo_re.png"> </a>
+        <ul class="nav_bar_re">
+            <li>
+                <a href="/" {% if index == 'home' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">家
+                </a>
+            </li>
+            <li>
+                <a href="/about-us/" {% if index == 'about_us' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">关于我们
+                </a>
+            </li>
+            <li>
+                <a href="/register/" {% if index == 'register' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">寄存器
+                </a>
+            </li>
+            <li>
+                <a href="/login/" {% if index == 'login' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">登录
+                </a>
+            </li>
+            <li>
+                <a href="/video/" {% if index == 'video' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">视频
+                </a>
+            </li>
+            <li>
+                <a href="/faq/" {% if index == 'faq' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">常见问题
+                </a>
+            </li>
+            <li>
+                <a href="/support"  {% if index == 'support' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">支持
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--end of header_re-->
+    <div class="main clearfloat mt20">
+    <!--left-->
+    <div class="side fl">
+        <div class="census bg0a">
+            <h1 class="side_tit">统计</h1>
+            <ul class="census_ul">
+                <li><p>会员</p><span>{{ statics_info.members }}</span></li>
+                <li><p>线上</p><span>{{ statics_info.online }}</span></li>
+                <li><p>命中</p><span>{{ statics_info.hits }}</span></li>
+                <li><p>总支付</p><span>${{ statics_info.total_paid }}</span></li>
+                <li><p>报价</p><span>{{ statics_info.offers }}</span></li>
+                <li><img src="/static/pic/border_grey.png"></li>
+                <li><p>PTS值</p><span>$3.81和62186.95</span></li>
+                <li><p>PTC值</p><span>$0.04</span></li>
+            </ul>
+        </div>
+        <div class="diary bg0a mt20">
+            <h1 class="side_tit">去年10记</h1>
+            <ul class="diary_ul">
+                <li>
+                    <a href="http://www.gpt1.com" target="_blank">四叶草GPT - 国际GPT#1</a>
+                </li>
+                <li>
+                    <a href="https://bitday.biz/" target="_blank">意见调查资金高回报 - 高级版</a>
+                </li>
+                <li>
+                    <a href="http://highestpaygpt.com/home?refid=20" target="_blank">日报调查+ highestpaygpt +每日支付+低每日最低支付</a>
+                </li>
+                <li>
+                    <a href="http://finosity.com/freeaccess/400in4hours.php?t=13m121115bn468400in4hoursint" target="_blank">日报调查+ finosity +每日支付+低奖金最低</a>
+                </li>
+                <li>
+                    <a href="https://theminers.biz" target="_blank">意见调查资金路由器 - 高级版</a>
+                </li>
+                <li>
+                    <a href="http://superpay.me/" target="_blank">意见调查资金路由器 - 高级版</a>
+                </li>
+                <li>
+                    <a href="http://myinfinitedownline.com/?ref=christinersilva" target="_blank">四叶草GPT - 国际GPT！</a>
+                </li>
+                <li>
+                    <a href="http://aglocoptr.com/" target="_blank">aglocoptr ***大***网站</a>
+                </li>
+                <li>
+                    <a href="http://offernation.com" target="_blank">offernation</a>
+                </li>
+                <li>
+                    <a href="http://point.st" target="_blank">横幅，点击，Facebook喜欢，调查等</a>
+                </li>
+                <li>
+                    <a href="https://mintvine.com" target="_blank">加入使用MintVine赚取成千上万奖励</a>
+                </li>
+            </ul>
+            <a href="#" class="more">点击查看更多>></a>
+        </div>
+    </div><!--end of left-->
+    {% block body %} {% endblock %}
+    <!--right-->
+    <div class="side fr">
+        <div class="sponsor bg0a">
+            <h1 class="side_tit">赞助商</h1>
+            <ul class="sponsor_ul">
+                <li>
+                    <a href="http://www.racehost.com/" target="_blank">
+                        <img src="/static/pic/sponsors001.png">
+                    </a>
+                </li>
+                <li>
+                    <a href="http://poker.williamhill.com/" target="_blank">
+                        <img src="/static/pic/sponsors002.png">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.skinnybodycare.com/" target="_blank">
+                        <img src="/static/pic/sponsors003.png">
+                    </a>
+                </li>
+            </ul>
+            <p>您的120x60的旗帜在这里低至5分钱每一天！</p>
+        </div>
+        <!--在线留言-->
+        <div class="message mt20 bg0a">
+            <h1 class="side_tit">在线留言板</h1>
+            <ul class="message_ul">
+                <li>
+                   <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
+                    <p>GAC信息博特</p>
+                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
+                </li>
+                <li>
+                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
+                    <p>GAC信息博特</p>
+                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
+                </li>
+                <li>
+                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
+                    <p>GAC信息博特</p>
+                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
+                </li>
+                <li>
+                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
+                    <p>GAC信息博特</p>
+                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
+                </li>
+                <li>
+                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
+                    <p>GAC信息博特</p>
+                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
+                </li>
+            </ul>
+            <a href="#" class="more">你必须先登录才能发帖</a>
+        </div>
+    </div>
+</div>
+</div>
+<div class="footer_re">
+    <div class="footer_re_nav">
+        <a href="#">风险披露<img src="/static/pic/icon_pdf.png"></a>
+        <a href="#">隐私政策<img src="/static/pic/icon_pdf.png"></a>
+        <a href="#">条款和条件<img src="/static/pic/icon_pdf.png"></a>
+        <a href="#">联系我们</a>
+        <a href="#">版权所有</a>
+    </div>
+    <p>Copyright © 2012-2016 capitalrev.com .All rights reserved.<br>
+        © Global Action Cash 2011 - 2016 </p>
+</div>
+</body>
+</html>
