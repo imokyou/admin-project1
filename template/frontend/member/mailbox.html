@@ -4,7 +4,11 @@
 {% block body %}
 <!--middle-->
 <div class="main_middle middle_box">
+    {% if ctype == 'received' %}
     <h2 class="middle_tit_h2">收件箱<i>({{ maillist.tot }})</i></h2>
+    {% elif ctype == 'sended' %}
+    <h2 class="middle_tit_h2">发件箱<i>({{ maillist.tot }})</i></h2>
+    {% endif %}
     <ul class="mail_list">
         {% for mail in maillist.data %}
         <li>
