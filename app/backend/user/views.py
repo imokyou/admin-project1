@@ -9,12 +9,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User as Auth_user
 from django.conf import settings
-from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank
+from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank, UserMessage, UserFeedback
 from lib import utils
 from lib.pagination import Pagination
 from lib.permissions import staff_required
 from config import errors
-from forms import SearchForm, QuickJumpForm, CreateForm, EditForm, OplogSearchForm, RevenueSearchForm, PaymentSearchForm, RelationSearchForm
+from forms import *
 import services
 
 
@@ -550,3 +550,178 @@ def relation(request):
         utils.debug()
         return utils.ErrResp(errors.FuncFailed)
     return render(request, 'backend/user/relation.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def mailbox(request):
+    try:
+        p = int(request.GET.get('p', 1))
+        n = int(request.GET.get('n', 25))
+        from_user = request.GET.get('from_user', '')
+        to_user = request.GET.get('to_user', '')
+
+        q = UserMessage.objects
+        if from_user:
+            try:
+                u = Auth_user.objects.get(username=from_user)
+                q = q.filter(from_user_id=u.id)
+            except:
+                pass
+        if to_user:
+            try:
+                u = Auth_user.objects.get(username=to_user)
+                q = q.filter(to_user_id=u.id)
+            except:
+                pass
+
+        form_initial = {'from_user': from_user, 'to_user': to_user}
+        form = MailboxSearchForm(initial=form_initial)
+
+        data = {
+            'index': 'user',
+            'paging': Pagination(request, q.count()),
+            'forms': form,
+            'mail_list': {
+                'p': p,
+                'n': n,
+                'data': [],
+            }
+        }
+
+        mails = q.all().order_by('-id')[(p - 1) * n:p * n]
+        for m in mails:
+            try:
+                send_time = utils.dt_field_to_local(m.create_time) \
+                    .strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                send_time = ''
+            try:
+                read_time = utils.dt_field_to_local(m.read_time) \
+                    .strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                read_time = ''
+            d = {
+                'id': m.id,
+                'from_user': m.from_user.username,
+                'to_user': m.to_user.username,
+                'title': m.title,
+                'send_time': send_time,
+                'read_time': read_time
+            }
+            data['mail_list']['data'].append(d)
+        return render(request, 'backend/user/mailbox.html', data)
+    except:
+        import traceback
+        traceback.print_exc()
+        return utils.ErrResp(errors.FuncFailed)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def mailinfo(request, mail_id):
+    try:
+        data = {
+            'mail_info': {}
+        }
+        data['mail_info'] = UserMessage.objects.get(id=int(mail_id))
+    except:
+        pass
+    finally:
+        return render(request, 'backend/user/mailinfo.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def maildrop(request, mail_id):
+    try:
+        mail_info = UserMessage.objects.get(id=int(mail_id))
+        mail_info.delete()
+    except:
+        pass
+    finally:
+        return HttpResponseRedirect('/backend/user/mailbox/')
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def feedback(request):
+    try:
+        p = int(request.GET.get('p', 1))
+        n = int(request.GET.get('n', 25))
+        username = request.GET.get('username', '')
+
+        q = UserFeedback.objects
+        if username:
+            try:
+                u = Auth_user.objects.get(username=username)
+                q = q.filter(user=u)
+            except:
+                pass
+
+        form_initial = {'username': username}
+        form = FeedbackSearchForm(initial=form_initial)
+
+        data = {
+            'index': 'user',
+            'paging': Pagination(request, q.count()),
+            'forms': form,
+            'feedback_list': {
+                'p': p,
+                'n': n,
+                'data': [],
+            }
+        }
+
+        feedbacks = q.all().order_by('-id')[(p - 1) * n:p * n]
+        for f in feedbacks:
+            try:
+                create_time = utils.dt_field_to_local(f.create_time) \
+                    .strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                create_time = ''
+            d = {
+                'id': f.id,
+                'username': f.user.username,
+                'title': f.title,
+                'create_time': create_time,
+                'status': UserFeedback.STATUS[f.status]
+            }
+            data['feedback_list']['data'].append(d)
+        return render(request, 'backend/user/feedback.html', data)
+    except:
+        import traceback
+        traceback.print_exc()
+        return utils.ErrResp(errors.FuncFailed)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def feedback_info(request, f_id):
+    try:
+        data = {
+            'feedback_info': {}
+        }
+        data['feedback_info'] = UserFeedback.objects.get(id=int(f_id))
+    except:
+        pass
+    finally:
+        return render(request, 'backend/user/feedback_info.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def feedback_drop(request, f_id):
+    try:
+        feedback_info = UserFeedback.objects.get(id=int(f_id))
+        feedback_info.delete()
+    except:
+        pass
+    finally:
+        return HttpResponseRedirect('/backend/user/feedback/')

@@ -250,6 +250,32 @@ class UserMessage(models.Model):
         db_table = 'user_message'
 
 
+class UserFeedback(models.Model):
+    '''用户反馈'''
+    user = models.ForeignKey(auth_models.User)
+    ctype = models.SmallIntegerField(max_length=4)
+    title = models.CharField(max_length=256)
+    content = models.CharField(max_length=1024)
+    status = models.SmallIntegerField(default=0)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    # 定义状态
+    STATUS = {
+        0: '已发送',
+        1: '已解决'
+    }
+
+    # 定义状态
+    CTYPE = {
+        1: '类型一',
+        2: '类型二'
+    }
+
+    class Meta:
+        managed = False
+        db_table = 'user_feedback'
+
+
 class NewsCategory(models.Model):
     '''新闻资讯分类表'''
     name = models.CharField(max_length=1024)

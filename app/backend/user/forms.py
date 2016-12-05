@@ -26,40 +26,99 @@ class SearchForm(forms.Form):
         (1, '正常')
     ]
 
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    email = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    status = forms.ChoiceField(label="", choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
-
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    email = forms.CharField(label="",
+                            required=False,
+                            widget=forms.TextInput(
+                                attrs={'class': 'form-control'}))
+    status = forms.ChoiceField(label="",
+                               choices=CHOICES,
+                               required=False,
+                               widget=forms.Select(
+                                   attrs={'class': 'form-control'}), )
 
 
 class QuickJumpForm(SearchForm):
-    username = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    email = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    status = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    is_superuser = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    n = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    p = forms.ChoiceField(label="", widget=forms.TextInput(attrs={'size': 4}), required=False)
-
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.HiddenInput(attrs={}))
+    email = forms.CharField(label="",
+                            required=False,
+                            widget=forms.HiddenInput(attrs={}))
+    status = forms.CharField(label="",
+                             required=False,
+                             widget=forms.HiddenInput(attrs={}))
+    is_superuser = forms.CharField(label="",
+                                   required=False,
+                                   widget=forms.HiddenInput(attrs={}))
+    n = forms.CharField(label="",
+                        required=False,
+                        widget=forms.HiddenInput(attrs={}))
+    p = forms.ChoiceField(label="",
+                          required=False,
+                          widget=forms.TextInput(attrs={'size': 4}))
 
 
 class CreateForm(forms.Form):
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    reg_code = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    bank_code = forms.ChoiceField(label="", choices=BANK_CODE, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
-    bank_card = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="",
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    email = forms.CharField(label="",
+                            widget=forms.TextInput(
+                                attrs={'class': 'form-control'}))
+    password = forms.CharField(label="",
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    first_name = forms.CharField(label="",
+                                 widget=forms.TextInput(
+                                     attrs={'class': 'form-control'}))
+    reg_code = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    bank_code = forms.ChoiceField(label="",
+                                  choices=BANK_CODE,
+                                  required=False,
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control'}))
+    bank_card = forms.CharField(label="",
+                                required=False,
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control'}))
 
 
 class EditForm(forms.Form):
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
-    email = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
-    password = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    bank_code = forms.ChoiceField(label="", choices=BANK_CODE, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
-    bank_card = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    is_active = forms.ChoiceField(label="", choices=STATUS, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="",
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control',
+                                          'readonly': 'readonly'}))
+    email = forms.CharField(label="",
+                            widget=forms.TextInput(
+                                attrs={'class': 'form-control',
+                                       'readonly': 'readonly'}))
+    password = forms.CharField(label="",
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    first_name = forms.CharField(label="",
+                                 widget=forms.TextInput(
+                                     attrs={'class': 'form-control'}))
+    bank_code = forms.ChoiceField(label="",
+                                  choices=BANK_CODE,
+                                  required=False,
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control'}))
+    bank_card = forms.CharField(label="",
+                                required=False,
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control'}))
+    is_active = forms.ChoiceField(label="",
+                                  choices=STATUS,
+                                  required=False,
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control'}))
 
 
 class OplogSearchForm(forms.Form):
@@ -75,8 +134,15 @@ class OplogSearchForm(forms.Form):
         (8, '读信')
     ]
 
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    optype = forms.ChoiceField(label="", choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    optype = forms.ChoiceField(label="",
+                               choices=CHOICES,
+                               required=False,
+                               widget=forms.Select(
+                                   attrs={'class': 'form-control'}))
 
 
 class RevenueSearchForm(forms.Form):
@@ -86,8 +152,15 @@ class RevenueSearchForm(forms.Form):
         (2, '邀请获利'),
         (3, '项目收入')
     ]
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    revenue_type = forms.ChoiceField(label="", choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    revenue_type = forms.ChoiceField(label="",
+                                     choices=CHOICES,
+                                     required=False,
+                                     widget=forms.Select(
+                                         attrs={'class': 'form-control'}))
 
 
 class PaymentSearchForm(forms.Form):
@@ -96,9 +169,37 @@ class PaymentSearchForm(forms.Form):
         (1, '银行卡/信用卡'),
         (2, 'Paypal')
     ]
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    pay_type = forms.ChoiceField(label="", choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    pay_type = forms.ChoiceField(label="",
+                                 choices=CHOICES,
+                                 required=False,
+                                 widget=forms.Select(
+                                     attrs={'class': 'form-control'}))
 
 
 class RelationSearchForm(forms.Form):
-    username = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+
+
+class MailboxSearchForm(forms.Form):
+    from_user = forms.CharField(label="",
+                                required=False,
+                                widget=forms.TextInput(
+                                    attrs={'class': 'form-control'}))
+    to_user = forms.CharField(label="",
+                              required=False,
+                              widget=forms.TextInput(
+                                  attrs={'class': 'form-control'}))
+
+
+class FeedbackSearchForm(forms.Form):
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))

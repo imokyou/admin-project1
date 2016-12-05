@@ -19,8 +19,6 @@
                     <h2>创建门票</h2>
                     <select name="" id="">
                         <option value="">浏览门票</option>
-                        <option value="">浏览门票</option>
-                        <option value="">浏览门票</option>
                     </select>
                 </div>
                 <p>您的账户当前被标记为”您已切换地理位置自登记，清寻求帮助管理员。”如过您需要任何帮助，请随时发送给我们的帮助车票。</p>
@@ -38,48 +36,48 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for d in data %}
                 <tr>
-                    <td>Miase001</td>
-                    <td>我的账号解锁？</td>
-                    <td>16/04/10</td>
-                    <td>已发送</td>
+                    <td>{{ d.username }}</td>
+                    <td>{{ d.title }}</td>
+                    <td>{{ d.create_time }}</td>
+                    <td>{{ d.status }}</td>
                 </tr>
-                <tr>
-                    <td>Miase001</td>
-                    <td>我的账号解锁？</td>
-                    <td>16/04/10</td>
-                    <td>已发送</td>
-                </tr>
-                <tr>
-                    <td class="no_border">Miase001</td>
-                    <td class="no_border">我的账号解锁？</td>
-                    <td class="no_border">16/04/10</td>
-                    <td class="no_border">已发送</td>
-                </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
         <div class="info_box">
-            <ul class="create_info">
-                <li>
-                    <span>学科</span>
-                    <input type="text">
-                </li>
-                <li>
-                    <span>部</span>
-                    <select name="" >
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                    </select>
-                </li>
-                <li>
-                    <span>信息</span>
-                    <textarea rows="6"></textarea>
-                </li>
-            </ul>
-            <p>请输入您所遇到的问题的简短消息，您将尽快得到答复。</p>
-            <button class="btn_globe mauto">提交</button>
+            <form name="feedbackForm" method="POST">
+                {% csrf_token %}
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <p class="err-msg" style="margin: 5px 0 0 30px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+
+                {% if form.content.errors %}
+                    {% for error in form.content.errors %}
+                        <p class="err-msg" style="margin: 5px 0 0 30px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+                <ul class="create_info">
+                    <li>
+                        <span>学科</span>
+                        {{ form.title }}
+                    </li>
+                    <li>
+                        <span>部</span>
+                        {{ form.ctype }}
+                    </li>
+                    <li>
+                        <span>信息</span>
+                        {{ form.content }}
+                    </li>
+                </ul>
+                <p>请输入您所遇到的问题的简短消息，您将尽快得到答复。</p>
+                <button class="btn_globe mauto" type="submit">提交</button>
+            </form>
         </div>
     </div>
 </div><!--end of middle-->

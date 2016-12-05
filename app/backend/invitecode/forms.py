@@ -8,12 +8,27 @@ class SearchForm(forms.Form):
         (0, '未使用'),
         (1, '已使用')
     ]
-    code = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
-    status = forms.ChoiceField(label="", choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=False)
+    code = forms.CharField(label="",
+                           required=False,
+                           widget=forms.TextInput(
+                               attrs={'class': 'form-control'}))
+    status = forms.ChoiceField(label="",
+                               choices=CHOICES,
+                               required=False,
+                               widget=forms.Select(
+                                   attrs={'class': 'form-control'}))
 
 
 class QuickJumpForm(SearchForm):
-    code = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    status = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    n = forms.CharField(label="", widget=forms.HiddenInput(attrs={}), required=False)
-    p = forms.ChoiceField(label="", widget=forms.TextInput(attrs={'size': 4}), required=False)
+    code = forms.CharField(label="",
+                           required=False,
+                           widget=forms.HiddenInput(attrs={}))
+    status = forms.CharField(label="",
+                             required=False,
+                             widget=forms.HiddenInput(attrs={}))
+    n = forms.CharField(label="",
+                        required=False,
+                        widget=forms.HiddenInput(attrs={}))
+    p = forms.ChoiceField(label="",
+                          required=False,
+                          widget=forms.TextInput(attrs={'size': 4}))

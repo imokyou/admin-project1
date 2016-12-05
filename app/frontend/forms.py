@@ -71,3 +71,17 @@ class LoginForm(forms.Form):
         if user is None or not user.is_active:
             self.add_error('username', '用户名或密码不正确')
         return cleaned_data
+
+
+class FeedbackForm(forms.Form):
+    CHOICES = [
+        (1, '类型一')
+    ]
+    ctype = forms.ChoiceField(label="",
+                              choices=CHOICES,
+                              widget=forms.Select())
+    title = forms.CharField(max_length=256,
+                            error_messages={'required': '标题不能为空'})
+    content = forms.CharField(max_length=1024,
+                              widget=forms.Textarea(attrs={'rows': 6}),
+                              error_messages={'required': '内容不能为空'})
