@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.contrib.auth.models import User as Auth_user
-from dbmodel.ziben.models import UserOplog, News, UserMessage
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm
@@ -122,3 +122,37 @@ def mailbox(request, ctype):
     }
 
     return render(request, 'frontend/member/mailbox.html', data)
+
+
+@login_required(login_url='/login/')
+def rank(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'home',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    n = 20
+    p = request.GET.get('p', 1)
+    q = UserPromoteRank.objects
+    data['ranklist'] = {
+        'tot': q.count(),
+        'paging': Pagination(request, q.count()),
+        'data': q.all().order_by('-id')[(p - 1) * n:p * n]
+    }
+
+    return render(request, 'frontend/member/rank.html', data)
+
+
+@login_required(login_url='/login/')
+def seller(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'home',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    return render(request, 'frontend/member/seller.html', data)
+

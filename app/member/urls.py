@@ -8,5 +8,7 @@ urlpatterns = [
     url(r'^log/(\w+)/', views.log),
     url(r'^news/', views.news),
     url(r'^chat/', views.chat),
-    url(r'^mailbox/(\w+)/', views.mailbox)
+    url(r'^mailbox/(\w+)/', views.mailbox),
+    url(r'^rank/', views.rank),
+    url(r'^seller/', views.seller)
 ]

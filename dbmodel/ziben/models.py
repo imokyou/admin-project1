@@ -276,6 +276,26 @@ class UserFeedback(models.Model):
         db_table = 'user_feedback'
 
 
+class UserPromoteRank(models.Model):
+    '''用户信箱'''
+    user = models.ForeignKey(auth_models.User)
+    recommend_users = models.IntegerField(default=0)
+    commission = models.DecimalField(max_digits=14, decimal_places=2)
+    reward = models.DecimalField(max_digits=14, decimal_places=2)
+    season = models.SmallIntegerField(default=0)
+    season_date = models.DateField(auto_now_add=True)
+
+    # 定义状态
+    STATUS = {
+        0: '未读',
+        1: '已读'
+    }
+
+    class Meta:
+        managed = False
+        db_table = 'user_promote_rank'
+
+
 class NewsCategory(models.Model):
     '''新闻资讯分类表'''
     name = models.CharField(max_length=1024)

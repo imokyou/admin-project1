@@ -1,0 +1,31 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-比赛{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0; ">
+    <h2 class="middle_tit_h2 plr20">最后比赛优胜者<span>将得到不一样的佣金奖励，30日更新一次</span></h2>
+    <table class="match_table">
+        <thead>
+            <tr>
+                <td>位置</td>
+                <td>用户名</td>
+                <td>直接推荐</td>
+                <td>佣金</td>
+                <td>比赛奖励</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in ranklist.data %}
+        <tr>
+            <td class="no_left_border">#1</td>
+            <td>{{ r.user.username }}</td>
+            <td>{{ r.recommend_users }}</td>
+            <td>{{ r.commission }}</td>
+            <td>${{ r.reward }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div><!--end of middle-->
+{% endblock %}
