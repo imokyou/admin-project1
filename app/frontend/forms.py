@@ -66,10 +66,13 @@ class LoginForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(LoginForm, self).clean()
-        user = authenticate(username=cleaned_data['username'],
-                            password=cleaned_data['password'])
-        if user is None or not user.is_active:
-            self.add_error('username', '用户名或密码不正确')
+        username = cleaned_data.get('username', '')
+        password = cleaned_data.get('password', '')
+        if username and password:
+            user = authenticate(username=cleaned_data.get('username', ''),
+                                password=cleaned_data.get('password', ''))
+            if user is None or not user.is_active:
+                self.add_error('username', '用户名或密码不正确')
         return cleaned_data
 
 

@@ -150,33 +150,15 @@
         <div class="message mt20 bg0a">
             <h1 class="side_tit">在线留言板</h1>
             <ul class="message_ul">
+                {% for ch in chatlist %}
                 <li>
-                   <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
-                    <p>GAC信息博特</p>
-                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
+                   <h6><i></i>{{ ch.create_time | date:'Y-m-d H:i:s' }}</h6>
+                    <p>{{ ch.user.username }}</p>
+                    <span>{{ ch.title }}</span>
                 </li>
-                <li>
-                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
-                    <p>GAC信息博特</p>
-                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
-                </li>
-                <li>
-                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
-                    <p>GAC信息博特</p>
-                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
-                </li>
-                <li>
-                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
-                    <p>GAC信息博特</p>
-                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
-                </li>
-                <li>
-                    <h6><i></i>2016/9/25&nbsp;上午6:10:20</h6>
-                    <p>GAC信息博特</p>
-                    <span>BOT:Chuchineitor[PfferWall]Matomy[+1p]</span>
-                </li>
+                {% endfor %}
             </ul>
-            <a href="#" class="more">你必须先登录才能发帖</a>
+            <a href="/login/" class="more">你必须先登录才能发帖</a>
         </div>
     </div>
 </div>

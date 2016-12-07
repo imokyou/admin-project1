@@ -17,10 +17,11 @@ def test(request):
 
 def home(request):
     data = {
-        'index': 'home'
+        'index': 'home',
+        'statics_info': Statics.objects.order_by('-id').first(),
+        'chatlist': UserFeedback.objects.order_by('-id')[0:10],
     }
-    statics_info = Statics.objects.order_by('-id').first()
-    data['statics_info'] = statics_info
+
     return render(request, 'frontend/index.html', data)
 
 
@@ -43,11 +44,11 @@ def register(request):
 
     data = {
         'index': 'register',
+        'statics_info': Statics.objects.order_by('-id').first(),
+        'chatlist': UserFeedback.objects.order_by('-id')[0:10],
         'form': RegForm(initial={'recommend_user': recommend_user}),
         'errmsg': ''
     }
-    statics_info = Statics.objects.order_by('-id').first()
-    data['statics_info'] = statics_info
 
     if request.method == 'POST':
         data['form'] = RegForm(request.POST)
@@ -63,6 +64,7 @@ def login(request):
     data = {
         'index': 'login',
         'statics_info': Statics.objects.order_by('-id').first(),
+        'chatlist': UserFeedback.objects.order_by('-id')[0:10],
         'form': LoginForm(),
         'errmsg': ''
     }
@@ -101,7 +103,8 @@ def video(request):
 
 def faq(request):
     data = {
-        'index': 'faq'
+        'index': 'faq',
+        'chatlist': UserFeedback.objects.order_by('-id')[0:10],
     }
     statics_info = Statics.objects.order_by('-id').first()
     data['statics_info'] = statics_info
@@ -112,8 +115,10 @@ def support(request):
     data = {
         'index': 'support',
         'statics_info': Statics.objects.order_by('-id').first(),
+        'chatlist': UserFeedback.objects.order_by('-id')[0:10],
         'form': FeedbackForm(),
-        'data': []
+        'data': [],
+        'errmsg': ''
     }
     result = UserFeedback.objects \
         .filter(user_id=request.user.id) \
@@ -128,15 +133,18 @@ def support(request):
         })
 
     if request.method == 'POST':
-        data['form'] = FeedbackForm(request.POST)
-        if data['form'].is_valid():
-            fb = UserFeedback(
-                user=request.user,
-                ctype=request.POST.get('ctype'),
-                title=request.POST.get('title'),
-                content=request.POST.get('content')
-            )
-            fb.save()
-            return HttpResponseRedirect('/support/')
+        if not request.user.is_authenticated():
+            data['errmsg'] = '请先登陆'
+        else:
+            data['form'] = FeedbackForm(request.POST)
+            if data['form'].is_valid():
+                fb = UserFeedback(
+                    user=request.user,
+                    ctype=request.POST.get('ctype'),
+                    title=request.POST.get('title'),
+                    content=request.POST.get('content')
+                )
+                fb.save()
+                return HttpResponseRedirect('/support/')
 
     return render(request, 'frontend/support.html', data)

@@ -50,6 +50,9 @@
         <div class="info_box">
             <form name="feedbackForm" method="POST">
                 {% csrf_token %}
+                {% if errmsg %}
+                    <p class="err-msg" style="margin: 5px 0 0 30px">{{ errmsg|escape }}</p>
+                {% endif %}
                 {% if form.title.errors %}
                     {% for error in form.title.errors %}
                         <p class="err-msg" style="margin: 5px 0 0 30px">{{ error|escape }}</p>
