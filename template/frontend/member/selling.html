@@ -1,0 +1,24 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-出租介绍人{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">出租介绍人</h2>
+    <div class="lease_box mauto">
+        <h4>出租对象</h4>
+        <form name="sellingForm" method="POST">
+            {% csrf_token %}
+            <select name="user_id">
+                {% for uc in data.uconnect %}
+                <option value="{{ uc.user_id }}">{{ uc.username }}</option>
+                {% endfor %}
+            </select>
+            <h5>购买平衡：＄0.000000</h5>
+            <button class="notxt btn_lease" type="submit"></button>
+        </form>
+        <p>出租介绍人可获得投资金额的5%</p>
+    </div>
+</div><!--end of middle-->
+
+{% endblock %}

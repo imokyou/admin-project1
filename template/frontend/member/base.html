@@ -65,7 +65,7 @@
             <div class="user">
                 <h1 class="user_pic"><img src="/static/images/tx_01.jpg"></h1>
                 <h2>{{ user.first_name }} {{ user.last_name }} </h2>
-                <p>账户 {{ user.id }}</p>
+                <p>账户 {{ user.username }}</p>
             </div>
             <ul class="left_slide_ul">
                 <li><img src="/static/images/icon_user.png"><span>{{ statics.recommend_users }}</span></li>
@@ -76,19 +76,18 @@
                 <li><h5 {% if sub_index == 'home' %}class="in"{% endif %}>菜单</h5>
                     <dl>
                         <dd><a href="/member/rank/">比赛</a></dd>
-                        <dd><a href="出租介绍人.html">出租介绍人</a></dd>
-                        <dd><a href="购买下线.html">购买下线</a></dd>
-                        <dd><a href="寄存器.html">寄存器</a></dd>
+                        <dd><a href="/member/selling/">出租介绍人</a></dd>
+                        <dd><a href="/member/buying/">购买下线</a></dd>
                         <dd><a href="">你的下线</a></dd>
-                        <dd><a href="直接推荐.html">直接推荐</a></dd>
-                        <dd><a href="转介.html" >转介</a></dd>
-                        <dd><a href="设置.html">设置</a></dd>
+                        <dd><a href="/member/promotion/">直接推荐</a></dd>
+                        <dd><a href="/member/change-recommend-user/" >转介</a></dd>
+                        <dd><a href="/member/setting/">设置</a></dd>
                     </dl>
                 </li>
                 <li><h5 {% if sub_index == 'balance' %}class="in"{% endif %}>盈利平衡统计</h5>
                     <dl>
                         <dd><a href="为了莱杰.html">为了莱杰</a></dd>
-                        <dd><a href="仪盘表.html">仪盘表</a></dd>
+                        <dd><a href="/member/dashboard/">仪盘表</a></dd>
                     </dl>
                 </li>
                 <li><h5 {% if sub_index == 'exchange' %}class="in"{% endif %}>存款交易所</h5>

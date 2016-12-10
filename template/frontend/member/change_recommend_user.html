@@ -1,0 +1,52 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-转介{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">转介<span><img src="/static/images/icon_bulb.png">自动转账：禁用</span></h2>
+    <div class="referral">
+        <div class="referral_user">
+            <h2 class="mb20"><img src="/static/images/icon_username.png">我Sponsorees</h2>
+            <form name="changeRecommendForm" method="POST">
+                <div class="username_box">
+                    {% csrf_token %}
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    {% if errmsg %}
+                        <p class="err-msg" style="margin-left:0px">{{ errmsg|escape }}</p>
+                    {% endif %}
+                    {{ form.username }}
+                    <button class="notxt" type="submit">确定</button>
+                </div>
+            </form>
+        </div>
+        <table class="referral_table">
+            <thead>
+                <tr>
+                    <td>用户名</td>
+                    <td>推荐人</td>
+                    <td class="w200">注册时间</td>
+                    <td>存款金额</td>
+                    <td>转介次数</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cl in data.changelist %}
+             <tr>
+                 <td>{{ cl.username }}</td>
+                 <td>{{ cl.recommend_user }}</td>
+                 <td class="w200">{{ cl.reg_time | date:'Y-m-d H:i:s' }}</td>
+                 <td>{{ cl.investment }}</td>
+                 <td>{{ cl.times }}</td>
+             </tr>
+             {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div><!--end of middle-->
+{% endblock %}

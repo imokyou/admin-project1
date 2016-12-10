@@ -1,0 +1,91 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-设置{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">设置</h2>
+    <ul class="setting_ul mt30" style="padding-left:80px;">
+        <li>
+            <span>姓名</span>
+            <input type="text">
+        </li>
+        <li>
+            <span>邮箱</span>
+            <input type="text">
+        </li>
+        <li>
+            <span>国家</span>
+            <select>
+                <option value="">中国</option>
+                <option value="">日本</option>
+                <option value="">美国</option>
+            </select>
+        </li>
+        <li>
+            <span>手机号码</span>
+            <input type="text" value="+86&nbsp;&nbsp;">
+        </li>
+        <li>
+            <span>提款地址</span>
+            <select>
+                <option value="">完美货币</option>
+                <option value="">比特币</option>
+                <option value="">QQ币</option>
+            </select>
+        </li>
+        <li>
+            <span></span>
+            <label><input type="checkbox"><i>动画</i></label>
+        </li>
+        <li>
+            <span></span>
+            <input type="hidden" name="ctype" value="changeinfo" />
+            <button class="btn_keep"></button>
+        </li>
+
+        <form name="ChangePwdForm" method="POST">
+            {% csrf_token %}
+            <li class="mt30">
+                <span></span>
+                <h2>密码</h2>
+                {% if errmsg %}
+                    <p class="err-msg" style="margin-left:100px">{{ errmsg|escape }}</p>
+                {% endif %}
+            </li>
+            <li>
+                <span>旧密码</span>
+                {{ changePwdForm.password }}
+                {% if changePwdForm.password.errors %}
+                    {% for error in changePwdForm.password.errors %}
+                        <p class="err-msg" style="margin-left:100px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>新密码</span>
+                {{ changePwdForm.new_password }}
+                {% if changePwdForm.new_password.errors %}
+                    {% for error in changePwdForm.new_password.errors %}
+                        <p class="err-msg" style="margin-left:100px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>确认新密码</span>
+                {{ changePwdForm.cnew_password }}
+                {% if changePwdForm.cnew_password.errors %}
+                    {% for error in changePwdForm.cnew_password.errors %}
+                        <p class="err-msg" style="margin-left:100px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li class="mt30">
+                <span></span>
+                <input type="hidden" name="ctype" value="changepwd" />
+                <button class="btn_keep" type="submit"></button>
+            </li>
+        </form>
+    </ul>
+</div><!--end of middle-->
+{% endblock %}

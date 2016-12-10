@@ -1,0 +1,47 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-直接推荐{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="min-height:828px;">
+    <h2 class="middle_tit_h2">直接推荐</h2>
+    <div class="groom_box">
+        <h1>总收入：<span>$ {{ data.ubalance.invite_benifit }}</span></h1>
+        <p>最后更新：<span>{{ data.ubalance.update_time}}</span></p>
+        <div class="tc mt10 mb10"><img src="/static/images/split-line.png"></div>
+        <h2><img src="/static/images/icon_link.png">我的推荐链接</h2>
+        <p class="mt15 mb10">获取每一个推荐链接带来sponsorees的佣金10%</p>
+        <div class="link_box">
+            <input type="text" value="{{ data.invite_url }}" readonly>
+            <button>复制链接</button>
+        </div>
+        <p class="mt20 mb10">图片:<a href="{{ data.invite_url }}">{{ data.invite_url }}</a></p>
+        <img src="/static/images/link_pic.png">
+        <div class="tc mt10 mb10"><img src="/static/images/split-line.png"></div>
+        <h2 class="mb20"><img src="/static/images/icon_link.png">我Sponsorees</h2>
+        <table class="match_table">
+            <thead>
+            <tr>
+                <td>用户名</td>
+                <td>注册日期</td>
+                <td>邀请人数</td>
+                <td>最后登录</td>
+                <td>我的佣金</td>
+            </tr>
+            </thead>
+            <tbody class="bge">
+            {% for ucon in data.uconnect %}
+            <tr>
+                <td class="no_left_border no_bottom_border">{{ ucon.username }}</td>
+                <td class="no_bottom_border">{{ ucon.reg_time }}</td>
+                <td class="no_bottom_border">{{ ucon.recommends }}</td>
+                <td class="no_bottom_border">{{ ucon.last_login }}</td>
+                <td class="no_bottom_border">$ {{ ucon.invite_benifit }} </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div><!--end of middle-->
+
+{% endblock %}

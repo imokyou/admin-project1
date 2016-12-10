@@ -1,0 +1,26 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-购买下线{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">购买下线</h2>
+    <ul class="offline_list clearfloat">
+        {% for m in data.members %}
+        <li>
+            <form name="buyingForm{{ m.user_id }}" method="POST">
+                {% csrf_token %}
+                <div class="offline_info">
+                    <input type="hidden" name="user_id" value="{{ m.user_id }}" />
+                    <div class="offline_pic"><img src="/static/images/tx_01.jpg"></div>
+                    <h4>{{ m.username }}</h4>
+                    <time>{{ m.reg_time | date:'d/m H:i'}}</time>
+                </div>
+            <button class="notxt btn_sure mt15" type="submit"></button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div><!--end of middle-->
+
+{% endblock %}

@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from lib import utils
 from lib.permissions import staff_required
-from dbmodel.ziben.models import Statics
+from dbmodel.ziben.models import Statics, SiteSetting
 from config import errors
-from forms import EditForm
+from forms import EditForm, SsetingEditForm
 
 
 def test(request):
@@ -35,3 +35,22 @@ def home(request):
         utils.debug()
         return utils.ErrResp(errors.FuncFailed)
     return render(request, 'backend/statics/index.html', data)
+
+
+@login_required(login_url='/backend/login/')
+@staff_required()
+def user_buy_setting(request):
+    try:
+        Sseting = SiteSetting.objects.order_by('-id').first()
+        data = {
+            'form': SsetingEditForm(instance=Sseting)
+        }
+        if request.method == 'POST':
+            data['form'] = SsetingEditForm(request.POST)
+            if data['form'].is_valid():
+                Sseting.user_buy_price = request.POST.get('user_buy_price')
+                Sseting.save()
+    except:
+        utils.debug()
+        return utils.ErrResp(errors.FuncFailed)
+    return render(request, 'backend/statics/user_buy_setting.html', data)

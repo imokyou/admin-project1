@@ -38,6 +38,15 @@ class Statics(models.Model):
         q.save()
 
 
+class SiteSetting(models.Model):
+    '''网站其他配置表'''
+    user_buy_price = models.DecimalField(max_digits=14, decimal_places=3)
+
+    class Meta:
+        managed = False
+        db_table = 'site_setting'
+
+
 class InviteCodeQuerySet(models.QuerySet):
 
     def pop(self):
@@ -125,10 +134,39 @@ class UserConnection(models.Model):
     depth = models.SmallIntegerField(max_length=4, default=0)
     create_time = models.DateTimeField(auto_now_add=True)
     ratio = models.DecimalField(max_digits=7, decimal_places=3, default=0)
+    is_selling = models.SmallIntegerField(default=0)
+
+    IS_SELLING = {
+        0: '不在下线大厅',
+        1: '在下线大厅'
+    }
 
     class Meta:
         managed = False
         db_table = 'user_connection'
+
+
+class UserConnectionBuying(models.Model):
+    '''用户关联表(购买下线)'''
+    parent = models.ForeignKey(auth_models.User)
+    user = models.ForeignKey(auth_models.User)
+    create_time = models.DateTimeField(auto_now_add=True)
+    ratio = models.DecimalField(max_digits=7, decimal_places=3, default=0)
+
+    class Meta:
+        managed = False
+        db_table = 'user_connection_buying'
+
+
+class UserChangeRecommend(models.Model):
+    '''用户转介表'''
+    user = models.ForeignKey(auth_models.User)
+    recommend_user = models.ForeignKey(auth_models.User)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user_change_recommend'
 
 
 class UserBalance(models.Model):
@@ -140,6 +178,7 @@ class UserBalance(models.Model):
                                          default=0)
     total = models.DecimalField(max_digits=14, decimal_places=3, default=0)
     point = models.IntegerField(default=0)
+    update_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -149,6 +188,7 @@ class UserBalance(models.Model):
 class UserRevenue(models.Model):
     '''用户收入流水表'''
     user = models.ForeignKey(auth_models.User)
+    parent_user_id = models.IntegerField()
     revenue_type = models.SmallIntegerField(max_length=4)
     revenue = models.DecimalField(max_digits=14, decimal_places=3, default=0)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -294,6 +334,17 @@ class UserPromoteRank(models.Model):
     class Meta:
         managed = False
         db_table = 'user_promote_rank'
+
+
+class UserSellingMall(models.Model):
+    '''下线购买大厅'''
+    user = models.ForeignKey(auth_models.User)
+    parent_user = models.ForeignKey(auth_models.User)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user_selling_mall'
 
 
 class NewsCategory(models.Model):

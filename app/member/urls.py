@@ -10,5 +10,11 @@ urlpatterns = [
     url(r'^chat/', views.chat),
     url(r'^mailbox/(\w+)/', views.mailbox),
     url(r'^rank/', views.rank),
-    url(r'^seller/', views.seller)
+    url(r'^seller/', views.seller),
+    url(r'^promotion/', views.promotion),
+    url(r'^selling/', views.selling),
+    url(r'^buying/', views.buying),
+    url(r'^change-recommend-user/', views.change_recommend_user),
+    url(r'^setting/', views.setting),
+    url(r'^dashboard/', views.dashboard),
 ]

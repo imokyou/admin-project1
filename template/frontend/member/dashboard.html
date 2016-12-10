@@ -1,0 +1,74 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-仪表盘{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box02">
+    <div class="middle_tit_h2">仪盘表</div>
+    <div class="user_box">
+        <div class="user_info_box">
+            <div class="header_pic"><img src="/static/images/tx_01.jpg"></div>
+            <div class="user_info">
+                <h2>{{ request.user.username }}</h2>
+                <p>加入日期: {{ request.user.date_joined | date:'Y-m-d'}}</p>
+                <span>会员:标准</span>
+            </div>
+        </div>
+        <div class="date">
+            <h2>{% now 'd' %}</h2>
+            <p>{{ data.curr_weekday }}</p>
+            <span>{% now 'Y-m' %}</span>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <ul class="dashboard_tab ">
+            <li><span class="blue">概要</span></li>
+            <li><span>统计</span></li>
+            <li><span>登记记录</span></li>
+        </ul>
+        <div class="dashboard_box">
+            <div class="dashboard_item">
+                <div class="profit_box">
+                    <h4>盈利平衡统计</h4>
+                    <ul class="profit_ul">
+                        <li class="w50">
+                            <h5>${{ data.balance.cash }}</h5>
+                            <p>现金结余</p>
+                        </li>
+                        <li class="w50">
+                            <h5>$0</h5>
+                            <p>购买平衡</p>
+                        </li>
+                        <li class="w50">
+                            <h5>${{ data.balance.invite_benifit }}</h5>
+                            <p>介绍盈利</p>
+                        </li>
+                        <li class="w50">
+                            <h5>$0</h5>
+                            <p>付款已收到</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="profit_box">
+                    <h4>介绍统计</h4>
+                    <ul class="profit_ul">
+                        <li class="w33">
+                            <h5>{{ data.invite_users }}</h5>
+                            <p>直接介绍人</p>
+                        </li>
+                        <li class="w33">
+                            <h5>{{ data.buy_users }}</h5>
+                            <p>租用介绍人</p>
+                        </li>
+                        <li class="w33">
+                            <h5>{{ data.total_users }}</h5>
+                            <p>目前团队人数</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!--end of middle-->
+{% endblock %}
