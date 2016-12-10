@@ -241,7 +241,8 @@ def buying(request):
             'members': []
         }
     }
-    sellings = UserSellingMall.objects.order_by('-id')
+    sellings = UserSellingMall.objects \
+        .exclude(parent_user=request.user).order_by('-id')
     for s in sellings:
         data['data']['members'].append({
             'user_id': s.user.id,
