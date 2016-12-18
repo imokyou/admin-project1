@@ -119,6 +119,10 @@ class EditForm(forms.Form):
                                   required=False,
                                   widget=forms.Select(
                                       attrs={'class': 'form-control'}))
+    cash = forms.CharField(required=False,
+                           widget=forms.TextInput(
+                               attrs={'class': 'form-control',
+                                      'type': 'number'}))
 
 
 class OplogSearchForm(forms.Form):
@@ -199,6 +203,13 @@ class MailboxSearchForm(forms.Form):
 
 
 class FeedbackSearchForm(forms.Form):
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+
+
+class WithDrawSearchForm(forms.Form):
     username = forms.CharField(label="",
                                required=False,
                                widget=forms.TextInput(

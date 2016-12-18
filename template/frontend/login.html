@@ -11,7 +11,7 @@
             {% csrf_token %}
             <ul class="login_ul">
                 <li>
-                    <h4>用户名<a href="#">忘记用户名?</a></h4>
+                    <h4>用户名<a href="#"></a></h4>
                     {{ form.username }}
 
                     {% if form.username.errors %}
@@ -21,7 +21,7 @@
                     {% endif %}
                 </li>
                 <li>
-                    <h4>密码<a href="#">忘记密码?</a></h4>
+                    <h4>密码<a href="#"></a></h4>
                     {{ form.password }}
 
                     {% if form.password.errors %}

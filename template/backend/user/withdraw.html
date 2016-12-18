@@ -1,6 +1,6 @@
 {% extends "backend/base.html" %}
 
-{% block title %}编辑用户信息{% endblock %}
+{% block title %}用户提款{% endblock %}
 {% block body %}
 <div class="wrapper">
     <div class="container">
@@ -8,72 +8,88 @@
         <!-- Page-Title -->
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="page-title">编辑用户信息</h4>
-            </div>
+                <h4 class="page-title">用户提款
         </div>
 
         <div class="row">
-            <div class="col-lg-12">
-                <form class="form-horizontal" role="form" name="change-password" action="/backend/user/edit/?id={{ user_id }}" method="POST">
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">状态: </label>
-                        <div class="col-md-10">
-                            {{ form.is_active }}
-                        </div>
+            <div class="col-sm-12">
+                <div class="card-box table-responsive">
+                    <div class="pull-right">
+                    {% if paging.has_previous %}
+                        <a href="{{paging.prev_url}}">
+                            上一页
+                        </a>
+                    {% endif %}
+                        第{{ paging.p }}/{{ paging.pages }}页,共{{ paging.tot }}条记录
+                    {% if paging.has_next %}
+                        <a href="{{paging.next_url}}">
+                            下一页
+                        </a>
+                    {% endif %}
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">账号: </label>
-                        <div class="col-md-10">
-                            {{ form.username }}
-                        </div>
+                    <div>
+                        <form class="form-inline">
+                            <div class="form-group m-r-10">
+                                <label for="username">用户: </label>
+                                {{ forms.username }}
+                            </div>
+                            <button type="submit" class="btn btn-default waves-effect waves-light btn-md">
+                                点击查询
+                            </button>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">邮箱: </label>
-                        <div class="col-md-10">
-                            {{ form.email }}
-                        </div>
+                    <table id="datatable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户</th>
+                                <th>订单号</th>
+                                <th>金额</th>
+                                <th>支付账号</th>
+                                <th>状态</th>
+                                <th>申请时间</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for m in withdraw_list.data %}
+                            <tr>
+                                <td>{{ m.id }}</td>
+                                <td>{{ m.username }}</td>
+                                <td>{{ m.order_id }}</td>
+                                <td>{{ m.amount }}</td>
+                                <td>{{ m.pay_type }}: {{ m.pay_account }}</td>
+                                <td>{{ m.status }}</td>
+                                <td>{{ m.create_time }}</td>
+                                <td>{{ m.update_time }}</td>
+                                <td>
+                                    <a href="/backend/user/withdraw/pass/{{ m.id }}/?next_url={{ request.path }}" class="btn btn-primary waves-effect waves-light btn-sm">
+                                        通过
+                                    </a>
+                                    <a href="/backend/user/withdraw/reject/{{ m.id }}/?next_url={{ request.path }}" class="btn  btn-danger waves-effect waves-light btn-sm">
+                                        拒绝
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="pull-right">
+                    {% if paging.has_previous %}
+                        <a href="{{paging.prev_url}}">
+                            上一页
+                        </a>
+                    {% endif %}
+                        第{{ paging.p }}/{{ paging.pages }}页,共{{ paging.tot }}条记录
+                    {% if paging.has_next %}
+                        <a href="{{paging.next_url}}">
+                            下一页
+                        </a>
+                    {% endif %}
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">密码: </label>
-                        <div class="col-md-10">
-                            {{ form.password }}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">真实姓名: </label>
-                        <div class="col-md-10">
-                            {{ form.first_name }}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">账号余额: </label>
-                        <div class="col-md-10">
-                            {{ form.cash }}
-                        </div>
-                    </div>
-                   <!--  <div class="form-group">
-                       <label class="col-md-2 control-label">银行: </label>
-                       <div class="col-md-4">
-                           {{ form.bank_code }}
-                       </div>
-                       <div class="col-md-6">
-                           {{ form.bank_card }}
-                       </div>
-                   </div> -->
-                    <div class="form-group">
-                        <label class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <p class='font-red'>{{ msg }}</p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <button class="btn btn-custom btn-bordred btn-block waves-effect waves-light" type="submit">确定提交</button>
-                            <a  href="/backend/user/detail/?id={{ user_id }}" class="btn btn-custom btn-bordred btn-block waves-effect waves-light">查看详情</a>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div><!-- end col -->
         </div>
         <!-- end row -->

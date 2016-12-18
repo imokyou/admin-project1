@@ -17,4 +17,6 @@ urlpatterns = [
     url(r'^change-recommend-user/', views.change_recommend_user),
     url(r'^setting/', views.setting),
     url(r'^dashboard/', views.dashboard),
+    url(r'^us-bank-account/', views.us_bank_account),
+    url(r'^withdraw/', views.withdraw),
 ]

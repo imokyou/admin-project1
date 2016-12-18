@@ -1,7 +1,8 @@
 # coding=utf8
+import traceback
 from django.utils import timezone
 from django.db.models import Sum
-from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics
+from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting
 from lib import utils
 
 
@@ -64,6 +65,28 @@ def get_balance(user):
         result['total_investment'] = float(ubalance.total_investment)
         result['update_time'] = utils.dt_field_to_local(ubalance.create_time)
     except:
+        traceback.print_exc()
         pass
+    finally:
+        return result
+
+
+def pay_cash(user, should_pay):
+    result = False
+    try:
+        try:
+            ubalance = get_balance(user)
+            ucash = float(ubalance['cash'])
+        except:
+            ucash = 0
+        rcash = ucash - should_pay
+        if rcash >= 0:
+            UserBalance.objects \
+                .filter(user_id=user.id) \
+                .update(cash=rcash)
+            result = True
+    except Exception, e:
+        traceback.print_exc()
+        raise e
     finally:
         return result

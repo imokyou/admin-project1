@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'^feedback/$', views.feedback),
     url(r'^feedback/info/(\d)/$', views.feedback_info),
     url(r'^feedback/drop/(\d)/$', views.feedback_drop),
+    url(r'^withdraw/$', views.withdraw),
+    url(r'^withdraw/pass/(\d)/$', views.withdraw_pass),
+    url(r'^withdraw/reject/(\d)/$', views.withdraw_reject),
 ]

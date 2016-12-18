@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User as Auth_user
 from django.conf import settings
-from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank, UserMessage, UserFeedback
+from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank, UserMessage, UserFeedback, UserWithDraw
 from lib import utils
 from lib.pagination import Pagination
 from lib.permissions import staff_required
@@ -184,7 +184,7 @@ def create(request):
 def edit(request):
     try:
         user_id = request.GET.get('id', '')
-        form = EditForm()
+        form_initial = {}
         if user_id:
             try:
                 u = Auth_user.objects.get(id=user_id)
@@ -199,13 +199,18 @@ def edit(request):
                 }
                 if u.is_active:
                     form_initial['is_active'] = 1
-                form = EditForm(initial=form_initial)
             except:
                 pass
+            try:
+                ubalance = UserBalance.objects.get(user_id=user_id)
+                form_initial['cash'] = float(ubalance.cash)
+            except:
+                form_initial['cash'] = 0
+
         data = {
             'msg': '',
             'index': 'user',
-            'form': form,
+            'form': EditForm(initial=form_initial),
             'user_id': user_id
         }
         if request.method == 'POST':
@@ -235,6 +240,20 @@ def edit(request):
                     uinfo.bank_code = bank_code
                     uinfo.bank_card = bank_card
                     uinfo.save()
+
+                    try:
+                        ub = UserBalance.objects.get(user=u)
+                        ub.cash = float(request.POST.get('cash'))
+                    except:
+                        ub = UserBalance(
+                            user=u,
+                            cash=float(request.POST.get('cash')),
+                            invite_benifit=0,
+                            total=0,
+                            point=0,
+                        )
+                    finally:
+                        ub.save()
                     data['msg'] = '账号修改成功'
 
                     return HttpResponseRedirect('/backend/user/detail/?id=%s' % user_id)
@@ -297,7 +316,7 @@ def detail(request):
                 pass
             try:
                 ubalance = UserBalance.objects.get(user=u)
-                data['user_info']['cash'] = float(ubalance.ubalance)
+                data['user_info']['cash'] = float(ubalance.cash)
                 data['user_info']['invite_benifit'] = float(ubalance.invite_benifit)
                 data['user_info']['total_amount'] = float(ubalance.total)
             except:
@@ -725,3 +744,97 @@ def feedback_drop(request, f_id):
         pass
     finally:
         return HttpResponseRedirect('/backend/user/feedback/')
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def withdraw(request):
+    try:
+        p = int(request.GET.get('p', 1))
+        n = int(request.GET.get('n', 25))
+        username = request.GET.get('username', '')
+
+        q = UserWithDraw.objects
+        if username:
+            try:
+                u = Auth_user.objects.get(username=username)
+                q = q.filter(user=u)
+            except:
+                pass
+
+        form_initial = {'username': username}
+        form = WithDrawSearchForm(initial=form_initial)
+
+        data = {
+            'index': 'user',
+            'paging': Pagination(request, q.count()),
+            'forms': form,
+            'withdraw_list': {
+                'p': p,
+                'n': n,
+                'data': [],
+            }
+        }
+
+        withdraws = q.all().order_by('-id')[(p - 1) * n:p * n]
+        for w in withdraws:
+            try:
+                create_time = utils.dt_field_to_local(w.create_time) \
+                    .strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                create_time = ''
+            try:
+                update_time = utils.dt_field_to_local(w.update_time) \
+                    .strftime('%Y-%m-%d %H:%M:%S')
+            except:
+                update_time = ''
+            d = {
+                'id': w.id,
+                'username': w.user.username,
+                'amount': float(w.amount),
+                'pay_type': UserWithDraw.PAY_TYPE[w.pay_type],
+                'pay_account': w.pay_account,
+                'order_id': w.order_id,
+                'create_time': create_time,
+                'update_time': update_time,
+                'status': UserWithDraw.STATUS[w.status]
+            }
+            data['withdraw_list']['data'].append(d)
+        return render(request, 'backend/user/withdraw.html', data)
+    except:
+        import traceback
+        traceback.print_exc()
+        return utils.ErrResp(errors.FuncFailed)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def withdraw_pass(request, f_id):
+    try:
+        next_url = request.GET.get('next_url')
+        UserWithDraw.objects.filter(id=f_id).update(status=1)
+    except:
+        next_url = '/backend/user/withdraw/'
+    finally:
+        return HttpResponseRedirect(next_url)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def withdraw_reject(request, f_id):
+    try:
+        next_url = request.GET.get('next_url')
+        withdraw = UserWithDraw.objects.get(id=f_id)
+        withdraw.status = 2
+        withdraw.save()
+
+        # ubalance = UserBalance.objects.get(user_id=withdraw.user_id)
+        # ubalance.cash = float(ubalance.cash) + float(withdraw.amount)
+        # ubalance.save()
+    except:
+        next_url = '/backend/user/withdraw/'
+    finally:
+        return HttpResponseRedirect(next_url)

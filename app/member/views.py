@@ -7,10 +7,10 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
 from django.db.models import Count
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting
 from lib import utils
 from lib.pagination import Pagination
-from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm
+from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
 import services
 
 
@@ -235,6 +235,7 @@ def buying(request):
     data = {
         'index': 'member',
         'sub_index': 'home',
+        'errmsg': '',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
         'data': {
@@ -254,16 +255,20 @@ def buying(request):
     if request.method == 'POST':
         user_id = request.POST.get('user_id')
         # todo: 扣钱
-        ucb = UserConnectionBuying(
-            user_id=user_id,
-            parent=request.user,
-            ratio=100
-        )
-        ucb.save()
+        ssetings = SiteSetting.objects.first()
+        if services.pay_cash(request.user, int(ssetings.user_buy_price)):
+            ucb = UserConnectionBuying(
+                user_id=user_id,
+                parent=request.user,
+                ratio=100
+            )
+            ucb.save()
 
-        UserSellingMall.objects \
-            .filter(user_id=user_id).delete()
-        return HttpResponseRedirect('/member/buying/')
+            UserSellingMall.objects \
+                .filter(user_id=user_id).delete()
+            return HttpResponseRedirect('/member/buying/')
+        else:
+            data['errmsg'] = '余额不足，请充值'
 
     return render(request, 'frontend/member/buying.html', data)
 
@@ -386,3 +391,61 @@ def dashboard(request):
     data['data']['total_users'] = data['data']['invite_users'] + data['data']['buy_users']
     data['data']['balance'] = services.get_balance(request.user)
     return render(request, 'frontend/member/dashboard.html', data)
+
+
+@login_required(login_url='/login/')
+def us_bank_account(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'deposite',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'data': {}
+    }
+    return render(request, 'frontend/member/us_bank_account.html', data)
+
+
+@login_required(login_url='/login/')
+def withdraw(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'deposite',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'errmsg': '',
+        'data': {'withdraws': []}
+    }
+    ubalance = services.get_balance(request.user)
+    data['form'] = WithDrawForm(initial={'cash': ubalance['cash']})
+
+    withdraws = UserWithDraw.objects.filter(user=request.user).order_by('-id')
+    for w in withdraws:
+        data['data']['withdraws'].append({
+            'order_id': w.order_id,
+            'create_time': w.create_time,
+            'amount': float(w.amount),
+            'status': UserWithDraw.STATUS[w.status]
+        })
+    if request.method == 'POST':
+        data['form'] = WithDrawForm(request.POST)
+        if data['form'].is_valid():
+            uauth = authenticate(username=request.user.username,
+                                 password=request.POST['password'])
+            if uauth:
+                pay_amount = float(request.POST.get('amount'))
+                if services.pay_cash(request.user, pay_amount):
+                    udraw = UserWithDraw(
+                        user=request.user,
+                        pay_type=request.POST.get('pay_type'),
+                        pay_account=request.POST.get('pay_account'),
+                        amount=float(request.POST.get('amount'))
+                    )
+                    udraw.save()
+
+                    return HttpResponseRedirect('/member/withdraw/')
+                else:
+                    data['errmsg'] = '余额不足'
+            else:
+                data['errmsg'] = '密码不正确'
+
+    return render(request, 'frontend/member/withdraw.html', data)

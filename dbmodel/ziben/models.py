@@ -1,6 +1,7 @@
 # coding=utf-8
 from datetime import datetime
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth import models as auth_models
 from redactor.fields import RedactorField
 
@@ -179,6 +180,12 @@ class UserBalance(models.Model):
     total = models.DecimalField(max_digits=14, decimal_places=3, default=0)
     point = models.IntegerField(default=0)
     update_time = models.DateTimeField(auto_now_add=True)
+    revenue_promote = models.DecimalField(max_digits=14,
+                                          decimal_places=3,
+                                          default=0)
+    total_investment = models.DecimalField(max_digits=14,
+                                           decimal_places=3,
+                                           default=0)
 
     class Meta:
         managed = False
@@ -345,6 +352,47 @@ class UserSellingMall(models.Model):
     class Meta:
         managed = False
         db_table = 'user_selling_mall'
+
+
+class UserWithDraw(models.Model):
+    '''会员提款'''
+    user = models.ForeignKey(auth_models.User)
+    order_id = models.CharField(max_length=32)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    pay_type = models.SmallIntegerField(default=0)
+    pay_account = models.CharField(max_length=128)
+    status = models.SmallIntegerField(default=0)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField()
+
+    PAY_TYPE = {
+        1: '支付宝',
+        2: '银行卡'
+    }
+
+    STATUS = {
+        0: '申请中',
+        1: '申请成功',
+        2: '申请失败'
+    }
+
+    def save(self, *args, **kwargs):
+        self.order_id = self.gen_id()
+        super(UserWithDraw, self).save(*args, **kwargs)
+
+    def gen_id(self):
+        applicant_time = timezone.now()
+        active_on = applicant_time.date()
+        next_day = active_on + timezone.timedelta(days=1)
+        total = UserWithDraw.objects \
+            .filter(create_time__range=(active_on, next_day)) \
+            .count()
+        order_id = int(active_on.strftime("%Y%m%d") + '0000') + total + 1
+        return order_id
+
+    class Meta:
+        managed = False
+        db_table = 'user_withdraw'
 
 
 class NewsCategory(models.Model):

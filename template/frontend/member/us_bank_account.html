@@ -1,0 +1,47 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-会员中心-增加资金{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">增加资金</h2>
+    <ul class="fund_ul mt70">
+        <li class="mt15">
+            <span>方法:</span>
+            <select>
+                <option value="">点击选择</option>
+                <option value="">方法一</option>
+                <option value="">方法二</option>
+                <option value="">方法三</option>
+            </select>
+        </li>
+        <li class="mt15">
+           <span>量:</span>
+           <input type="text" placeholder="0.00">
+        </li>
+        <li class="mt15">
+            <span></span>
+            <p>最低存款：＄20.00</p>
+        </li>
+        <li><button class="btn_sent mauto mt30"></button></li>
+    </ul>
+
+</div><!--end of middle-->
+
+
+<!--付款确认弹窗-->
+<div class="popup" id="pop">
+    <h1>付款确认<button id="btn_close" onclick="javascript:document.getElementById('pop').style.display='none'"></button></h1>
+    <div class="pop_body">
+        <div class="pay_info">
+            <h4>公司账户:</h4>
+            <p>银联账户：<span>42002563300125255</span></p>
+            <p>开户人：<span>周小红</span></p>
+        </div>
+        <p class="pop_tip">注意：打完款请联系客服！</p>
+    </div>
+    <div class="pop_bottom">
+        <button class="pop_sure">确认</button>
+    </div>
+</div>
+{% endblock %}

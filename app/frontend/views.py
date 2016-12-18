@@ -148,3 +148,23 @@ def support(request):
                 return HttpResponseRedirect('/support/')
 
     return render(request, 'frontend/support.html', data)
+
+
+def risk_disclosure(request):
+    data = {}
+    return render(request, 'frontend/risk_disclosure.html', data)
+
+
+def privacy(request):
+    data = {}
+    return render(request, 'frontend/privacy.html', data)
+
+
+def contract(request):
+    data = {}
+    return render(request, 'frontend/contract.html', data)
+
+
+def copyright(request):
+    data = {}
+    return render(request, 'frontend/copyright.html', data)

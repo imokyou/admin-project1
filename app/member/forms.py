@@ -69,3 +69,32 @@ class ChangePwdForm(forms.Form):
 
 class ChangeUserInfoForm(forms.Form):
     pass
+
+
+class WithDrawForm(forms.Form):
+    PAY_TYPE = [
+      (1, '支付宝'),
+      (2, '银行卡')
+    ]
+    cash = forms.CharField(max_length=64,
+                           min_length=4,
+                           required=False,
+                           widget=TextInput(
+                               attrs={'readonly': 'readonly'}))
+    amount = forms.CharField(max_length=6,
+                             min_length=1,
+                             required=True,
+                             widget=TextInput(attrs={'type': 'number'}))
+    pay_type = forms.ChoiceField(label="",
+                                 choices=PAY_TYPE,
+                                 required=False,
+                                 widget=forms.Select())
+    pay_account = forms.CharField(max_length=64,
+                                  min_length=4,
+                                  required=True,
+                                  widget=TextInput())
+    password = forms.CharField(max_length=64,
+                               min_length=4,
+                               required=True,
+                               widget=forms.PasswordInput(
+                                   attrs={"placeholder": "你的登陆密码"}))

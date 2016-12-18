@@ -2,7 +2,7 @@
 from ipware.ip import get_ip
 from django.contrib.auth.models import User as Auth_user
 from django.utils import timezone
-from dbmodel.ziben.models import UserInfo, UserConnection
+from dbmodel.ziben.models import UserInfo, UserConnection, UserBalance
 
 
 def _get_reg_params(request):
@@ -77,4 +77,16 @@ def reg(form, request):
             user_grid.save()
         except:
             pass
+
+    # 写余额表
+    ubalance = UserBalance(
+        user=u,
+        cash=0,
+        invite_benifit=0,
+        total=0,
+        point=0,
+        revenue_promote=0,
+        total_investment=0
+    )
+    ubalance.save()
     return True

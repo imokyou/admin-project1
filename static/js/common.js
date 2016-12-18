@@ -18,6 +18,13 @@ $(function () {
         $(this).find("a").addClass("ck").end().siblings("dd").find("a").removeClass("ck");
         $(this).parents("li").siblings("li").find("a").removeClass("ck")
     });
+    <!--点击投票按钮弹出层-->
+    $(".vote_before").on('click',function(){
+        $(this).parents(".vote_item").find(".vote_tip").show()
+    });
+    $('.close_voteTip').on('click',function(){
+        $('.vote_tip').hide()
+    });
 
     /*交易所表*/
     var myChart = echarts.init(document.getElementById('graph'));

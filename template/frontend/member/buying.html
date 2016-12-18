@@ -5,6 +5,14 @@
 <!--middle-->
 <div class="main_middle middle_box">
     <h2 class="middle_tit_h2">购买下线</h2>
+    {% if errmsg %}
+    <div class="warning_shouhui">
+        <img src="/static/images/alert-1.png">
+        <dl class="ml15">
+            <dt>{{ errmsg }}</dt>
+        </dl>
+    </div>
+    {% endif %}
     <ul class="offline_list clearfloat">
         {% for m in data.members %}
         <li>
