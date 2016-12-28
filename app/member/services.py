@@ -1,5 +1,7 @@
 # coding=utf8
 import traceback
+import bisect
+import random
 from django.utils import timezone
 from django.db.models import Sum
 from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting
@@ -90,3 +92,31 @@ def pay_cash(user, should_pay):
         raise e
     finally:
         return result
+
+
+def weighted_random(items):  
+    total = sum(w for _,w in items)  
+    n = random.uniform(0, total)#在饼图扔骰子  
+    for x, w in items:#遍历找出骰子所在的区间  
+        if n<w:  
+            break  
+        n -= w  
+    return x 
+
+
+class WeightRandom:  
+    def __init__(self, items):  
+        weights = [w for _,w in items]  
+        self.goods = [x for x,_ in items]  
+        self.total = sum(weights)  
+        self.acc = list(self.accumulate(weights))  
+  
+    #累和.如accumulate([10,40,50])->[10,50,100]
+    def accumulate(self, weights):   
+        cur = 0  
+        for w in weights:  
+            cur = cur+w  
+            yield cur  
+  
+    def __call__(self):  
+        return self.goods[bisect.bisect_right(self.acc , random.uniform(0, self.total))]

@@ -135,7 +135,8 @@ class OplogSearchForm(forms.Form):
         (5, '选择上线'),
         (6, '充值'),
         (7, '发信'),
-        (8, '读信')
+        (8, '读信'),
+        (9, '认购抽奖')
     ]
 
     username = forms.CharField(label="",

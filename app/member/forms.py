@@ -9,14 +9,17 @@ class ChatForm(forms.Form):
                                min_length=4,
                                required=True,
                                widget=TextInput(
-                                   attrs={'placeholder': 'username...'}))
+                                   attrs={'placeholder': 'username...'}),
+                               error_messages={'required': '收件人不能为空'})
     title = forms.CharField(max_length=256,
                             required=True,
                             widget=TextInput(
-                                attrs={'placeholder': 'title...'}))
+                                attrs={'placeholder': 'title...'}),
+                            error_messages={'required': '标题不能为空'})
     message = forms.CharField(required=True,
                               widget=Textarea(
-                                attrs={'placeholder': 'message...'}))
+                                attrs={'placeholder': 'message...'}),
+                              error_messages={'required': '内容不能为空'})
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -30,6 +33,7 @@ class ChangeRecommendForm(forms.Form):
     username = forms.CharField(max_length=64,
                                min_length=4,
                                required=True,
+                               error_messages={'required': '用户名不能为空'},
                                widget=TextInput(
                                    attrs={'placeholder': '请输入用户名...'}))
 
@@ -45,15 +49,18 @@ class ChangePwdForm(forms.Form):
     password = forms.CharField(max_length=64,
                                min_length=4,
                                required=True,
-                               widget=forms.PasswordInput())
+                               widget=forms.PasswordInput(),
+                               error_messages={'required': '旧密码不能为空'})
     new_password = forms.CharField(max_length=64,
                                    min_length=4,
                                    required=True,
-                                   widget=forms.PasswordInput())
+                                   widget=forms.PasswordInput(),
+                                   error_messages={'required': '新密码不能为空'})
     cnew_password = forms.CharField(max_length=64,
                                     min_length=4,
                                     required=True,
-                                    widget=forms.PasswordInput())
+                                    widget=forms.PasswordInput(),
+                                    error_messages={'required': '确认密码不能为空'})
 
     def clean(self):
         cleaned_data = super(ChangePwdForm, self).clean()
@@ -84,7 +91,8 @@ class WithDrawForm(forms.Form):
     amount = forms.CharField(max_length=6,
                              min_length=1,
                              required=True,
-                             widget=TextInput(attrs={'type': 'number'}))
+                             widget=TextInput(attrs={'type': 'number'}),
+                             error_messages={'required': '提款金额不能为空'})
     pay_type = forms.ChoiceField(label="",
                                  choices=PAY_TYPE,
                                  required=False,
@@ -92,9 +100,11 @@ class WithDrawForm(forms.Form):
     pay_account = forms.CharField(max_length=64,
                                   min_length=4,
                                   required=True,
-                                  widget=TextInput())
+                                  widget=TextInput(),
+                                  error_messages={'required': '收款账号不能为空'})
     password = forms.CharField(max_length=64,
                                min_length=4,
                                required=True,
                                widget=forms.PasswordInput(
-                                   attrs={"placeholder": "你的登陆密码"}))
+                                   attrs={"placeholder": "你的登陆密码"}),
+                               error_messages={'required': '密码不能为空'})

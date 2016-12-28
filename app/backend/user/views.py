@@ -335,7 +335,7 @@ def oplog(request):
         p = int(request.GET.get('p', 1))
         n = int(request.GET.get('n', 25))
         username = request.GET.get('username', '')
-        optype = request.GET.get('optype', -1)
+        optype = int(request.GET.get('optype', -1))
 
         q = UserOplog.objects
         if optype != -1:

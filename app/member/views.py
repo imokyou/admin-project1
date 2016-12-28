@@ -1,5 +1,7 @@
 # coding=utf8
+from ipware.ip import get_ip
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.conf import settings
@@ -7,7 +9,7 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
 from django.db.models import Count
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBDCPriceLog
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
@@ -151,7 +153,7 @@ def rank(request):
 @login_required(login_url='/login/')
 def seller(request):
     data = {
-        'index': 'member',
+        'index': 'member_seller',
         'sub_index': 'home',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10]
@@ -449,3 +451,87 @@ def withdraw(request):
                 data['errmsg'] = '密码不正确'
 
     return render(request, 'frontend/member/withdraw.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/login/')
+def bonus(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'bonus',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    if request.method == 'POST':
+        b2c = {
+            'bonus_50': 0,
+            'bonus_100': 7,
+            'bonus_200': 6,
+            'bonus_400': 5,
+            'bonus_600': 4,
+            'bonus_800': 3,
+            'bonus_1000': 2,
+            'bonus_2000': 1
+        }
+        result = SiteSetting.objects.all().order_by('-id').first()
+
+        # 写日志
+        total = UserBonus.objects \
+            .filter(user=request.user).count()
+        if total >= result.bonus_times:
+            point = 0
+            click_num = 0
+            level = 0
+        else:
+            bonuss = []
+            for b in b2c:
+                bonuss.append((b, getattr(result, b)))
+            wr = services.weighted_random(bonuss)
+            point = int(wr.split('bonus_')[1])
+            level = b2c[wr]
+            click_num = result.bonus_times - total
+
+            ubonus = UserBonus(
+                user=request.user,
+                point=point,
+                status=0
+            )
+            ubonus.save()
+
+            log = UserOplog(
+                user_id=request.user.id,
+                optype=9,
+                content='会员认购中抽中资本兑: %s' % point,
+                ip=get_ip(request),
+            )
+            log.save()
+
+
+        resp = {'level': level, 'click_num': click_num, 'point': point, 'money': point/10}
+        return utils.NormalResp(resp)
+
+    return render(request, 'frontend/member/bonus.html', data)
+
+
+@login_required(login_url='/login/')
+def cbcd_price(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'home',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    n = 20
+    p = request.GET.get('p', 1)
+    q = CBDCPriceLog.objects
+    data['pricelist'] = {
+        'tot': q.count(),
+        'paging': Pagination(request, q.count()),
+        'data': q.all().order_by('-id')[(p - 1) * n:p * n]
+    }
+
+    return render(request, 'frontend/member/CBCD_price_log.html', data)
+
+

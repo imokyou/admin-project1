@@ -8,7 +8,7 @@
         <!-- Page-Title -->
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="page-title">购买下线花费设置</h4>
+                <h4 class="page-title">通用设置</h4>
             </div>
         </div>
 
@@ -17,12 +17,126 @@
                 <form class="form-horizontal" role="form" method="POST">
                     {% csrf_token %}
                     <div class="form-group">
+                        <h5>购买下线花费设置：</h5>
+                    </div>
+                    <div class="form-group">
                         <label class="col-md-2 control-label">金额: </label>
                         <div class="col-md-10">
                             {{ form.user_buy_price }}
 
                             {% if form.user_buy_price.errors %}
                                 {% for error in form.user_buy_price.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <h5>认购抽奖概率设置(输入0-100之间的数字，总数加起来等于100)：</h5>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">50 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_50 }} %
+
+                            {% if form.bonus_50.errors %}
+                                {% for error in form.bonus_50.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">100 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_100 }} %
+
+                            {% if form.bonus_100.errors %}
+                                {% for error in form.bonus_50.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">200 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_200 }} %
+
+                            {% if form.bonus_200.errors %}
+                                {% for error in form.bonus_200.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">400 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_400 }} %
+
+                            {% if form.bonus_400.errors %}
+                                {% for error in form.bonus_400.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">600 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_600 }} %
+
+                            {% if form.bonus_600.errors %}
+                                {% for error in form.bonus_600.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">800 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_800 }} %
+
+                            {% if form.bonus_800.errors %}
+                                {% for error in form.bonus_800.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">1000 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_1000 }} %
+
+                            {% if form.bonus_1000.errors %}
+                                {% for error in form.bonus_1000.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">2000 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_2000 }} %
+
+                            {% if form.bonus_2000.errors %}
+                                {% for error in form.bonus_2000.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">每天可抽奖次数</label>
+                        <div class="col-md-10">
+                            {{ form.bonus_times }}
+
+                            {% if form.bonus_times.errors %}
+                                {% for error in form.bonus_times.errors %}
                                     <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
                                 {% endfor %}
                             {% endif %}

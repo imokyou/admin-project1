@@ -42,6 +42,15 @@ class Statics(models.Model):
 class SiteSetting(models.Model):
     '''网站其他配置表'''
     user_buy_price = models.DecimalField(max_digits=14, decimal_places=3)
+    bonus_50 = models.IntegerField(default=0)
+    bonus_100 = models.IntegerField(default=0)
+    bonus_200 = models.IntegerField(default=0)
+    bonus_400 = models.IntegerField(default=0)
+    bonus_600 = models.IntegerField(default=0)
+    bonus_800 = models.IntegerField(default=0)
+    bonus_1000 = models.IntegerField(default=0)
+    bonus_2000 = models.IntegerField(default=0)
+    bonus_times = models.IntegerField(default=3)
 
     class Meta:
         managed = False
@@ -230,7 +239,8 @@ class UserOplog(models.Model):
         5: '选择上线',
         6: '充值',
         7: '发信',
-        8: '读信'
+        8: '读信',
+        9: '认购抽奖'
     }
 
     OPTYPE_CODES = {
@@ -395,6 +405,23 @@ class UserWithDraw(models.Model):
         db_table = 'user_withdraw'
 
 
+class UserBonus(models.Model):
+    '''会员认购抽奖记录'''
+    user = models.ForeignKey(auth_models.User)
+    point = models.DecimalField(max_digits=14, decimal_places=2)
+    status = models.SmallIntegerField(default=0)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    STATUS = {
+        0: '未充值',
+        1: '充值成功'
+    }
+
+    class Meta:
+        managed = False
+        db_table = 'user_bonus'
+
+
 class NewsCategory(models.Model):
     '''新闻资讯分类表'''
     name = models.CharField(max_length=1024)
@@ -452,3 +479,14 @@ class Projects(models.Model):
     class Meta:
         managed = False
         db_table = 'project'
+
+
+class CBDCPriceLog(models.Model):
+    '''资本兑历史价格表'''
+    buy = models.DecimalField(max_digits=14, decimal_places=2)
+    sell = models.DecimalField(max_digits=14, decimal_places=2)
+    create_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'CBCD_price_log'
