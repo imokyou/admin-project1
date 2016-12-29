@@ -8,8 +8,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
-from django.db.models import Count
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBDCPriceLog, UserOrder
+from django.db.models import Count, Sum
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBDCPriceLog, UserOrder, CBCDInit
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
@@ -483,6 +483,8 @@ def bonus(request):
             ubonus = UserBonus.objects \
                 .filter(user=request.user).first()
             if ubonus:
+                if ubonus.status == 1:
+                    return utils.ErrResp(errors.BonusExists)
                 point = ubonus.point
                 level = b2c['bonus_%s' % point]
             else:
@@ -543,16 +545,17 @@ def cbcd_price(request):
     return render(request, 'frontend/member/CBCD_price_log.html', data)
 
 
+@csrf_exempt
 @login_required(login_url='/login/')
 def cbcd_sell(request):
     if request.method == 'POST':
         num = int(request.POST.get('num'))
         price = float(request.POST.get('price'))
         try:
-            ubalance = UserBalance.objects.get(uesr=request.user)
+            ubalance = UserBalance.objects.get(user=request.user)
         except:
             return utils.ErrResp(errors.CBCDLimit)
-        if int(ubalance.point) < num:
+        if not ubalance.point or int(ubalance.point) < num:
             return utils.ErrResp(errors.CBCDLimit)
         ubalance.point = ubalance.point - num
         ubalance.save()
@@ -560,6 +563,7 @@ def cbcd_sell(request):
             seller_user=request.user,
             buyer_user_id=0,
             num=num,
+            num_unsell=num,
             price=price,
             status=0
         )
@@ -567,35 +571,87 @@ def cbcd_sell(request):
         return utils.NormalResp()
 
 
+@csrf_exempt
 @login_required(login_url='/login/')
 def cbcd_buy(request):
     if request.method == 'POST':
-        order_id = request.POST.get('order_id')
-        num = int(request.POST.get('num'))
-        price = float(request.POST.get('price'))
+        num = int(request.POST.get('num', 0))
+        price = float(request.POST.get('price', 0))
+
+        if not num or not price:
+            return utils.ErrResp(errors.ArgMiss)
+
+        result = UserOrder.objects.filter(status=0) \
+            .aggregate(total=Sum('num_unsell'))
+
+        if num > int(result.get('total', 0)):
+            return utils.ErrResp(errors.CBCDLimit)
 
         # 付款
         try:
-            buyer = UserBalance.objects.get(uesr=request.user)
+            buyer = UserBalance.objects.get(user_id=request.user.id)
         except:
+            utils.debug()
             return utils.ErrResp(errors.MoneyLimit)
         # 美元
         money = float(num * price)
-        if float(buyer.cash) < money:
+
+        if not buyer.cash or float(buyer.cash) < money:
             return utils.ErrResp(errors.MoneyLimit)
         buyer.point = buyer.point + num
         buyer.cash = float(buyer.cash) - money
         buyer.save()
 
-        # 更新订单状态
-        uorder = UserOrder.objects.get(order_id=order_id)
-        uorder.status = 1
-        uorder.buyer_user_id = request.user_id
-        uorder.save()
+        # 更新订单状态和收钱
+        uorders = UserOrder.objects.filter(status=0).order_by('id')
+        unpaid_num = num
+        for order in uorders:
+            seller = UserBalance.objects.get(user_id=order.seller_user_id)
+            if order.num_unsell <= unpaid_num:
+                unpaid_num = unpaid_num - order.num_unsell
+                order.status = 1
+                order.num_unsell = 0
+                order.save()
 
-        # 收钱
-        seller = UserBalance.objects.get(seller_uesr_id=uorder.user_id)
-        seller.cash = float(seller.cash) + money
-        seller.save()
+                seller.cash = float(seller.cash) + float(order.num*order.price)
+                seller.save()
+            else:
+                order.num_unsell = order.num_unsell - unpaid_num
+                order.save()
 
+                seller.cash = float(seller.cash) + float(unpaid_num*order.price)
+                seller.save()
+                break
+            
         return utils.NormalResp()
+
+@login_required(login_url='/login/')
+def trading_hall(request, ctype):
+    data = {
+        'index': 'member',
+        'sub_index': 'deposite',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'errmsg': '',
+        'ctype': ctype,
+        'data': {}
+    }
+
+    result = UserOrder.objects.filter(status=0) \
+        .aggregate(total=Sum('num_unsell'))
+    try:
+        
+        data['data']['total'] = int(result.get('total', 0))
+    except:
+        data['data']['total'] = 0
+    
+    cinit = CBCDInit.objects.filter(status=1).order_by('id').first()
+    data['data']['price_init'] = float(cinit.price)
+    data['data']['price'] = float(cinit.price)
+    if ctype == 'sell':
+        ubalance = services.get_balance(request.user)
+        data['data']['point'] = ubalance['point']
+    else:
+        data['data']['point'] = 0
+
+    return render(request, 'frontend/member/trading_hall.html', data)

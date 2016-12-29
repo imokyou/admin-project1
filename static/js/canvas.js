@@ -23,33 +23,29 @@ $(document).ready(function(){
 		    data: '',
 		    async: false,
 		    success: function(resp){
-		        clickNum = resp.d.click_num;
-		        level = resp.d.level;
-		        point = resp.d.point;
-		        money = resp.d.money;
+		        if (resp.c != 0) {
+		        	alert(resp.m)
+		        } else {
+		        	level = resp.d.level;
+		        	point = resp.d.point;
+		        	money = resp.d.money;
+
+		        	runCup(level);
+		        	//转盘旋转过程“开始抽奖”按钮无法点击
+					$('#tupBtn').attr("disabled", true);
+					//旋转次数加一
+					rotNum = rotNum + 1;
+					//“开始抽奖”按钮无法点击恢复点击
+					setTimeout(function(){
+						alert('您抽到了 '+ point);
+						$('#bonus_point').html(point);
+						$('#bonus_money').html(money);
+						$('#tupBtn').removeAttr("disabled", true);
+					},6000);
+		        }
+		        
 		    }
 		});
-
-		if (clickNum >= 1) {
-			//可抽奖次数减一
-			clickNum = clickNum-1;
-			//转盘旋转
-			runCup(level);
-			//转盘旋转过程“开始抽奖”按钮无法点击
-			$('#tupBtn').attr("disabled", true);
-			//旋转次数加一
-			rotNum = rotNum + 1;
-			//“开始抽奖”按钮无法点击恢复点击
-			setTimeout(function(){
-				alert(point);
-				$('#bonus_point').html(point);
-				$('#bonus_money').html(money);
-				$('#tupBtn').removeAttr("disabled", true);
-			},6000);
-		}
-		else{
-			alert("亲，抽奖次数已用光！");
-		}
 	});
 
 

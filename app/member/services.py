@@ -58,6 +58,7 @@ def get_balance(user):
         'cash': 0,
         'invite_benifit': 0,
         'total_investment': 0,
+        'point': 0,
         'update_time': timezone.now()
     }
     try:
@@ -65,6 +66,7 @@ def get_balance(user):
         result['cash'] = float(ubalance.cash)
         result['invite_benifit'] = float(ubalance.invite_benifit)
         result['total_investment'] = float(ubalance.total_investment)
+        result['point'] = int(ubalance.point)
         result['update_time'] = utils.dt_field_to_local(ubalance.create_time)
     except:
         traceback.print_exc()
@@ -101,6 +103,8 @@ def get_price():
 # 扣除资本兑
 def cbcd_reduce(point):
     cinit = CBCDInit.objects.filter(status=1).order_by('id').first()
+    if not cinit:
+        return False
     if int(cinit.unsell) < int(point):
         cinit.status = 0
         cinit.save()

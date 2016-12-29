@@ -429,10 +429,11 @@ class UserOrder(models.Model):
     buyer_user_id = models.IntegerField()
     order_id = models.CharField(max_length=64)
     num = models.IntegerField()
+    num_unsell = models.IntegerField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     status = models.SmallIntegerField(default=0)
     create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField()
+    update_at = models.DateTimeField(auto_now_add=True)
 
     STATUS = {
         0: '挂单中',

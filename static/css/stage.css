@@ -81,7 +81,7 @@ input[type="submit"],button{ cursor:pointer;} button:hover{opacity: .8;}
 .left_nav li{cursor:pointer; }
 .left_nav li h5{height:34px; line-height:34px; color: #fff; text-indent:25px; font-size:14px; letter-spacing:2px;}
 .left_nav li h5.in{background-color:#00a8ff; width: 170px; margin-left:-10px; text-indent:35px; }
-.left_nav li dl{margin-bottom:10px; display:none;}
+.left_nav li dl{margin-bottom:10px;}
 .left_nav li dl dd a{display:block; font-size:13px; color:#fff; text-indent:30px; height: 26px; line-height: 26px; border-left:2px solid transparent;}
 .left_nav li dl dd a.ck,.left_nav li dl dd a:hover{color: #00a8ff; border-left:2px solid #00a8ff;}
 
@@ -469,14 +469,15 @@ input[type="submit"],button{ cursor:pointer;} button:hover{opacity: .8;}
 .bourse_left h3{font-size: 20px; margin-top: 10px;}
 .bourse_left h3 img,.bourse_txt p img{width:16px; height: 16px; margin-top: -3px; margin-right:5px;  }
 .bourse_left h4{font-size:16px; color:#2bba4c; margin-top: 10px;}
-.bourse_left p{font-size: 18px; color: #000; margin-top: 30px;}
+.bourse_left p{font-size: 16px;  margin-top:15px;}
+.bourse_left p input{ line-height:30px; margin-left: 10px; border-radius: 3px; width: 150px;  padding: 0 5px;}
 .bourse_right{float: right; }
 .bourse_right > li{margin-bottom: 20px; text-align:right;}
 .bourse_right > li > img{display:inline-block; vertical-align: middle; margin-right:15px; width: 30px; height: 30px; }
 .bourse_txt{display:inline-block; vertical-align: middle; min-width:110px; text-align: left;}
 .bourse_txt h2{font-size: 20px;  font-weight: bold; margin-bottom: 5px;}
 .bourse_txt p{font-size: 18px; }
-.bourse_btn{width: 100%; height:40px; line-height:40px; margin:10px auto; text-align: center;color:#fff; font-weight: 600; font-size:16px; border-radius:4px;}
+.bourse_btn{width: 100%; height:40px; line-height:40px; margin:30px auto; text-align: center;color:#fff; font-weight: 600; font-size:16px; border-radius:4px;}
 .bourse_btn.bg_green{background-color: #3bc47d;}
 .bourse_btn.bg_red{background-color:#d75540;}
 

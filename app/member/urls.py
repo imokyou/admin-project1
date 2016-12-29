@@ -21,5 +21,7 @@ urlpatterns = [
     url(r'^withdraw/$', views.withdraw),
     url(r'^bonus/$', views.bonus),
     url(r'^cbcd-price/$', views.cbcd_price),
-    url(r'^cbcd-sell/$', views.cbcd_sell)
+    url(r'^cbcd-sell/$', views.cbcd_sell),
+    url(r'^cbcd-buy/$', views.cbcd_buy),
+    url(r'^trading-hall/(\w+)/$', views.trading_hall)
 ]
