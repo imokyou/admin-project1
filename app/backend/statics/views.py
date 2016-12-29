@@ -49,16 +49,6 @@ def common_setting(request):
             data['form'] = SsetingEditForm(request.POST)
             if data['form'].is_valid():
                 Sseting.user_buy_price = request.POST.get('user_buy_price')
-                # 认购出奖概率
-                Sseting.bonus_50 = request.POST.get('bonus_50')
-                Sseting.bonus_100 = request.POST.get('bonus_100')
-                Sseting.bonus_200 = request.POST.get('bonus_200')
-                Sseting.bonus_400 = request.POST.get('bonus_400')
-                Sseting.bonus_600 = request.POST.get('bonus_600')
-                Sseting.bonus_800 = request.POST.get('bonus_800')
-                Sseting.bonus_1000 = request.POST.get('bonus_1000')
-                Sseting.bonus_2000 = request.POST.get('bonus_2000')
-                Sseting.bonus_times = request.POST.get('bonus_times')
                 Sseting.save()
     except:
         utils.debug()

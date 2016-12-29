@@ -117,6 +117,14 @@
                                     <li><a href="/backend/statics/common/">通用配置</a></li>
                                 </ul>
                             </li>
+                            <li class="has-submenu" class="{% if index = 'cbcd' %}active{% endif %}">
+                                <a href="#"><i class="zmdi zmdi-view-list"></i> <span>资本兑管理 </span> </a>
+                                <ul class="submenu">
+                                    <li><a href="/backend/cbcd/">资本兑投放设置</a></li>
+                                    <li><a href="/backend/cbcd/bonus">资本兑抽奖认购设置</a></li>
+                                    <li><a href="/backend/cbcd/order">资本兑挂单</a></li>
+                                </ul>
+                            </li>
                             <li class="has-submenu" {% if index = 'user' %}active{% endif %}>
                                 <a href="#"><i class="zmdi zmdi-invert-colors"></i> <span> 会员管理 </span> </a>
                                 <ul class="submenu megamenu">

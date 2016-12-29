@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^us-bank-account/$', views.us_bank_account),
     url(r'^withdraw/$', views.withdraw),
     url(r'^bonus/$', views.bonus),
-    url(r'^cbcd-price/$', views.cbcd_price)
+    url(r'^cbcd-price/$', views.cbcd_price),
+    url(r'^cbcd-sell/$', views.cbcd_sell)
 ]

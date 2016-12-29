@@ -42,6 +42,7 @@ class Statics(models.Model):
 class SiteSetting(models.Model):
     '''网站其他配置表'''
     user_buy_price = models.DecimalField(max_digits=14, decimal_places=3)
+    bonus_switch = models.IntegerField(default=0)
     bonus_50 = models.IntegerField(default=0)
     bonus_100 = models.IntegerField(default=0)
     bonus_200 = models.IntegerField(default=0)
@@ -422,6 +423,41 @@ class UserBonus(models.Model):
         db_table = 'user_bonus'
 
 
+class UserOrder(models.Model):
+    '''会员挂单记录'''
+    seller_user = models.ForeignKey(auth_models.User)
+    buyer_user_id = models.IntegerField()
+    order_id = models.CharField(max_length=64)
+    num = models.IntegerField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    status = models.SmallIntegerField(default=0)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField()
+
+    STATUS = {
+        0: '挂单中',
+        1: '已结单',
+    }
+
+    def save(self, *args, **kwargs):
+        self.order_id = self.gen_id()
+        super(UserOrder, self).save(*args, **kwargs)
+
+    def gen_id(self):
+        applicant_time = timezone.now()
+        active_on = applicant_time.date()
+        next_day = active_on + timezone.timedelta(days=1)
+        total = UserOrder.objects \
+            .filter(create_at__range=(active_on, next_day)) \
+            .count()
+        order_id = int(active_on.strftime("%Y%m%d") + '0000') + total + 1
+        return order_id
+
+    class Meta:
+        managed = False
+        db_table = 'user_order'
+
+
 class NewsCategory(models.Model):
     '''新闻资讯分类表'''
     name = models.CharField(max_length=1024)
@@ -490,3 +526,16 @@ class CBDCPriceLog(models.Model):
     class Meta:
         managed = False
         db_table = 'CBCD_price_log'
+
+
+class CBCDInit(models.Model):
+    total = models.IntegerField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    unsell = models.IntegerField()
+    status = models.IntegerField(default=1)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'CBCD_init'

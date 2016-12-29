@@ -9,11 +9,12 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
 from django.db.models import Count
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBDCPriceLog
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBDCPriceLog, UserOrder
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
 import services
+from config import errors
 
 
 def test(request):
@@ -475,41 +476,48 @@ def bonus(request):
             'bonus_2000': 1
         }
         result = SiteSetting.objects.all().order_by('-id').first()
-
-        # 写日志
-        total = UserBonus.objects \
-            .filter(user=request.user).count()
-        if total >= result.bonus_times:
-            point = 0
-            click_num = 0
-            level = 0
+        if not result.bonus_switch:
+            return utils.ErrResp(errors.BonusSwitchOff)
         else:
-            bonuss = []
-            for b in b2c:
-                bonuss.append((b, getattr(result, b)))
-            wr = services.weighted_random(bonuss)
-            point = int(wr.split('bonus_')[1])
-            level = b2c[wr]
-            click_num = result.bonus_times - total
+            # 写日志
+            ubonus = UserBonus.objects \
+                .filter(user=request.user).first()
+            if ubonus:
+                point = ubonus.point
+                level = b2c['bonus_%s' % point]
+            else:
+                bonuss = []
+                for b in b2c:
+                    bonuss.append((b, getattr(result, b)))
+                wr = services.weighted_random(bonuss)
+                point = int(wr.split('bonus_')[1])
+                level = b2c[wr]
 
-            ubonus = UserBonus(
-                user=request.user,
-                point=point,
-                status=0
-            )
-            ubonus.save()
+                # 扣除资本兑总量
+                if not services.cbcd_reduce(point):
+                    return utils.ErrResp(errors.BonusSwitchOff)
 
-            log = UserOplog(
-                user_id=request.user.id,
-                optype=9,
-                content='会员认购中抽中资本兑: %s' % point,
-                ip=get_ip(request),
-            )
-            log.save()
+                ubonus = UserBonus(
+                    user=request.user,
+                    point=point,
+                    status=0
+                )
+                ubonus.save()
 
+                log = UserOplog(
+                    user_id=request.user.id,
+                    optype=9,
+                    content='会员认购中抽中资本兑: %s' % point,
+                    ip=get_ip(request),
+                )
+                log.save()
 
-        resp = {'level': level, 'click_num': click_num, 'point': point, 'money': point/10}
-        return utils.NormalResp(resp)
+            resp = {
+                'level': level,
+                'point': point,
+                'money': int(point*services.get_price())
+            }
+            return utils.NormalResp(resp)
 
     return render(request, 'frontend/member/bonus.html', data)
 
@@ -535,3 +543,59 @@ def cbcd_price(request):
     return render(request, 'frontend/member/CBCD_price_log.html', data)
 
 
+@login_required(login_url='/login/')
+def cbcd_sell(request):
+    if request.method == 'POST':
+        num = int(request.POST.get('num'))
+        price = float(request.POST.get('price'))
+        try:
+            ubalance = UserBalance.objects.get(uesr=request.user)
+        except:
+            return utils.ErrResp(errors.CBCDLimit)
+        if int(ubalance.point) < num:
+            return utils.ErrResp(errors.CBCDLimit)
+        ubalance.point = ubalance.point - num
+        ubalance.save()
+        uorder = UserOrder(
+            seller_user=request.user,
+            buyer_user_id=0,
+            num=num,
+            price=price,
+            status=0
+        )
+        uorder.save()
+        return utils.NormalResp()
+
+
+@login_required(login_url='/login/')
+def cbcd_buy(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        num = int(request.POST.get('num'))
+        price = float(request.POST.get('price'))
+
+        # 付款
+        try:
+            buyer = UserBalance.objects.get(uesr=request.user)
+        except:
+            return utils.ErrResp(errors.MoneyLimit)
+        # 美元
+        money = float(num * price)
+        if float(buyer.cash) < money:
+            return utils.ErrResp(errors.MoneyLimit)
+        buyer.point = buyer.point + num
+        buyer.cash = float(buyer.cash) - money
+        buyer.save()
+
+        # 更新订单状态
+        uorder = UserOrder.objects.get(order_id=order_id)
+        uorder.status = 1
+        uorder.buyer_user_id = request.user_id
+        uorder.save()
+
+        # 收钱
+        seller = UserBalance.objects.get(seller_uesr_id=uorder.user_id)
+        seller.cash = float(seller.cash) + money
+        seller.save()
+
+        return utils.NormalResp()

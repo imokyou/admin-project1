@@ -4,7 +4,7 @@ import bisect
 import random
 from django.utils import timezone
 from django.db.models import Sum
-from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting
+from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting, CBCDInit
 from lib import utils
 
 
@@ -94,29 +94,28 @@ def pay_cash(user, should_pay):
         return result
 
 
-def weighted_random(items):  
-    total = sum(w for _,w in items)  
-    n = random.uniform(0, total)#在饼图扔骰子  
-    for x, w in items:#遍历找出骰子所在的区间  
-        if n<w:  
-            break  
-        n -= w  
-    return x 
+def get_price():
+    return 0.3
 
 
-class WeightRandom:  
-    def __init__(self, items):  
-        weights = [w for _,w in items]  
-        self.goods = [x for x,_ in items]  
-        self.total = sum(weights)  
-        self.acc = list(self.accumulate(weights))  
-  
-    #累和.如accumulate([10,40,50])->[10,50,100]
-    def accumulate(self, weights):   
-        cur = 0  
-        for w in weights:  
-            cur = cur+w  
-            yield cur  
-  
-    def __call__(self):  
-        return self.goods[bisect.bisect_right(self.acc , random.uniform(0, self.total))]
+# 扣除资本兑
+def cbcd_reduce(point):
+    cinit = CBCDInit.objects.filter(status=1).order_by('id').first()
+    if int(cinit.unsell) < int(point):
+        cinit.status = 0
+        cinit.save()
+        return False
+    else:
+        cinit.unsell = int(cinit.unsell) - int(point)
+        cinit.save()
+        return True
+
+
+def weighted_random(items):
+    total = sum(w for _, w in items)
+    n = random.uniform(0, total)
+    for x, w in items:
+        if n < w:
+            break
+        n -= w
+    return x

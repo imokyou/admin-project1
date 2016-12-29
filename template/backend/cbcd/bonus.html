@@ -1,0 +1,254 @@
+{% extends "backend/base.html" %}
+
+{% block title %}资本兑抽奖认购设置{% endblock %}
+{% block body %}
+<div class="wrapper">
+    <div class="container">
+
+        <!-- Page-Title -->
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="page-title">资本兑抽奖认购设置</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <form class="form-horizontal" role="form" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">抽奖开关: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_switch }} %
+
+                            {% if form.bonus_switch.errors %}
+                                {% for error in form.bonus_switch.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">50 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_50 }} %
+
+                            {% if form.bonus_50.errors %}
+                                {% for error in form.bonus_50.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">100 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_100 }} %
+
+                            {% if form.bonus_100.errors %}
+                                {% for error in form.bonus_50.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">200 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_200 }} %
+
+                            {% if form.bonus_200.errors %}
+                                {% for error in form.bonus_200.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">400 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_400 }} %
+
+                            {% if form.bonus_400.errors %}
+                                {% for error in form.bonus_400.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">600 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_600 }} %
+
+                            {% if form.bonus_600.errors %}
+                                {% for error in form.bonus_600.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">800 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_800 }} %
+
+                            {% if form.bonus_800.errors %}
+                                {% for error in form.bonus_800.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">1000 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_1000 }} %
+
+                            {% if form.bonus_1000.errors %}
+                                {% for error in form.bonus_1000.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">2000 CBCD: </label>
+                        <div class="col-md-10">
+                            {{ form.bonus_2000 }} %
+
+                            {% if form.bonus_2000.errors %}
+                                {% for error in form.bonus_2000.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">每天可抽奖次数</label>
+                        <div class="col-md-10">
+                            {{ form.bonus_times }}
+
+                            {% if form.bonus_times.errors %}
+                                {% for error in form.bonus_times.errors %}
+                                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <button class="btn btn-custom btn-bordred btn-block waves-effect waves-light" type="submit">确定提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- end col -->
+        </div>
+        <!-- end row -->
+        <!-- Footer -->
+        <footer class="footer text-right">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-6">
+                        2016 © Adminto.
+                    </div>
+                    <div class="col-xs-6">
+                        <ul class="pull-right list-inline m-b-0">
+                            <li>
+                                <a href="#">About</a>
+                            </li>
+                            <li>
+                                <a href="#">Help</a>
+                            </li>
+                            <li>
+                                <a href="#">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- End Footer -->
+
+    </div>
+    <!-- end container -->
+
+
+
+    <!-- Right Sidebar -->
+    <div class="side-bar right-bar">
+        <a href="javascript:void(0);" class="right-bar-toggle">
+            <i class="zmdi zmdi-close-circle-o"></i>
+        </a>
+        <h4 class="">Notifications</h4>
+        <div class="notification-list nicescroll">
+            <ul class="list-group list-no-border user-list">
+                <li class="list-group-item">
+                    <a href="#" class="user-list-item">
+                        <div class="avatar">
+                            <img src="/static/images/users/avatar-2.jpg" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Michael Zenaty</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">2 hours ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" class="user-list-item">
+                        <div class="icon bg-info">
+                            <i class="zmdi zmdi-account"></i>
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">New Signup</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">5 hours ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" class="user-list-item">
+                        <div class="icon bg-pink">
+                            <i class="zmdi zmdi-comment"></i>
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">New Message received</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">1 day ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item active">
+                    <a href="#" class="user-list-item">
+                        <div class="avatar">
+                            <img src="/static/images/users/avatar-3.jpg" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">James Anderson</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">2 days ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item active">
+                    <a href="#" class="user-list-item">
+                        <div class="icon bg-warning">
+                            <i class="zmdi zmdi-settings"></i>
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Settings</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">1 day ago</span>
+                        </div>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <!-- /Right-bar -->
+
+</div>
+{% endblock %}

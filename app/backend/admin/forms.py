@@ -41,7 +41,6 @@ class SearchForm(forms.Form):
                                    attrs={'class': 'form-control'}))
 
 
-
 class QuickJumpForm(SearchForm):
     username = forms.CharField(label="",
                                required=False,

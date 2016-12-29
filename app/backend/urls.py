@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^project/', include('app.backend.projects.urls')),
     url(r'^news/', include('app.backend.news.urls')),
     url(r'^statics/', include('app.backend.statics.urls')),
+    url(r'^cbcd/', include('app.backend.cbcd.urls')),
 ]
