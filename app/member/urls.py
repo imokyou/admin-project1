@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^test/$', views.test),
     url(r'^$', views.home),
     url(r'^log/payment/$', views.log_payment),
+    url(r'^log/withdraw/$', views.log_withdraw),
     url(r'^log/(\w+)/$', views.log),
     url(r'^news/$', views.news),
     url(r'^chat/$', views.chat),

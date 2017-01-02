@@ -1,10 +1,10 @@
 {% extends "frontend/member/base.html" %}
 
-{% block title %}资本国度-存款历史记录{% endblock %}
+{% block title %}资本国度-收回历史记录{% endblock %}
 {% block body %}
 <!--middle-->
 <div class="main_middle middle_box" style="min-height:828px;">
-    <div class="middle_tit_h2">存款历史记录
+    <div class="middle_tit_h2">收回历史记录
         <div class="page">
             {% if paging.has_previous %}
                 <a href="{{paging.prev_url}}">
@@ -25,17 +25,19 @@
                 <tr>
                     <td>日期</td>
                     <td>订单号</td>
-                    <td>方法</td>
+                    <td>账号</td>
                     <td>量</td>
+                    <td>状态</td>
                 </tr>
             </thead>
             <tbody>
             {% for l in loglist.data %}
              <tr>
-                 <td>{{ l.create_at | date:'Y-m-d' }}</td>
+                 <td>{{ l.create_time | date:'Y-m-d' }}</td>
                  <td>{{ l.order_id }}</td>
-                 <td>{{ l.pay_type }}</td>
+                 <td>{{ l.pay_account }}</td>
                  <td>{{ l.amount }}</td>
+                 <td>{% if l.status == 1 %}成功{% else %}失败{% endif %}</td>
              </tr>
              {% endfor %}
             </tbody>

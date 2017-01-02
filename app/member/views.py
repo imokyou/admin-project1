@@ -80,6 +80,27 @@ def log_payment(request):
 
 
 @login_required(login_url='/login/')
+def log_withdraw(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'log',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    n = 20
+    p = request.GET.get('p', 1)
+    q = UserWithDraw.objects \
+        .filter(user_id=request.user.id)
+
+    data['loglist'] = {
+        'paging': Pagination(request, q.count()),
+        'data': q.all().order_by('-id')[(p - 1) * n:p * n]
+    }
+
+    return render(request, 'frontend/member/log_withdraw.html', data)
+
+@login_required(login_url='/login/')
 def news(request):
     data = {
         'index': 'member',
