@@ -35,7 +35,7 @@ class InitForm(forms.Form):
                                 attrs={'class': 'form-control'}))
 
 
-class UserOrderSearchForm(forms.Form):
+class UserOrderSellSearchForm(forms.Form):
     CHOICES = [
         (-1, '所有'),
         (0, '挂单中'),

@@ -5,9 +5,9 @@ from django.http import HttpResponseRedirect
 from lib import utils
 from lib.permissions import staff_required
 from django.contrib.auth.models import User as Auth_user
-from dbmodel.ziben.models import SiteSetting, CBCDInit, UserOrder
+from dbmodel.ziben.models import SiteSetting, CBCDInit, UserOrderSell
 from config import errors
-from forms import InitForm, BonusForm, UserOrderSearchForm
+from forms import InitForm, BonusForm, UserOrderSellSearchForm
 from lib.pagination import Pagination
 
 
@@ -84,7 +84,7 @@ def bonus(request):
 @staff_required()
 def order(request):
     try:
-        q = UserOrder.objects
+        q = UserOrderSell.objects
 
         p = int(request.GET.get('p', 1))
         n = int(request.GET.get('n', 25))
@@ -102,7 +102,7 @@ def order(request):
         data = {
             'index': 'cbcd',
             'paging': Pagination(request, q.count()),
-            'form': UserOrderSearchForm(),
+            'form': UserOrderSellSearchForm(),
             'orders': {
                 'p': p,
                 'n': n,
@@ -114,8 +114,10 @@ def order(request):
             data['orders']['data'].append({
                 'id': r.id,
                 'order_id': r.order_id,
-                'seller': r.user.username,
-                'buyer': Auth_user.objects.get(user_id=r.buyer_user_id).username,
+                'seller': r.seller_user.username,
+                'price': float(r.price),
+                'num': int(r.num),
+                'num_unsell': int(r.num_unsell),
                 'create_at': r.create_at,
                 'status': r.status
             })

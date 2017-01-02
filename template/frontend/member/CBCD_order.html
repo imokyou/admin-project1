@@ -1,0 +1,47 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-交易所{% endblock %}
+{% block body %}
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2 mb20">资本兑交易状态</h2>
+    <div class="cap_table_box">
+        <table class="cap_table fl mr10 ">
+            <thead>
+            <tr>
+                <td class="no_left_border">交易状态</td>
+                <td>单位价</td>
+                <td>数量</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ob in data.orderbuy %}
+              <tr>
+                  <td class="no_left_border">买入</td>
+                  <td>{{ ob.price }}</td>
+                  <td>{{ ob.num }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="cap_table fl">
+            <thead>
+            <tr>
+                <td class="no_left_border">交易状体</td>
+                <td>单位价</td>
+                <td>数量</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for os in data.ordersell %}
+              <tr>
+                  <td class="no_left_border">卖出</td>
+                  <td>{{ os.price }}</td>
+                  <td>{{ os.num }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div><!--end of middle-->
+{% endblock %}

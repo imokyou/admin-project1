@@ -149,7 +149,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 60 * 60
 SESSION_SAVE_EVERY_REQUEST = True
 
-SITE_URL = 'http://admin-project1/'
+SITE_URL = 'http://ziben.js101.local/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
@@ -183,4 +183,17 @@ REDACTOR_AUTH_DECORATOR = 'django.contrib.auth.decorators.login_required'
 CRONJOBS = [
     ('* * */1 * *', 'django.core.management.call_command', ['static_refresh'], {}, '> /tmp/static_refresh.log'),
     ('*/30 * * * *', 'django.core.management.call_command', ['online_refresh'], {}, '> /tmp/online_refresh.log'),
+    ('* 3 * * *', 'django.core.management.call_command', ['close_hall'], {}, '> /tmp/close_hall.log'),
 ]
+
+# 充值相关
+CURRENCY_RATIO = 7
+PAYMENT_API = 'https://www.95epay.cn/sslpayment'
+PAYMENT_RETURNURL = 'http://ziben.js101.local/member/payment-callback/'
+PAYMENT_NOTIFYURL = 'http://ziben.js101.local/member/payment-notify/'
+# PAYMENT_MERNO = 184647
+# PAYMENT_KEY = '_((LToML'
+
+PAYMENT_MERNO = 168885
+PAYMENT_KEY = '12345678'
+

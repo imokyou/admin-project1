@@ -4,10 +4,10 @@ import views
 
 urlpatterns = [
     url(r'^$', views.home),
-    url(r'^create/', views.create),
-    url(r'^edit/', views.edit),
-    url(r'^test/', views.test),
+    url(r'^create/$', views.create),
+    url(r'^edit/$', views.edit),
+    url(r'^test/$', views.test),
     url(r'^category/$', views.category_home),
-    url(r'^category/create/', views.category_create),
-    url(r'^category/edit/', views.category_edit),
+    url(r'^category/create/$', views.category_create),
+    url(r'^category/edit/$', views.category_edit),
 ]

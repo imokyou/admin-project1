@@ -10,6 +10,7 @@ $(document).ready(function(){
 	var point = 0;
 	var level = 0;
 	var money = 0;
+	var bonus_id = 0;
 	//转盘初始化
 	var color = ["#626262","#787878","rgba(0,0,0,0.5)","#DCC722","white","#00a8ff"];
 	var info = ["   50","  100","  200","  400","  600","  800"," 1000"," 2000"];
@@ -29,6 +30,7 @@ $(document).ready(function(){
 		        	level = resp.d.level;
 		        	point = resp.d.point;
 		        	money = resp.d.money;
+		        	bonus_id = resp.d.bonus_id;
 
 		        	runCup(level);
 		        	//转盘旋转过程“开始抽奖”按钮无法点击
@@ -40,6 +42,7 @@ $(document).ready(function(){
 						alert('您抽到了 '+ point);
 						$('#bonus_point').html(point);
 						$('#bonus_money').html(money);
+						$('#bonus_id').val(bonus_id);
 						$('#tupBtn').removeAttr("disabled", true);
 					},6000);
 		        }

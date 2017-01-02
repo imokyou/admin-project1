@@ -1,4 +1,6 @@
 # coding=utf8
+import requests
+import json
 from ipware.ip import get_ip
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -9,7 +11,7 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
 from django.db.models import Count, Sum
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBDCPriceLog, UserOrder, CBCDInit
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBCDPriceLog, UserOrderSell, CBCDInit, UserOrderBuy, UserPayment
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
@@ -52,6 +54,29 @@ def log(request, logtype):
     }
 
     return render(request, 'frontend/member/log_%s.html' % logtype, data)
+
+
+@login_required(login_url='/login/')
+def log_payment(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'log',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    n = 20
+    p = request.GET.get('p', 1)
+    q = UserPayment.objects \
+        .filter(user_id=request.user.id) \
+        .filter(status=1)
+
+    data['loglist'] = {
+        'paging': Pagination(request, q.count()),
+        'data': q.all().order_by('-id')[(p - 1) * n:p * n]
+    }
+
+    return render(request, 'frontend/member/log_payment.html', data)
 
 
 @login_required(login_url='/login/')
@@ -101,6 +126,19 @@ def chat(request):
             return HttpResponseRedirect('/member/chat/')
 
     return render(request, 'frontend/member/chat.html', data)
+
+
+
+@login_required(login_url='/login/')
+def shop(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'log',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10]
+    }
+
+    return render(request, 'frontend/member/shop.html', data)
 
 
 @login_required(login_url='/login/')
@@ -517,7 +555,8 @@ def bonus(request):
             resp = {
                 'level': level,
                 'point': point,
-                'money': int(point*services.get_price())
+                'money': int(point*services.get_price()),
+                'bonus_id': ubonus.id
             }
             return utils.NormalResp(resp)
 
@@ -525,32 +564,70 @@ def bonus(request):
 
 
 @login_required(login_url='/login/')
+def bonus_update(request):
+    bonus_id = int(request.GET.get('id', 0))
+    if bonus_id:
+        ubonus = UserBonus.objects.get(id=bonus_id)
+        ubonus.status = 1
+        ubonus.save()
+    return utils.NormalResp()
+
+@login_required(login_url='/login/')
 def cbcd_price(request):
     data = {
         'index': 'member',
         'sub_index': 'home',
         'statics': services.get_statics(request.user.id),
-        'news': News.objects.all().order_by('-id')[0:10]
+        'news': News.objects.all().order_by('-id')[0:10],
+        'data': {}
     }
 
-    n = 20
-    p = request.GET.get('p', 1)
-    q = CBDCPriceLog.objects
-    data['pricelist'] = {
-        'tot': q.count(),
-        'paging': Pagination(request, q.count()),
-        'data': q.all().order_by('-id')[(p - 1) * n:p * n]
+    data['data']['ordersell'] = UserOrderSell.objects \
+        .filter(seller_user=request.user) \
+        .all().order_by('id')[0:15]
+    data['data']['orderbuy'] = UserOrderBuy.objects \
+        .filter(buyer_user=request.user) \
+        .all().order_by('-id')[0:15]
+
+    return render(request, 'frontend/member/cbcd_price.html', data)
+
+
+@login_required(login_url='/login/')
+def cbcd_order(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'hall',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'data': {}
     }
 
-    return render(request, 'frontend/member/CBCD_price_log.html', data)
+    data['data']['ordersell'] = UserOrderSell.objects \
+        .filter(status=0) \
+        .filter(create_at__startswith=timezone.now().date()) \
+        .all().order_by('id')[0:15]
+    data['data']['orderbuy'] = UserOrderBuy.objects \
+        .filter(create_at__startswith=timezone.now().date()) \
+        .all().order_by('-id')[0:15]
+
+    return render(request, 'frontend/member/CBCD_order.html', data)
 
 
 @csrf_exempt
 @login_required(login_url='/login/')
 def cbcd_sell(request):
     if request.method == 'POST':
+        if not services.is_hall_open():
+            return utils.ErrResp(errors.HallNotOpened)
+
         num = int(request.POST.get('num'))
         price = float(request.POST.get('price'))
+
+        current_order = services.get_current_order()
+        if int(price*1000) >= int(current_order['price'] * 1000 * 1.1):
+            return utils.ErrResp(errors.PriceTooHigh) 
+        if int(price*1000) <= int(current_order['price'] * 1000 * 0.9):
+            return utils.ErrResp(errors.PriceTooLow)
         try:
             ubalance = UserBalance.objects.get(user=request.user)
         except:
@@ -559,9 +636,8 @@ def cbcd_sell(request):
             return utils.ErrResp(errors.CBCDLimit)
         ubalance.point = ubalance.point - num
         ubalance.save()
-        uorder = UserOrder(
+        uorder = UserOrderSell(
             seller_user=request.user,
-            buyer_user_id=0,
             num=num,
             num_unsell=num,
             price=price,
@@ -575,19 +651,22 @@ def cbcd_sell(request):
 @login_required(login_url='/login/')
 def cbcd_buy(request):
     if request.method == 'POST':
+        if not services.is_hall_open():
+            return utils.ErrResp(errors.HallNotOpened)
+
         num = int(request.POST.get('num', 0))
         price = float(request.POST.get('price', 0))
 
         if not num or not price:
             return utils.ErrResp(errors.ArgMiss)
 
-        result = UserOrder.objects.filter(status=0) \
-            .aggregate(total=Sum('num_unsell'))
+        current_order = UserOrderSell.objects.filter(status=0).order_by('id').first()
 
-        if num > int(result.get('total', 0)):
+        if num > int(current_order.num_unsell):
             return utils.ErrResp(errors.CBCDLimit)
+        price = float(current_order.price)
 
-        # 付款
+        # 买家付款
         try:
             buyer = UserBalance.objects.get(user_id=request.user.id)
         except:
@@ -602,34 +681,33 @@ def cbcd_buy(request):
         buyer.cash = float(buyer.cash) - money
         buyer.save()
 
-        # 更新订单状态和收钱
-        uorders = UserOrder.objects.filter(status=0).order_by('id')
-        unpaid_num = num
-        for order in uorders:
-            seller = UserBalance.objects.get(user_id=order.seller_user_id)
-            if order.num_unsell <= unpaid_num:
-                unpaid_num = unpaid_num - order.num_unsell
-                order.status = 1
-                order.num_unsell = 0
-                order.save()
+        # 更新订单状态
+        current_order.num_unsell = current_order.num_unsell - num
+        if int(current_order.num_unsell) == 0:
+            current_order.status = 1
+        current_order.save()
 
-                seller.cash = float(seller.cash) + float(order.num*order.price)
-                seller.save()
-            else:
-                order.num_unsell = order.num_unsell - unpaid_num
-                order.save()
+        # 卖家收钱
+        seller = UserBalance.objects.get(user=current_order.seller_user)
+        seller.cash = float(seller.cash) + float(num * price)
+        seller.save()
 
-                seller.cash = float(seller.cash) + float(unpaid_num*order.price)
-                seller.save()
-                break
-            
+        # 写买入记录
+        buyorder = UserOrderBuy(
+            seller_order_id=current_order.order_id,
+            buyer_user=request.user,
+            price=price,
+            num=num
+        )
+        buyorder.save()
+    
         return utils.NormalResp()
 
 @login_required(login_url='/login/')
 def trading_hall(request, ctype):
     data = {
         'index': 'member',
-        'sub_index': 'deposite',
+        'sub_index': 'hall',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
         'errmsg': '',
@@ -637,7 +715,7 @@ def trading_hall(request, ctype):
         'data': {}
     }
 
-    result = UserOrder.objects.filter(status=0) \
+    result = UserOrderSell.objects.filter(status=0) \
         .aggregate(total=Sum('num_unsell'))
     try:
         
@@ -645,13 +723,238 @@ def trading_hall(request, ctype):
     except:
         data['data']['total'] = 0
     
-    cinit = CBCDInit.objects.filter(status=1).order_by('id').first()
-    data['data']['price_init'] = float(cinit.price)
-    data['data']['price'] = float(cinit.price)
+    
+    data['data']['price_init'] = services.get_init_price()
+    current_order = services.get_current_order()
+    data['data']['price_current'] = current_order['price']
     if ctype == 'sell':
         ubalance = services.get_balance(request.user)
         data['data']['point'] = ubalance['point']
     else:
-        data['data']['point'] = 0
+        data['data']['point'] = current_order['num']
+    data['data']['price_open'] = services.get_opening_price()
+    data['data']['price_up'] = data['data']['price_current'] - data['data']['price_open']
+    data['data']['ratio'] = (data['data']['price_current'] - data['data']['price_init'])*100 / data['data']['price_init']
 
     return render(request, 'frontend/member/trading_hall.html', data)
+
+
+@login_required(login_url='/login/')
+def trading_hall_home(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'hall',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'errmsg': '',
+        'data': {}
+    }
+    current_order = services.get_current_order()
+    data['data']['price_buy'] = current_order['price']
+    data['data']['price_sell'] = current_order['price']
+
+    # 7天价格走势
+    data['data']['pricelog'] = {
+        'date': [],
+        'price': []
+    }
+    pricelogs = CBCDPriceLog.objects.all().order_by('id')[0:7]
+    for log in pricelogs:
+        data['data']['pricelog']['date'].append(
+            utils.dt_field_to_local(log.closing_date).strftime('%m-%d')
+        )
+        data['data']['pricelog']['price'].append(
+            float(log.price)
+        )
+
+    # 交易状态
+    data['data']['ordersell'] = UserOrderSell.objects \
+        .filter(status=0) \
+        .filter(create_at__startswith=timezone.now().date()) \
+        .all().order_by('id')[0:5]
+    data['data']['orderbuy'] = UserOrderBuy.objects \
+        .filter(create_at__startswith=timezone.now().date()) \
+        .all().order_by('-id')[0:5]
+    return render(request, 'frontend/member/trading_hall_home.html', data)
+
+
+@login_required(login_url='/login/')
+def cbcd_current(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'hall',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'errmsg': '',
+        'data': {}
+    }
+    try:
+        result = UserOrderSell.objects \
+            .filter(status=0).filter(seller_user=request.user) \
+            .aggregate(num=Sum('num_unsell'))[0]
+        sell_num = int(result.get('num'))
+    except:
+        sell_num = 0
+    
+    ubalance = services.get_balance(request.user)
+    data['data']['num'] = sell_num + int(ubalance['point'])
+
+    current_order = services.get_current_order()
+    data['data']['price_buy'] = current_order['price']
+    data['data']['price_sell'] = current_order['price']
+
+    return render(request, 'frontend/member/cbcd_current.html', data)
+
+
+@login_required(login_url='/login/')
+def payment(request):
+    if not request.GET.get('point', 0):
+        return utils.ErrResp(errors.ArgMiss)
+    if not request.GET.get('amount', 0):
+        return utils.ErrResp(errors.MonenyNotZero)
+    bonus_id = request.GET.get('bonus_id', 0)
+    # 生成订单写入数据库
+    upayment = UserPayment(
+        user=request.user,
+        amount=float(request.GET.get('amount', 0)) * settings.CURRENCY_RATIO,
+        point=int(request.GET.get('point', 0)),
+        currency=1,
+        pay_type='CSPAY',
+        ip=get_ip(request),
+        request_url=settings.PAYMENT_API,
+        callback=settings.SITE_URL+'member/bonus/update/?id='+bonus_id
+    )
+    upayment.save()
+
+    # 组织参数及签名
+    data = {
+        'Amount': float(upayment.amount),
+        'BillNo': upayment.order_id,
+        'MerNo': settings.PAYMENT_MERNO,
+        'PayType': upayment.pay_type,
+        'ReturnUrl': settings.PAYMENT_RETURNURL
+    }
+    sign = services.get_sign(data, settings.PAYMENT_KEY)
+    data['MD5info'] = sign
+    data['NotifyUrl'] = settings.PAYMENT_NOTIFYURL
+    data['api'] = settings.PAYMENT_API
+
+    upayment.params = json.dumps(data)
+    upayment.save()
+
+    return render(request, 'frontend/member/payment.html', data)
+
+
+@csrf_exempt
+def payment_callback(request):
+    MD5info = str(request.GET.get('MD5info'))
+    Result = str(request.GET.get('Result'))
+    MerRemark = str(request.GET.get('MerRemark'))
+    Orderno = str(request.GET.get('Orderno'))
+
+    params = {
+        'Amount': request.GET.get('Amount'),
+        'BillNo': request.GET.get('BillNo'),
+        'MerNo': request.GET.get('MerNo'),
+        'Succeed': request.GET.get('Succeed')
+    }
+    sign = services.get_sign(params, settings.PAYMENT_KEY)
+    # 验证签名
+    if MD5info == sign:
+        upayment = UserPayment.objects.filter(order_id=params['BillNo']).first()
+        # 订单是否存在、订单已成功的则不作处理
+        if upayment.status != 1:
+            # 验证返回信息，如成功则status=1
+            if int(Succeed) == 88:
+                upayment.status = 1
+            else:
+                upayment.status = -1
+            upayment.update_at = timezone.now()
+            upayment.partner_order_id = Orderno
+            upayment.resp_code = Succeed
+            upayment.remark = MerRemark
+            upayment.save()
+
+            # 加点加钱
+            if upayment.status == 1:
+                try:
+                    ubalance = UserBalance.objects.get(user_id=upayment.user_id)
+                except:
+                    ubalance = UserBalance(
+                        user_id=upayment.user_id,
+                        point=0,
+                        cash=0
+                    )
+                if upayment.point:
+                    ubalance.point = ubalance.point + upayment.point
+                else:
+                    if upayment.currency == 1:
+                        ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                    else:
+                        ubalance.cash = int(params['Amount'])
+                ubalance.save()
+
+                if upayment.callback:
+                    requests.get(upayment.callback, verify=False)
+    else:
+        pass
+    return HttpResponseRedirect('/member/cbcd/current/')
+
+
+@csrf_exempt
+def payment_notify(request):
+    MD5info = str(request.POST.get('MD5info'))
+    Result = str(request.POST.get('Result'))
+    MerRemark = str(request.POST.get('MerRemark'))
+    Orderno = str(request.POST.get('Orderno'))
+
+    params = {
+        'Amount': request.POST.get('Amount'),
+        'BillNo': request.POST.get('BillNo'),
+        'MerNo': request.POST.get('MerNo'),
+        'Succeed': request.POST.get('Succeed')
+    }
+    sign = services.get_sign(params, settings.PAYMENT_KEY)
+    # 验证签名
+    if MD5info == sign:
+        upayment = UserPayment.objects.filter(order_id=params['BillNo'])
+        # 订单是否存在、订单已成功的则不作处理
+        if upayment.status != 1:
+            # 验证返回信息，如成功则status=1
+            if int(Succeed) == 88:
+                upayment.status = 1
+            else:
+                upayment.status = -1
+            upayment.update_at = timezone.now()
+            upayment.partner_order_id = Orderno
+            upayment.resp_code = Succeed
+            upayment.remark = MerRemark
+            upayment.save()
+
+            # 加点加钱
+            if upayment.status == 1:
+                try:
+                    ubalance = UserBalance.objects.get(user_id=upayment.user_id)
+                except:
+                    ubalance = UserBalance(
+                        user_id=upayment.user_id,
+                        point=0
+                    )
+                if upayment.point:
+                    ubalance.point = ubalance.point + upayment.point
+                else:
+                    if upayment.currency == 1:
+                        ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                    else:
+                        ubalance.cash = int(params['Amount'])
+                ubalance.save()
+
+                if upayment.callback:
+                    requests.get(upayment.callback, verify=False)
+            return utils.NormalResp()
+    else:
+        return utils.ErrResp()
+
+
+
+

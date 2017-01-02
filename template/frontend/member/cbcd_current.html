@@ -1,0 +1,29 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-我的资本兑{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0;">
+<h2 class="middle_tit_h2 plr20">我的资本兑(CBDC)</h2>
+    <div class="capital_box">
+        <div class="captial_total">
+            <div class="captial_total_l fl">
+                <h2>{{ data.num }}</h2>
+                <p>我的资本兑(CBCD)</p>
+            </div>
+            <time>{% now 'Y-m-d' %}</time>
+        </div>
+        <ul class="trade_price">
+            <li>
+                <h4>{{ data.price_buy }}</h4>
+                <p>买入单价</p>
+            </li>
+            <li>
+                <h4>{{ data.price_sell }}</h4>
+                <p>卖出单价</p>
+            </li>
+        </ul>
+    </div>
+</div><!--end of middle-->
+
+{% endblock %}

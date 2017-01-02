@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             stat = Statics.objects.order_by('-id').first()
-            stat.member = stat.member + random.randint(10, 50)
+            stat.members = stat.members + random.randint(10, 50)
             stat.hits = float(stat.hits) + random.randint(500, 1000)
             stat.save()
         except:

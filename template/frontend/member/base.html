@@ -40,7 +40,7 @@
             </li>
             -->
             <li>
-                <a href="店.html" {% if index == 'member_shop' %}class="om"{% endif %}>
+                <a href="/member/shop/" {% if index == 'member_shop' %}class="om"{% endif %}>
                     <i class="{% if index == 'member_shop' %}icon_nav02{% else %}icon_nav01{% endif %} icon_04"></i>店
                 </a>
             </li>
@@ -86,6 +86,11 @@
                         <dd><a href="/member/setting/">设置</a></dd>
                     </dl>
                 </li>
+                <li><h5 {% if sub_index == 'my-cbcd' %}class="in"{% endif %}>我的资本兑</h5>
+                    <dl>
+                        <dd><a href="/member/cbcd/current/">我的资本兑</a></dd>
+                    </dl>
+                </li>
                 <li><h5 {% if sub_index == 'bonus' %}class="in"{% endif %}>认购</h5>
                     <dl>
                         <dd><a href="/member/bonus/">认购</a></dd>
@@ -93,7 +98,8 @@
                 </li>
                 <li><h5 {% if sub_index == 'balance' %}class="in"{% endif %}>盈利平衡统计</h5>
                     <dl>
-                        <dd><a href="为了莱杰">为了莱杰</a></dd>
+                        <!--
+                        <dd><a href="为了莱杰">为了莱杰</a></dd> -->
                         <dd><a href="/member/dashboard/">仪盘表</a></dd>
                     </dl>
                 </li>
@@ -103,11 +109,12 @@
                         <dd><a href="/member/withdraw/">收回</a></dd>
                     </dl>
                 </li>
-                <li><h5 {% if sub_index == 'mall' %}class="in"{% endif %}>交易所</h5>
+                <li><h5 {% if sub_index == 'hall' %}class="in"{% endif %}>交易所</h5>
                     <dl>
+                        <dd><a href="/member/trading-hall/">交易大厅</a></dd>
                         <dd><a href="/member/trading-hall/buy/">交易所-买</a></dd>
                         <dd><a href="/member/trading-hall/sell/">交易所-卖</a></dd>
-                        <dd><a href="/member/cbcd-price/">资本兑交易状态</a></dd>
+                        <dd><a href="/member/cbcd-order/">资本兑交易状态</a></dd>
                     </dl>
                 </li>
                 <li><h5 {% if sub_index == 'log' %}class="in"{% endif %}>日志</h5>
@@ -115,7 +122,7 @@
                         <dd><a href="/member/news/">新闻公告</a></dd>
                         <dd><a href="/member/mailbox/sended/">发件箱</a></dd>
                         <dd><a href="/member/mailbox/received/">收件箱</a></dd>
-                        <dd><a href="/member/log/deposit/">存款历史记录</a></dd>
+                        <dd><a href="/member/log/payment/">存款历史记录</a></dd>
                         <dd><a href="/member/log/retreat/">收回历史记录</a></dd>
                         <dd><a href="/member/log/login/">登录历史记录</a></dd>
                     </dl>

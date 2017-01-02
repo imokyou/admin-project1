@@ -18,7 +18,7 @@ $(function () {
         $(this).find("span").addClass("blue").end().siblings("li").find("span").removeClass("blue")
     });
    /* 左侧导航*/
-/*    $(".left_nav li").on("click",function(){
+    $(".left_nav li").on("click",function(){
         $(this).find("h5").addClass("in").end().siblings("li").find("h5").removeClass("in");
         $(this).find("dl").slideDown().end().siblings("li").find("dl").slideUp()
     });
@@ -26,7 +26,7 @@ $(function () {
     $(".left_nav li dl dd").on("click",function(){
         $(this).find("a").addClass("ck").end().siblings("dd").find("a").removeClass("ck");
         $(this).parents("li").siblings("li").find("a").removeClass("ck")
-    });*/
+    });
 
     <!--点击投票按钮弹出层-->
     $(".vote_before").on('click',function(){

@@ -2,9 +2,10 @@
 import traceback
 import bisect
 import random
+import hashlib
 from django.utils import timezone
 from django.db.models import Sum
-from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting, CBCDInit
+from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting, CBCDInit, CBCDPriceLog,UserOrderSell
 from lib import utils
 
 
@@ -115,6 +116,60 @@ def cbcd_reduce(point):
         return True
 
 
+def get_closing_price():
+    pass
+
+
+def get_opening_price():
+    init_price = 0
+    try:
+         pricelog = CBCDPriceLog.objects.order_by('-id').first()
+         init_price = float(pricelog.price)
+    except:
+        cbcdinit = CBCDInit.objects.filter(status=1).order_by('-id').first()
+        if cbcdinit:
+            init_price = float(cbcdinit.price)
+    finally:
+        return init_price
+
+
+def get_init_price():
+    init_price = 0
+    try:
+        cinit = CBCDInit.objects.filter(status=1).order_by('id').first()
+        init_price = float(cinit.price)
+    except:
+        pass
+    finally:
+        return float(cinit.price)
+
+
+def get_current_order():
+    result = {
+        'user_id': 0,
+        'price': 0,
+        'num': 0
+    }
+    try:
+        order = UserOrderSell.objects \
+            .filter(status=0).order_by('id').first()
+        result['user_id'] = order.seller_user_id
+        result['price'] = float(order.price)
+        result['num'] = int(order.num_unsell)
+    except:
+        utils.debug()
+    finally:
+        return result
+
+
+def is_hall_open():
+    result = False
+    utc_hour = timezone.now().hour
+    if utc_hour <= 3 or utc_hour >= 15:
+        result = True
+    return result
+
+
 def weighted_random(items):
     total = sum(w for _, w in items)
     n = random.uniform(0, total)
@@ -123,3 +178,32 @@ def weighted_random(items):
             break
         n -= w
     return x
+
+
+def sorted_sict(adict): 
+    keys = adict.keys() 
+    keys.sort() 
+    return [adict[key]  for key  in keys]
+
+
+def get_sign(data, sign_key):
+    try:
+        result = ''
+        sign_list = []
+        keys = data.keys() 
+        keys.sort()
+        for k in keys:
+            sign_list.append('%s=%s&' % (k, data[k]))
+
+        m1 = hashlib.md5()
+        m1.update(sign_key)
+        md5_sign_key = m1.hexdigest().upper()
+
+        m2 = hashlib.md5()
+        m2.update('&'.join(sign_list)+'&'+md5_sign_key)
+        result = m2.hexdigest().upper()
+    except:
+        pass
+    finally:
+        return result
+

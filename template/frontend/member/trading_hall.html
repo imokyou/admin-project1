@@ -13,10 +13,11 @@
             <div class="bourse_left">
                 <img class="chart_icon" src="/static/images/bourse_icon01.png">
                 <h1>CER</h1>
-                <h2>0.38</h2>
-                <h3><img src="/static/images/bourse_icon02.png">0.26</h3>
-                <h4>(250.00%)</h4>
+                <h2>{{ data.price_current }}</h2>
+                <h3><img src="/static/images/bourse_icon02.png">{{ data.price_up }}</h3>
+                <h4>({{ data.ratio }}%)</h4>
                 <p>数量:<input type="text" value={{ data.point }} id="point"></p>
+                <p>单价:<input type="text" value="{{ data.price_current }}" id="price" {% if ctype == 'buy'%}readonly='readonly'{% endif %}></p>
             </div>
            <ul class="bourse_right">
                <li>
@@ -28,7 +29,7 @@
                <li>
                    <img src="/static/images/bourse_icon04.png">
                    <div class="bourse_txt">
-                       <h2>成长</h2><p><img src="/static/images/bourse_icon02.png">250.00%</p>
+                       <h2>成长</h2><p><img src="/static/images/bourse_icon02.png">{{ data.ratio }}%</p>
                    </div>
                </li>
                <li>
@@ -40,7 +41,7 @@
                <li>
                    <img src="/static/images/bourse_icon06.png">
                    <div class="bourse_txt">
-                       <h2>市场价格</h2><p><span id="price">{{ data.price }}</span></p>
+                       <h2>市场价格</h2><p>{{ data.price_current }}</p>
                    </div>
                </li>
            </ul>
@@ -71,7 +72,7 @@
 <script type="text/javascript">
 function trade(url) {
     var num = $('#point').val()
-    var price = $('#price').text()
+    var price = $('#price').val()
 
     $.ajax({
         type:"post",

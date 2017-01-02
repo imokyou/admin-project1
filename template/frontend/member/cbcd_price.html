@@ -1,0 +1,71 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-交易所{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0; background-image:none;">
+    <div class="his_top">
+        <h2 class="middle_tit_h2 fl">历史价格</h2>
+        <div class="btn_buy_sell">
+            <button class="at" data="table-buy">买入</button>
+            <button data="data-sell">卖出</button>
+        </div>
+    </div>
+
+    <table class="match_table layf" id="table-buy">
+        <thead>
+            <tr>
+                <td class="no_left_border">单位价</td>
+                <td>数量</td>
+                <td>日期</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ob in data.orderbuy %}
+        <tr>
+            <td class="no_left_border">{{ ob.price }}</td>
+            <td>{{ ob.num }}</td>
+            <td>{{ ob.create_at | date:'Y-m-d' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="match_table layf" id="table-sell" style="display:none">
+        <thead>
+            <tr>
+                <td class="no_left_border">单位价</td>
+                <td>数量</td>
+                <td>日期</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ob in data.ordersell %}
+        <tr>
+            <td class="no_left_border">{{ ob.price }}</td>
+            <td>{{ ob.num }}</td>
+            <td>{{ ob.create_at | date:'Y-m-d' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div><!--end of middle-->
+{% endblock %}
+
+{% block script %}
+<script>
+  $(function () {
+      $('.btn_buy_sell button').on('click',function(){
+          $(this).addClass('at').siblings().removeClass('at')
+          if ($(this).attr('data') == 'table-buy') {
+            $('#table-buy').show()
+            $('#table-sell').hide()
+          } else {
+            $('#table-buy').hide()
+            $('#table-sell').show()
+          }
+      })
+  })
+</script>
+
+{% endblock %}

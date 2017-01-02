@@ -1,4 +1,5 @@
 # coding=utf-8
+import time
 from datetime import datetime
 from django.db import models
 from django.utils import timezone
@@ -71,7 +72,7 @@ class InviteCodeQuerySet(models.QuerySet):
 class InviteCode(models.Model):
     '''注册邀请码表'''
     code = models.CharField(max_length=15)
-    status = models.SmallIntegerField(max_length=4, default=1)
+    status = models.SmallIntegerField(default=1)
     update_time = models.DateTimeField()
 
     objects = InviteCodeQuerySet.as_manager()
@@ -101,7 +102,7 @@ class UserInfo(models.Model):
     recommend_user = models.CharField(max_length=64, default='')
     reg_time = models.DateTimeField(auto_now_add=True)
     reg_code = models.CharField(max_length=10)
-    reg_type = models.SmallIntegerField(max_length=4, default=1)
+    reg_type = models.SmallIntegerField(default=1)
     reg_ip = models.CharField(max_length=15, default='')
     reg_location = models.CharField(max_length=128, default='')
     invite_code = models.CharField(max_length=10)
@@ -140,9 +141,9 @@ class UserInfo(models.Model):
 
 class UserConnection(models.Model):
     '''用户关联表(推荐网络)'''
-    parent = models.ForeignKey(auth_models.User)
+    parent = models.ForeignKey(auth_models.User, related_name="parent_id")
     user = models.ForeignKey(auth_models.User)
-    depth = models.SmallIntegerField(max_length=4, default=0)
+    depth = models.SmallIntegerField(default=0)
     create_time = models.DateTimeField(auto_now_add=True)
     ratio = models.DecimalField(max_digits=7, decimal_places=3, default=0)
     is_selling = models.SmallIntegerField(default=0)
@@ -159,7 +160,7 @@ class UserConnection(models.Model):
 
 class UserConnectionBuying(models.Model):
     '''用户关联表(购买下线)'''
-    parent = models.ForeignKey(auth_models.User)
+    parent = models.ForeignKey(auth_models.User, related_name="bparent_id")
     user = models.ForeignKey(auth_models.User)
     create_time = models.DateTimeField(auto_now_add=True)
     ratio = models.DecimalField(max_digits=7, decimal_places=3, default=0)
@@ -172,7 +173,7 @@ class UserConnectionBuying(models.Model):
 class UserChangeRecommend(models.Model):
     '''用户转介表'''
     user = models.ForeignKey(auth_models.User)
-    recommend_user = models.ForeignKey(auth_models.User)
+    recommend_user = models.ForeignKey(auth_models.User, related_name="recommend_user_id")
     create_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -206,7 +207,7 @@ class UserRevenue(models.Model):
     '''用户收入流水表'''
     user = models.ForeignKey(auth_models.User)
     parent_user_id = models.IntegerField()
-    revenue_type = models.SmallIntegerField(max_length=4)
+    revenue_type = models.SmallIntegerField()
     revenue = models.DecimalField(max_digits=14, decimal_places=3, default=0)
     create_time = models.DateTimeField(auto_now_add=True)
 
@@ -225,7 +226,7 @@ class UserRevenue(models.Model):
 class UserOplog(models.Model):
     '''用户日志表'''
     user = models.ForeignKey(auth_models.User)
-    optype = models.SmallIntegerField(max_length=4)
+    optype = models.SmallIntegerField()
     content = models.CharField(max_length=1024)
     ip = models.CharField(max_length=15, default='')
     location = models.CharField(max_length=128, default='')
@@ -265,22 +266,62 @@ class Bank(models.Model):
 
 class UserPayment(models.Model):
     '''用户充值记录表'''
+    order_id = models.CharField(max_length=64)
+    partner_order_id = models.CharField(max_length=64)
     user = models.ForeignKey(auth_models.User)
-    order_id = models.CharField(max_length=32)
-    pay_type = models.SmallIntegerField(max_length=4)
-    payout = models.DecimalField(max_digits=14, decimal_places=3)
-    account = models.CharField(max_length=64, default='')
-    bank_id = models.IntegerField()
-    bank_card = models.CharField(max_length=64, default='')
+    pay_type = models.CharField(max_length=64)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    currency = models.SmallIntegerField(default=1)
+    point = models.IntegerField(default=0)
+    remark = models.CharField(max_length=1024, default='')
+    params = models.CharField(max_length=1024, default='')
+    status = models.SmallIntegerField(default=0)
+    create_at= models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField()
     ip = models.CharField(max_length=15, default='')
     location = models.CharField(max_length=128, default='')
-    create_time = models.DateTimeField(auto_now_add=True)
+    request_url = models.CharField(max_length=1024)
+    resp_code = models.CharField(max_length=64)
+    callback = models.CharField(max_length=256, default='')
 
-    # 定义充值类型
-    PAY_TYPE = {
-        1: '银行卡/信用卡',
-        2: 'Paypal'
+    STATUS = {
+        0: '付款中',
+        1: '充值成功',
+        -1: '充值失败'
     }
+
+    RESP_CODE = {
+        -1: '订单号错误',
+        0: '交易失败',
+        5: '同一IP重复',
+        8: '同一COOKIE重复交易',
+        10: '不存在该商户号',
+        11: 'MD5KEYi不存在',
+        13: '交易网址未注册',
+        14: 'MD5验签失败',
+        15: '商户未开通',
+        16: '通道未开通',
+        22: '返回地址未绑定',
+        24: '交易流水号重复',
+        25: '订单金额有误',
+        26: '当天金额超过限制',
+        30: '待处理',
+        88: '付款成功'
+    }
+
+    def save(self, *args, **kwargs):
+        self.order_id = self.gen_id()
+        super(UserPayment, self).save(*args, **kwargs)
+
+    def gen_id(self):
+        applicant_time = timezone.now()
+        active_on = applicant_time.date()
+        next_day = active_on + timezone.timedelta(days=1)
+        total = UserPayment.objects \
+            .filter(create_at__range=(active_on, next_day)) \
+            .count()
+        order_id = str(int(active_on.strftime("%Y%m%d") + '000000') + total + 1) + '-'+ str(int(time.time()*1000))
+        return order_id
 
     class Meta:
         managed = False
@@ -289,11 +330,11 @@ class UserPayment(models.Model):
 
 class UserMessage(models.Model):
     '''用户信箱'''
-    from_user = models.ForeignKey(auth_models.User)
-    to_user = models.ForeignKey(auth_models.User)
+    from_user = models.ForeignKey(auth_models.User, related_name="to_user_id")
+    to_user = models.ForeignKey(auth_models.User, related_name="from_user_id")
     title = models.CharField(max_length=256)
     content = models.CharField(max_length=1024)
-    status = models.SmallIntegerField(max_length=4)
+    status = models.SmallIntegerField()
     create_time = models.DateTimeField(auto_now_add=True)
     read_time = models.DateTimeField()
 
@@ -311,7 +352,7 @@ class UserMessage(models.Model):
 class UserFeedback(models.Model):
     '''用户反馈'''
     user = models.ForeignKey(auth_models.User)
-    ctype = models.SmallIntegerField(max_length=4)
+    ctype = models.SmallIntegerField()
     title = models.CharField(max_length=256)
     content = models.CharField(max_length=1024)
     status = models.SmallIntegerField(default=0)
@@ -357,7 +398,7 @@ class UserPromoteRank(models.Model):
 class UserSellingMall(models.Model):
     '''下线购买大厅'''
     user = models.ForeignKey(auth_models.User)
-    parent_user = models.ForeignKey(auth_models.User)
+    parent_user = models.ForeignKey(auth_models.User, related_name="parent_user_id")
     create_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -423,10 +464,9 @@ class UserBonus(models.Model):
         db_table = 'user_bonus'
 
 
-class UserOrder(models.Model):
+class UserOrderSell(models.Model):
     '''会员挂单记录'''
     seller_user = models.ForeignKey(auth_models.User)
-    buyer_user_id = models.IntegerField()
     order_id = models.CharField(max_length=64)
     num = models.IntegerField()
     num_unsell = models.IntegerField()
@@ -442,13 +482,13 @@ class UserOrder(models.Model):
 
     def save(self, *args, **kwargs):
         self.order_id = self.gen_id()
-        super(UserOrder, self).save(*args, **kwargs)
+        super(UserOrderSell, self).save(*args, **kwargs)
 
     def gen_id(self):
         applicant_time = timezone.now()
         active_on = applicant_time.date()
         next_day = active_on + timezone.timedelta(days=1)
-        total = UserOrder.objects \
+        total = UserOrderSell.objects \
             .filter(create_at__range=(active_on, next_day)) \
             .count()
         order_id = int(active_on.strftime("%Y%m%d") + '0000') + total + 1
@@ -456,13 +496,42 @@ class UserOrder(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'user_order'
+        db_table = 'user_order_sell'
+
+
+class UserOrderBuy(models.Model):
+    '''会员买入'''
+    buyer_user = models.ForeignKey(auth_models.User)
+    order_id = models.CharField(max_length=64)
+    seller_order_id = models.CharField(max_length=64)
+    num = models.IntegerField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+
+    def save(self, *args, **kwargs):
+        self.order_id = self.gen_id()
+        super(UserOrderBuy, self).save(*args, **kwargs)
+
+    def gen_id(self):
+        applicant_time = timezone.now()
+        active_on = applicant_time.date()
+        next_day = active_on + timezone.timedelta(days=1)
+        total = UserOrderBuy.objects \
+            .filter(create_at__range=(active_on, next_day)) \
+            .count()
+        order_id = int(active_on.strftime("%Y%m%d") + '0000') + total + 1
+        return order_id
+
+    class Meta:
+        managed = False
+        db_table = 'user_order_buy'
 
 
 class NewsCategory(models.Model):
     '''新闻资讯分类表'''
     name = models.CharField(max_length=1024)
-    status = models.SmallIntegerField(max_length=4, default=1)
+    status = models.SmallIntegerField(default=1)
     create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义状态
@@ -485,7 +554,7 @@ class News(models.Model):
     # publisher = models.ForeignKey(auth_models.User)
     title = models.CharField(max_length=1024)
     content = RedactorField()
-    status = models.SmallIntegerField(max_length=4, default=1)
+    status = models.SmallIntegerField(default=1)
     create_time = models.DateTimeField(auto_now_add=True)
 
     # 定义状态
@@ -518,11 +587,10 @@ class Projects(models.Model):
         db_table = 'project'
 
 
-class CBDCPriceLog(models.Model):
+class CBCDPriceLog(models.Model):
     '''资本兑历史价格表'''
-    buy = models.DecimalField(max_digits=14, decimal_places=2)
-    sell = models.DecimalField(max_digits=14, decimal_places=2)
-    create_time = models.DateTimeField(auto_now_add=True)
+    price = models.DecimalField(max_digits=14, decimal_places=2)
+    closing_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False

@@ -14,7 +14,8 @@
     <div class="luck_box">
         <h5>抽中CBDC：<b><span id="bonus_point">0</span></b></h5>
         <h6>约需要：<span>$<span id="bonus_money">0</span></span></h6>
-        <button class="btn_globe mauto" onclick="javascript:location.href='在线充值.html'">在线充值</button>
+        <input type="hidden" value='0' id="bonus_id">
+        <button class="btn_globe mauto" onclick="gopay()">在线充值</button>
     </div>
 </div><!--end of middle-->
 {% endblock %}
@@ -22,6 +23,14 @@
 {% block script %}
 <script src="/static/js/canvas.js"></script>
 <script type="text/javascript">
+    function gopay() {
+        
+        if ($('#bonus_money').text().trim() != '0') {
+            var url = '/member/payment/?amount='+$('#bonus_money').text().trim()+'&point='+$('#bonus_point').text().trim()+'&bonus_id='+$('#bonus_id').val();
+            location.href = url;
+        }
+    }
+
     window.alert = function(str)
     {
         var shield = document.createElement("DIV");

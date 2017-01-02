@@ -1,0 +1,45 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="min-height:828px;">
+    <div class="middle_tit_h2">存款历史记录
+        <div class="page">
+            {% if paging.has_previous %}
+                <a href="{{paging.prev_url}}">
+                    上一页
+                </a>
+            {% endif %}
+
+            {% if paging.has_next %}
+                <a href="{{paging.next_url}}">
+                    下一页
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+        <table class="referral_table mt20">
+            <thead>
+                <tr>
+                    <td>日期</td>
+                    <td>订单号</td>
+                    <td>方法</td>
+                    <td>量</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for l in loglist.data %}
+             <tr>
+                 <td>{{ l.create_at | date:'Y-m-d' }}</td>
+                 <td>{{ l.order_id }}</td>
+                 <td>{{ l.pay_type }}</td>
+                 <td>{{ l.amount }}</td>
+             </tr>
+             {% endfor %}
+            </tbody>
+        </table>
+
+</div><!--end of middle-->
+{% endblock %}

@@ -6,7 +6,7 @@ import app.backend.admin.views
 urlpatterns = [
 
     # 改成下面这种分APP的形式了.
-    url(r'^$', include('app.backend.dashboard.urls')),
+    url(r'^', include('app.backend.dashboard.urls')),
     url(r'^login/$', app.backend.admin.views.login),
     url(r'^logout/$', app.backend.admin.views.logout),
     url(r'^invite-code/', include('app.backend.invitecode.urls')),

@@ -1,0 +1,136 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-交易所{% endblock %}
+{% block body %}
+<div class="main_middle middle_box">
+   <h2 class="middle_tit_h2">交易所</h2>
+   <div class="trade mt20">
+       <div class="trade_tit clearfloat">
+           <h4>CER买/卖</h4>
+           <button onclick="location.reload();"><img src="/static/images/icon_refresh.png">刷新</button>
+       </div>
+       <div class="deal_box">
+           <div class="deal mr15 ">
+               <div class="unit_box p_deal">
+                   <p>单位价</p>
+                   <h1>{{ data.price_buy}}</h1>
+               </div>
+               <button class="btn_buy bg_lv" onclick="location.href='/member/trading-hall/buy/'">买入</button>
+           </div>
+           <div class="deal mr15 ">
+               <div class="unit_box p_deal">
+                   <p>单位价</p>
+                   <h1>{{ data.price_sell }}</h1>
+               </div>
+               <button class="btn_buy bg_red"  onclick="location.href='/member/trading-hall/sell/'">卖出</button>
+           </div>
+           <div class="deal">
+               <button class="his bg_grey mb20" onclick="location.href='/member/cbcd-price/'"><img src="/static/images/his01.png">历史价格</button>
+               <button class="his bg_purple" onclick="location.href='/member/cbcd-order/'"><img src="/static/images/his02.png">交易状态</button>
+           </div>
+       </div>
+
+       <div id="graph" class="graph"></div>
+
+       <!--资本兑交易状况表格-->
+      <div class="cap clearfloat">
+            <h1>资本兑交易状况<a href="#">查看更多></a></h1>
+            <table class="cap_table fl mr30">
+                <thead>
+                <tr>
+                    <td class="no_left_border">交易状态</td>
+                    <td>单位价</td>
+                    <td>数量</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ob in data.orderbuy %}
+                <tr>
+                    <td class="no_left_border">买入</td>
+                    <td>{{ ob.price }}</td>
+                    <td>{{ ob.num }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <table class="cap_table fl">
+              <thead>
+              <tr>
+                  <td class="no_left_border">交易状体</td>
+                  <td>单位价</td>
+                  <td>数量</td>
+              </tr>
+              </thead>
+              <tbody>
+              {% for os in data.ordersell %}
+              <tr>
+                  <td class="no_left_border">卖出</td>
+                  <td>{{ os.price }}</td>
+                  <td>{{ os.num }}</td>
+              </tr>
+              {% endfor %}
+              </tbody>
+          </table>
+      </div>
+   </div>
+</div><!--end of middle-->
+
+
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/echarts.min.js"></script>
+<script>
+    var myChart = echarts.init(document.getElementById('graph'));
+    var logdate = {% autoescape off %} {{ data.pricelog.date }} {% endautoescape %}
+    option = {
+        backgroundColor: '#fff',
+        title: {
+            text: "资本兑走势图"
+        },
+        grid: {
+            left: '0',
+            right: '10px',
+            top:'35px',
+            bottom: '0',
+            containLabel: true
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : logdate 
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value}美元'
+                }
+            }
+        ],
+        series: [
+            {
+                name:'数值',
+                type:'line',
+                itemStyle : {
+                    normal : {
+                        color:'#f5bf58',
+                        lineStyle:{
+                            color:'#000'
+                        }
+                    }
+                },
+                data: {{ data.pricelog.price }},
+                formatter: '{data}美元'
+            }
+        ]
+    };
+    myChart.setOption(option);
+</script>
+
+{% endblock %}

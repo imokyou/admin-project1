@@ -482,7 +482,7 @@ def payment(request):
         payments = q.all().order_by('-id')[(p - 1) * n:p * n]
         for p in payments:
             try:
-                create_time = utils.dt_field_to_local(p.create_time) \
+                create_time = utils.dt_field_to_local(p.create_at) \
                     .strftime('%Y-%m-%d %H:%M:%S')
             except:
                 create_time = ''
@@ -490,22 +490,12 @@ def payment(request):
                 'id': p.id,
                 'user_id': p.user.id,
                 'username': p.user.username,
-                'payout': float(p.payout),
-                'bank_name': '',
-                'bank_code': '',
-                'bank_card': p.bank_card,
-                'account': p.account,
-                'pay_type': UserPayment.PAY_TYPE[p.pay_type],
+                'payout': float(p.amount),
+                'pay_type': p.pay_type,
                 'create_time': create_time,
                 'ip': p.ip
             }
-            try:
-                bank = Bank.objects.get(id=p.bank_id)
-                d['bank_name'] = bank.name
-                d['bank_code'] = bank.code
-            except:
-                pass
-            data['user_list']['data'].append(d)
+            data['payment_list']['data'].append(d)
         return render(request, 'backend/user/payment.html', data)
     except:
         import traceback
