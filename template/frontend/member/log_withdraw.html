@@ -37,7 +37,7 @@
                  <td>{{ l.order_id }}</td>
                  <td>{{ l.pay_account }}</td>
                  <td>{{ l.amount }}</td>
-                 <td>{% if l.status == 1 %}成功{% else %}失败{% endif %}</td>
+                 <td>{% if l.status == 1 %}成功{% elif l.status == 0 %}申请中{% else %}失败{% endif %}</td>
              </tr>
              {% endfor %}
             </tbody>
