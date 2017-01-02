@@ -12,8 +12,8 @@
         <h2><img src="/static/images/icon_link.png">我的推荐链接</h2>
         <p class="mt15 mb10">获取每一个推荐链接带来sponsorees的佣金10%</p>
         <div class="link_box">
-            <input type="text" value="{{ data.invite_url }}" readonly>
-            <button>复制链接</button>
+            <input type="text" value="{{ data.invite_url }}" readonly id="biao1">
+            <button onclick="copyUrl2();">复制链接</button>
         </div>
         <p class="mt20 mb10">图片:<a href="{{ data.invite_url }}">{{ data.invite_url }}</a></p>
         <img src="/static/images/link_pic.png">
@@ -44,4 +44,15 @@
     </div>
 </div><!--end of middle-->
 
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function copyUrl2() {
+    var Url2=document.getElementById("biao1");
+    Url2.select(); // 选择对象
+    document.execCommand("Copy"); // 执行浏览器复制命令
+    alert("已复制好，可贴粘。");
+}
+</script>
 {% endblock %}

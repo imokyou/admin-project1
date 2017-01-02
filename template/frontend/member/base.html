@@ -75,12 +75,12 @@
                 <li><img src="/static/images/icon_b.png"><span>${{ statics.point }}</span></li>
             </ul>
             <ul class="left_nav">
-                <li><h5 {% if sub_index == 'home' %}class="in"{% endif %}>菜单</h5>
-                    <dl>
+                <li>
+                    <h5 {% if sub_index == 'home' %}class="in"{% endif %}>菜单</h5>
+                    <dl class="in">
                         <dd><a href="/member/rank/">比赛</a></dd>
                         <dd><a href="/member/selling/">出租介绍人</a></dd>
                         <dd><a href="/member/buying/">购买下线</a></dd>
-                        <dd><a href="你的下线">你的下线</a></dd>
                         <dd><a href="/member/promotion/">直接推荐</a></dd>
                         <dd><a href="/member/change-recommend-user/" >转介</a></dd>
                         <dd><a href="/member/setting/">设置</a></dd>
