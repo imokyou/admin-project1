@@ -5,7 +5,7 @@ from ipware.ip import get_ip
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
@@ -20,6 +20,7 @@ from config import errors
 
 
 def test(request):
+    # return HttpResponse('ok')
     return utils.NormalResp()
 
 
@@ -318,7 +319,7 @@ def buying(request):
         user_id = request.POST.get('user_id')
         # todo: 扣钱
         ssetings = SiteSetting.objects.first()
-        if services.pay_cash(request.user, int(ssetings.user_buy_price)):
+        if services.pay_cash(request.user, int(ssetings.user_buy_price)*settings.CURRENCY_RATIO):
             ucb = UserConnectionBuying(
                 user_id=user_id,
                 parent=request.user,
@@ -439,7 +440,7 @@ def dashboard(request):
     weekday2name = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天']
     data = {
         'index': 'member',
-        'sub_index': 'home',
+        'sub_index': 'balance',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
         'data': {}
@@ -803,7 +804,7 @@ def trading_hall_home(request):
 def cbcd_current(request):
     data = {
         'index': 'member',
-        'sub_index': 'hall',
+        'sub_index': 'my-cbcd',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
         'errmsg': '',
@@ -849,83 +850,24 @@ def payment(request):
 
     # 组织参数及签名
     data = {
-        'Amount': float(upayment.amount),
+        'Amount': int(upayment.amount),
         'BillNo': upayment.order_id,
         'MerNo': settings.PAYMENT_MERNO,
-        'PayType': upayment.pay_type,
-        'ReturnUrl': settings.PAYMENT_RETURNURL
+        'ReturnURL': settings.PAYMENT_RETURNURL
     }
     sign = services.get_sign(data, settings.PAYMENT_KEY)
     data['MD5info'] = sign
-    data['NotifyUrl'] = settings.PAYMENT_NOTIFYURL
+    data['PayType'] = upayment.pay_type
+    data['NotifyURL'] = settings.PAYMENT_NOTIFYURL
     data['api'] = settings.PAYMENT_API
-
-    upayment.params = json.dumps(data)
-    upayment.save()
 
     return render(request, 'frontend/member/payment.html', data)
 
 
 @csrf_exempt
 def payment_callback(request):
-    MD5info = str(request.GET.get('MD5info'))
-    Result = str(request.GET.get('Result'))
-    MerRemark = str(request.GET.get('MerRemark'))
-    Orderno = str(request.GET.get('Orderno'))
-
-    params = {
-        'Amount': request.GET.get('Amount'),
-        'BillNo': request.GET.get('BillNo'),
-        'MerNo': request.GET.get('MerNo'),
-        'Succeed': request.GET.get('Succeed')
-    }
-    sign = services.get_sign(params, settings.PAYMENT_KEY)
-    # 验证签名
-    if MD5info == sign:
-        upayment = UserPayment.objects.filter(order_id=params['BillNo']).first()
-        # 订单是否存在、订单已成功的则不作处理
-        if upayment.status != 1:
-            # 验证返回信息，如成功则status=1
-            if int(Succeed) == 88:
-                upayment.status = 1
-            else:
-                upayment.status = -1
-            upayment.update_at = timezone.now()
-            upayment.partner_order_id = Orderno
-            upayment.resp_code = Succeed
-            upayment.remark = MerRemark
-            upayment.save()
-
-            # 加点加钱
-            if upayment.status == 1:
-                try:
-                    ubalance = UserBalance.objects.get(user_id=upayment.user_id)
-                except:
-                    ubalance = UserBalance(
-                        user_id=upayment.user_id,
-                        point=0,
-                        cash=0
-                    )
-                if upayment.point:
-                    ubalance.point = ubalance.point + upayment.point
-                else:
-                    if upayment.currency == 1:
-                        ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
-                    else:
-                        ubalance.cash = int(params['Amount'])
-                ubalance.save()
-
-                if upayment.callback:
-                    requests.get(upayment.callback, verify=False)
-    else:
-        pass
-    return HttpResponseRedirect('/member/cbcd/current/')
-
-
-@csrf_exempt
-def payment_notify(request):
     MD5info = str(request.POST.get('MD5info'))
-    Result = str(request.POST.get('Result'))
+    Result = unicode(request.POST.get('Result'))
     MerRemark = str(request.POST.get('MerRemark'))
     Orderno = str(request.POST.get('Orderno'))
 
@@ -936,45 +878,105 @@ def payment_notify(request):
         'Succeed': request.POST.get('Succeed')
     }
     sign = services.get_sign(params, settings.PAYMENT_KEY)
-    # 验证签名
-    if MD5info == sign:
-        upayment = UserPayment.objects.filter(order_id=params['BillNo'])
-        # 订单是否存在、订单已成功的则不作处理
-        if upayment.status != 1:
-            # 验证返回信息，如成功则status=1
-            if int(Succeed) == 88:
-                upayment.status = 1
-            else:
-                upayment.status = -1
-            upayment.update_at = timezone.now()
-            upayment.partner_order_id = Orderno
-            upayment.resp_code = Succeed
-            upayment.remark = MerRemark
-            upayment.save()
 
-            # 加点加钱
-            if upayment.status == 1:
-                try:
-                    ubalance = UserBalance.objects.get(user_id=upayment.user_id)
-                except:
-                    ubalance = UserBalance(
-                        user_id=upayment.user_id,
-                        point=0
-                    )
-                if upayment.point:
-                    ubalance.point = ubalance.point + upayment.point
+    # 订单是否存在
+    upayment = UserPayment.objects.filter(order_id=params['BillNo']).first()
+    if upayment:
+        upayment.partner_order_id = Orderno
+        upayment.resp_code = '%s:%s' % (params['Succeed'], Result)
+        upayment.update_at = timezone.now()
+        upayment.remark = MerRemark
+        upayment.save()
+        # 验证签名
+        if MD5info == sign:        
+            # 订单已成功的则不作处理
+            if upayment.status != 1:
+                # 验证返回信息，如成功则status=1
+                if int(Succeed) == 88:
+                    upayment.status = 1
                 else:
-                    if upayment.currency == 1:
-                        ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
-                    else:
-                        ubalance.cash = int(params['Amount'])
-                ubalance.save()
+                    upayment.status = -1
+                upayment.save()
 
-                if upayment.callback:
-                    requests.get(upayment.callback, verify=False)
-            return utils.NormalResp()
-    else:
-        return utils.ErrResp()
+                # 加点加钱
+                if upayment.status == 1:
+                    try:
+                        ubalance = UserBalance.objects.get(user_id=upayment.user_id)
+                    except:
+                        ubalance = UserBalance(
+                            user_id=upayment.user_id,
+                            point=0,
+                            cash=0
+                        )
+                    if upayment.point:
+                        ubalance.point = ubalance.point + upayment.point
+                    else:
+                        if upayment.currency == 1:
+                            ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                        else:
+                            ubalance.cash = int(params['Amount'])
+                    ubalance.save()
+
+                    if upayment.callback:
+                        requests.get(upayment.callback, verify=False)
+    return HttpResponseRedirect('/member/cbcd/current/')
+
+
+@csrf_exempt
+def payment_notify(request):
+    MD5info = str(request.POST.get('MD5info'))
+    Result = unicode(request.POST.get('Result'))
+    MerRemark = str(request.POST.get('MerRemark'))
+    Orderno = str(request.POST.get('Orderno'))
+
+    params = {
+        'Amount': request.POST.get('Amount'),
+        'BillNo': request.POST.get('BillNo'),
+        'MerNo': request.POST.get('MerNo'),
+        'Succeed': request.POST.get('Succeed')
+    }
+    sign = services.get_sign(params, settings.PAYMENT_KEY)
+
+    upayment = UserPayment.objects.filter(order_id=params['BillNo'])
+    if upayment:
+        upayment.update_at = timezone.now()
+        upayment.partner_order_id = Orderno
+        upayment.resp_code = '%s:%s' % (params['Succeed'], Result)
+        upayment.remark = MerRemark
+        upayment.save()
+    
+        # 验证签名
+        if MD5info == sign:
+            # 订单是否存在、订单已成功的则不作处理
+            if upayment.status != 1:
+                # 验证返回信息，如成功则status=1
+                if int(Succeed) == 88:
+                    upayment.status = 1
+                else:
+                    upayment.status = -1
+                upayment.save()
+
+                # 加点加钱
+                if upayment.status == 1:
+                    try:
+                        ubalance = UserBalance.objects.get(user_id=upayment.user_id)
+                    except:
+                        ubalance = UserBalance(
+                            user_id=upayment.user_id,
+                            point=0
+                        )
+                    if upayment.point:
+                        ubalance.point = ubalance.point + upayment.point
+                    else:
+                        if upayment.currency == 1:
+                            ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                        else:
+                            ubalance.cash = int(params['Amount'])
+                    ubalance.save()
+
+                    if upayment.callback:
+                        requests.get(upayment.callback, verify=False)
+    return HttResponse('yes')
 
 
 

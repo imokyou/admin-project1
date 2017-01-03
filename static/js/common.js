@@ -36,6 +36,8 @@ $(function () {
         $('.vote_tip').hide()
     });
 
+    $('.left_nav h5.in').siblings('dl').show();
+
     /*交易所表*/
 
 });

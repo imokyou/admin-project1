@@ -193,7 +193,7 @@ def get_sign(data, sign_key):
         keys = data.keys() 
         keys.sort()
         for k in keys:
-            sign_list.append('%s=%s&' % (k, data[k]))
+            sign_list.append('%s=%s' % (k, data[k]))
 
         m1 = hashlib.md5()
         m1.update(sign_key)
