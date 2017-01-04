@@ -322,7 +322,7 @@ input[type="submit"],button{ cursor:pointer;} button:hover{opacity: .8;}
 .logo_re{position: absolute; width: 272px; height: 118px; bottom:10px; left:-20px;}
 .nav_bar_re{float: right; overflow: hidden;}
 .nav_bar_re li{float: left; height: 57px;}
-.nav_bar_re li a{display: block; height: 57px; line-height: 57px; font-size:14px; color:#fff; padding: 0 20px;}
+.nav_bar_re li a{display: block; height: 57px; line-height: 57px; font-size:14px; color:#fff; padding: 0 15px;}
 .nav_bar_re li a:hover,.nav_bar_re li a.om{color:#f5e701;}
 .nav_bar_re li a img{margin-right: 10px;}
 .bg_hei{background-color:#1e1e1e; }.bg0a{background-color:#0a0b0c; }
