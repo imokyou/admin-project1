@@ -626,10 +626,8 @@ def cbcd_order(request):
 
     data['data']['ordersell'] = UserOrderSell.objects \
         .filter(status=0) \
-        .filter(create_at__startswith=timezone.now().date()) \
         .all().order_by('id')[0:15]
     data['data']['orderbuy'] = UserOrderBuy.objects \
-        .filter(create_at__startswith=timezone.now().date()) \
         .all().order_by('-id')[0:15]
 
     return render(request, 'frontend/member/CBCD_order.html', data)
@@ -722,8 +720,8 @@ def cbcd_buy(request):
             num=num
         )
         buyorder.save()
-    
         return utils.NormalResp()
+
 
 @login_required(login_url='/login/')
 def trading_hall(request, ctype):
@@ -740,12 +738,9 @@ def trading_hall(request, ctype):
     result = UserOrderSell.objects.filter(status=0) \
         .aggregate(total=Sum('num_unsell'))
     try:
-        
         data['data']['total'] = int(result.get('total', 0))
     except:
         data['data']['total'] = 0
-    
-    
     data['data']['price_init'] = services.get_init_price()
     current_order = services.get_current_order()
     data['data']['price_current'] = current_order['price']
@@ -792,10 +787,8 @@ def trading_hall_home(request):
     # 交易状态
     data['data']['ordersell'] = UserOrderSell.objects \
         .filter(status=0) \
-        .filter(create_at__startswith=timezone.now().date()) \
         .all().order_by('id')[0:5]
     data['data']['orderbuy'] = UserOrderBuy.objects \
-        .filter(create_at__startswith=timezone.now().date()) \
         .all().order_by('-id')[0:5]
     return render(request, 'frontend/member/trading_hall_home.html', data)
 
