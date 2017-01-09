@@ -589,16 +589,18 @@ input[type="submit"],button{ cursor:pointer;} button:hover{opacity: .8;}
 .mr10{margin-right: 10px;}
 ::-webkit-scrollbar{width:0;}
 
+/*2017-01-07*/
+.language_box{float:right; position:relative; margin: 0 15px; line-height:57px;  width:100px; text-align: center; height: 57px; cursor: pointer;}
+.language_box h5{font-size: 14px; color:#fff; }
+.language_box h5 img{margin-left:10px; }
+.language_list{position: absolute; width: 100%; top: 55px;   left: 0; padding: 10px 0; background-color:#2d2d2d; border:1px solid #6f6f6f; z-index: 10; display: none; }
+.language_list li{display: block; color:#fff; height:28px; line-height:28px; }
+.language_list li:hover{background-color: #00a8ff;}
+.pointer{position: absolute; width:20px; height:10px; background: url("../images/pointer.png") no-repeat center; background-size: 20px 10px; top: 46px; left: 50%; margin-left: -10px; z-index: 15; display: none;}
 
 
-
-
-
-
-
-
-
-
+/*01-09新增*/
+.img_code{display: block; width: 150px; height:150px; margin: 20px auto;}
 
 
 

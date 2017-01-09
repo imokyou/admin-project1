@@ -38,6 +38,10 @@
                                 <label for="pay_type">类型: </label>
                                 {{ forms.pay_type }}
                             </div>
+                            <div class="form-group m-r-10">
+                                <label for="pay_type">状态: </label>
+                                {{ forms.status }}
+                            </div>
                             <button type="submit" class="btn btn-default waves-effect waves-light btn-md">
                                 点击查询
                             </button>
@@ -49,9 +53,12 @@
                                 <th>ID</th>
                                 <th>账号</th>
                                 <th>充值类型</th>
+                                <th>资本兑</th>
                                 <th>金额</th>
                                 <th>时间</th>
                                 <th>IP</th>
+                                <th>状态</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
 
@@ -61,9 +68,18 @@
                                 <td>{{ payment.id }}</td>
                                 <td>{{ payment.username }}</td>
                                 <td>{{ payment.pay_type }}</td>
+                                <td>{{ payment.point }}</td>
                                 <td>{{ payment.payout }}</td>
                                 <td>{{ payment.create_time }}</td>
                                 <td>{{ payment.ip }}</td>
+                                <td>{{ payment.status_name }}</td>
+                                <td>
+                                    {% if payment.status != 1 %}
+                                    <a href="javascript:paySuccess('{{ payment.order_id }}');"  class="btn btn-sm btn-danger waves-effect waves-light btn-sm">
+                                        确认充值成功
+                                    </a>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -190,4 +206,27 @@
     <!-- /Right-bar -->
 
 </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function paySuccess(order_id) {
+    var flag = confirm('确认充值成功？')
+    if (flag) {
+        $.ajax({
+            url: '/backend/user/payment-success/',
+            type: 'POST',
+            dataType: 'json',
+            data: { order_id: order_id, status: 1},
+            async: false,
+            success: function(resp) {
+                if (resp.c != 0) {
+                    alert(resp.m);
+                }
+                location.reload();
+            }
+        });
+    }
+}
+</script>
 {% endblock %}

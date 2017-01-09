@@ -1,0 +1,94 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-充值中心{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0;">
+<h2 class="middle_tit_h2 plr20">在线充值</h2>
+    <div>
+        <ul class="setting_ul mt30" style="padding-left:80px;">
+            <li>
+                <span>方法</span>
+                <select class="w350" id='paytype'>
+                    <option value="CSPAY">银联</option>
+                    <option value="BITCOIN">比特币</option>
+                    <option value="PM">完美货币</option>
+                </select>
+            </li>
+            <li>
+                <span>量</span>
+                <input class="w350" type="text" value={{ Amount }} readonly="readonly">
+            </li>
+        </ul>
+        <p class="recharge_tip">需要充值：&yen;<span>{{ Amount }}</span>&nbsp;&nbsp;才能兑换<span>{{ point }}</span>资本兑</p>
+        <!--新增二维码-->
+        <div style="text-align:center;display:none" id="bit-coin-code">
+            <img class="img_code" src="/static/images/qr_code.jpg">
+            <p class="recharge_tip">注：如已充值到比特币钱包，请点击已完成充值按钮</p>
+            <button class="btn_globe mauto mt30" id="btn_paydone">已完成充值</button>
+        </div>
+        
+        <button class="btn_globe mauto mt30" id="btn_recharge">发送</button>
+        
+        <form action="{{ api }}" method="post" id="payform">
+            <input type="hidden" name="MerNo" value="{{ MerNo }}">
+            <input type="hidden" name="Amount" value="{{ Amount }}">
+            <input type="hidden" name="BillNo" value="{{ BillNo }}" id="order_id">
+            <input type="hidden" name="ReturnURL" value="{{ ReturnURL }}">
+            <input type="hidden" name="NotifyURL" value="{{ NotifyURL }}">
+            <input type="hidden" name="MD5info" value="{{ MD5info }}">
+            <input type="hidden" name="PayType" value="{{ PayType }}">
+            <!--
+            <input type="hidden" name="PaymentType" value="">
+            <input type="hidden" name="MerRemark" value="">
+            <input type="hidden" name="products" value="">
+            -->
+
+            <input type="hidden" name="b1" value="95epay(Credit Card)">
+        </form>
+    </div>
+</div><!--end of middle-->
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function updatePayment() {
+    $.ajax({
+        url: '/member/payment-update/',
+        type: 'POST',
+        dataType: 'json',
+        data: {pay_type: $('#paytype').val(), order_id: $('#order_id').val()},
+        async: false,
+        success: function(resp) {
+        }
+    });
+    
+}
+
+$('#paytype').change(function() {
+    var payType = $(this).val()
+    $('#bit-coin-code').hide();
+    $('#btn_recharge').show();
+    if (payType == 'BITCOIN' ) {
+        $('#bit-coin-code').show();
+        $('#btn_recharge').hide();
+    }
+})
+
+$('#btn_recharge').click(function() {
+    var payType = $('#paytype').val();
+    updatePayment();
+    if (payType == 'CSPAY') {
+        $('#payform').submit();
+    } else if (payType == 'PM') {
+        location.href = 'https://perfectmoney.is/login.html';
+    }
+})
+
+$('#btn_paydone').click(function() {
+    updatePayment();
+    location.href='/member/';
+})
+</script>
+{% endblock %}

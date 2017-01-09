@@ -1,4 +1,5 @@
 # coding: utf-8
+import requests
 from datetime import datetime
 from ipware.ip import get_ip
 from django.shortcuts import render
@@ -452,11 +453,14 @@ def payment(request):
         p = int(request.GET.get('p', 1))
         n = int(request.GET.get('n', 25))
         username = request.GET.get('username', '')
-        pay_type = request.GET.get('pay_type', -1)
+        pay_type = request.GET.get('pay_type', 'ALL')
+        status = int(request.GET.get('status', -2))
 
         q = UserPayment.objects
-        if pay_type != -1:
+        if pay_type != 'ALL':
             q = q.filter(pay_type=pay_type)
+        if status != -2:
+            q = q.filter(status=status)
         if username:
             try:
                 u = Auth_user.objects.get(username=username)
@@ -465,7 +469,8 @@ def payment(request):
                 pass
 
         form_initial = {'pay_type': pay_type,
-                        'username': username}
+                        'username': username,
+                        'status': status}
         form = PaymentSearchForm(initial=form_initial)
 
         data = {
@@ -489,11 +494,15 @@ def payment(request):
             d = {
                 'id': p.id,
                 'user_id': p.user.id,
+                'order_id': p.order_id,
                 'username': p.user.username,
                 'payout': float(p.amount),
+                'point': int(p.point),
                 'pay_type': p.pay_type,
                 'create_time': create_time,
-                'ip': p.ip
+                'ip': p.ip,
+                'status': int(p.status),
+                'status_name': UserPayment.STATUS[p.status]
             }
             data['payment_list']['data'].append(d)
         return render(request, 'backend/user/payment.html', data)
@@ -501,6 +510,48 @@ def payment(request):
         import traceback
         traceback.print_exc()
         return utils.ErrResp(errors.FuncFailed)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def payment_success(request):
+    try:
+        order_id = request.POST.get('order_id', '')
+        if not order_id:
+            return utils.ErrResp(errors.ArgMiss)
+        try:
+            upayment = UserPayment.objects.get(order_id=order_id)
+        except:
+            return utils.ErrResp(errors.DataNotExists)
+        if upayment.status != 1:
+            upayment.status = request.POST.get('status', upayment.status)
+            upayment.save()
+            try:
+                ubalance = UserBalance.objects.get(user_id=upayment.user_id)
+            except:
+                ubalance = UserBalance(
+                    user_id=upayment.user_id,
+                    point=0,
+                    cash=0
+                )
+            if upayment.point:
+                ubalance.point = ubalance.point + upayment.point
+            else:
+                if upayment.currency == 1:
+                    ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                else:
+                    ubalance.cash = int(params['Amount'])
+            ubalance.save()
+
+            if upayment.callback:
+                requests.get(upayment.callback, verify=False)
+
+    except:
+        import traceback
+        traceback.print_exc()
+        return utils.ErrResp(errors.FuncFailed)
+    return utils.NormalResp()
 
 
 @csrf_exempt

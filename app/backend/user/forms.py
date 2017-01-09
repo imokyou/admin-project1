@@ -170,9 +170,16 @@ class RevenueSearchForm(forms.Form):
 
 class PaymentSearchForm(forms.Form):
     CHOICES = [
-        (-1, '所有'),
-        (1, '银行卡/信用卡'),
-        (2, 'Paypal')
+        ('ALL', '所有'),
+        ('CSPAY', '银联充值'),
+        ('BITCOIN', '比特币'),
+        ('PM', '完美货币'),
+    ]
+    STATUS = [
+        (-2, '所有'),
+        (-1, '失败'),
+        (0, '付款中'),
+        (1, '充值成功'),
     ]
     username = forms.CharField(label="",
                                required=False,
@@ -183,6 +190,11 @@ class PaymentSearchForm(forms.Form):
                                  required=False,
                                  widget=forms.Select(
                                      attrs={'class': 'form-control'}))
+    status = forms.ChoiceField(label="",
+                               choices=STATUS,
+                               required=False,
+                               widget=forms.Select(
+                                   attrs={'class': 'form-control'}))
 
 
 class RelationSearchForm(forms.Form):

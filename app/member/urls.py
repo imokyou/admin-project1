@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^trading-hall/(\w+)/$', views.trading_hall),
     url(r'^cbcd/current/$', views.cbcd_current),
     url(r'^payment/$', views.payment),
+    url(r'^payment-center/$', views.payment_center),
+    url(r'^payment-update/$', views.payment_update),
     url(r'^payment-callback/$', views.payment_callback),
     url(r'^payment-notify/$', views.payment_notify),
 ]

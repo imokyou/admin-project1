@@ -26,7 +26,7 @@
     function gopay() {
         
         if ($('#bonus_money').text().trim() != '0') {
-            var url = '/member/payment/?amount='+$('#bonus_money').text().trim()+'&point='+$('#bonus_point').text().trim()+'&bonus_id='+$('#bonus_id').val();
+            var url = '/member/payment-center/?amount='+$('#bonus_money').text().trim()+'&point='+$('#bonus_point').text().trim()+'&bonus_id='+$('#bonus_id').val();
             location.href = url;
         }
     }

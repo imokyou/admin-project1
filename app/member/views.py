@@ -540,13 +540,13 @@ def bonus(request):
             return utils.ErrResp(errors.BonusSwitchOff)
         else:
             # 写日志
+            firstday, lastday = utils.getMonthFirstDayAndLastDay()
             ubonus = UserBonus.objects \
-                .filter(user=request.user).first()
+                .filter(create_time__gte=firstday) \
+                .filter(create_time__lte=lastday) \
+                .filter(user=request.user)  
             if ubonus:
-                if ubonus.status == 1:
-                    return utils.ErrResp(errors.BonusExists)
-                point = ubonus.point
-                level = b2c['bonus_%s' % point]
+                return utils.ErrResp(errors.BonusExists)
             else:
                 bonuss = []
                 for b in b2c:
@@ -855,6 +855,64 @@ def payment(request):
     data['api'] = settings.PAYMENT_API
 
     return render(request, 'frontend/member/payment.html', data)
+
+
+@login_required(login_url='/login/')
+def payment_center(request):
+    if not request.GET.get('point', 0):
+        return utils.ErrResp(errors.ArgMiss)
+    if not request.GET.get('amount', 0):
+        return utils.ErrResp(errors.MonenyNotZero)
+    bonus_id = request.GET.get('bonus_id', 0)
+    ubonus = UserBonus.objects.filter(user=request.user).filter(id=bonus_id).first()
+    if not ubonus:
+        return utils.ErrResp(errors.ArgMiss)
+    if ubonus.status == 1:
+        return utils.ErrResp(errors.ArgMiss)
+
+    # 生成订单写入数据库
+    upayment = UserPayment(
+        user=request.user,
+        amount=float(request.GET.get('amount', 0)) * settings.CURRENCY_RATIO,
+        point=int(request.GET.get('point', 0)),
+        currency=1,
+        pay_type='CSPAY',
+        ip=get_ip(request),
+        request_url=settings.PAYMENT_API,
+        callback=settings.SITE_URL+'member/bonus/update/?id='+bonus_id
+    )
+    upayment.save()
+
+    # 组织参数及签名
+    data = {
+        'Amount': int(upayment.amount),
+        'BillNo': upayment.order_id,
+        'MerNo': settings.PAYMENT_MERNO,
+        'ReturnURL': settings.PAYMENT_RETURNURL
+    }
+    sign = services.get_sign(data, settings.PAYMENT_KEY)
+    data['MD5info'] = sign
+    data['PayType'] = upayment.pay_type
+    data['NotifyURL'] = settings.PAYMENT_NOTIFYURL
+    data['api'] = settings.PAYMENT_API
+    data['point'] = upayment.point
+    return render(request, 'frontend/member/payment_center.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/login/')
+def payment_update(request):
+    order_id = request.POST.get('order_id', '')
+    if not order_id:
+        return utils.ErrResp(errors.ArgMiss)
+    try:
+        upayment = UserPayment.objects.get(order_id=order_id)
+    except:
+        return utils.ErrResp(errors.DataNotExists)
+    upayment.pay_type = request.POST.get('pay_type', upayment.pay_type)
+    upayment.save()
+
+    return utils.NormalResp()
 
 
 @csrf_exempt

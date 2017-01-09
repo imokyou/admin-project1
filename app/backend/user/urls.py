@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^oplog/$', views.oplog),
     url(r'^revenue/$', views.revenue),
     url(r'^payment/$', views.payment),
+    url(r'^payment-success/$', views.payment_success),
     url(r'^relation/$', views.relation),
     url(r'^mailbox/$', views.mailbox),
     url(r'^mailinfo/(\d)/$', views.mailinfo),
