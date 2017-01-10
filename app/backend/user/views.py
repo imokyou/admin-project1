@@ -890,7 +890,7 @@ def visa_apply(request):
         p = int(request.GET.get('p', 1))
         n = int(request.GET.get('n', 25))
         username = request.GET.get('username', '')
-        status = request.GET.get('status', -1)
+        status = int(request.GET.get('status', -1))
 
         q = UserVisaApply.objects
         if username:
