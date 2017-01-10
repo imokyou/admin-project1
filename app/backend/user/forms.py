@@ -227,3 +227,20 @@ class WithDrawSearchForm(forms.Form):
                                required=False,
                                widget=forms.TextInput(
                                    attrs={'class': 'form-control'}))
+
+
+class VisaSearchForm(forms.Form):
+    STATUS = [
+        (-1, '所有'),
+        (0, '申请中'),
+        (1, '申请成功'),
+    ]
+    username = forms.CharField(label="",
+                               required=False,
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control'}))
+    status = forms.ChoiceField(label="",
+                               choices=STATUS,
+                               required=False,
+                               widget=forms.Select(
+                                   attrs={'class': 'form-control'}))

@@ -22,4 +22,7 @@ urlpatterns = [
     url(r'^withdraw/$', views.withdraw),
     url(r'^withdraw/pass/(\d)/$', views.withdraw_pass),
     url(r'^withdraw/reject/(\d)/$', views.withdraw_reject),
+    url(r'^visa-apply/$', views.visa_apply),
+     url(r'^visa-apply/detail/(\d)/$', views.visa_detail),
+      url(r'^visa-apply/update/(\d)/$', views.visa_update),
 ]

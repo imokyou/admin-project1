@@ -1,0 +1,231 @@
+{% extends "backend/base.html" %}
+
+{% block title %}万事达卡申请记录{% endblock %}
+{% block body %}
+<div class="wrapper">
+    <div class="container">
+
+        <!-- Page-Title -->
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="page-title">万事达卡申请记录</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <form class="form-horizontal" role="form" action="">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">申请人: </label>
+                        <div class="col-md-10">
+                            {{ info.user.username }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">名: </label>
+                        <div class="col-md-10">
+                            {{ info.first_name }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">姓: </label>
+                        <div class="col-md-10">
+                            {{ info.last_name }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">年龄: </label>
+                        <div class="col-md-10">
+                            {{ info.age }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">电子邮件: </label>
+                        <div class="col-md-10">
+                            {{ info.email }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">手机号码: </label>
+                        <div class="col-md-10">
+                            {{ info.phone }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">身份证号码: </label>
+                        <div class="col-md-10">
+                            {{ info.id_card }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">地址: </label>
+                        <div class="col-md-10">
+                            {{ info.address }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">市: </label>
+                        <div class="col-md-10">
+                            {{ info.city }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">州/省: </label>
+                        <div class="col-md-10">
+                            {{ info.provincy }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">国家: </label>
+                        <div class="col-md-10">
+                            {{ info.country }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">邮政编码: </label>
+                        <div class="col-md-10">
+                            {{ info.zip_code }}
+                        </div>
+                    </div>
+                    {% if info.status != 1 %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <a href="javascript:applySuccess('{{info.id}}')" class="btn btn-custom btn-bordred btn-block waves-effect waves-light" >申请成功</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+            </div><!-- end col -->
+        </div>
+        <!-- end row -->
+        <!-- Footer -->
+        <footer class="footer text-right">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-6">
+                        2016 © Adminto.
+                    </div>
+                    <div class="col-xs-6">
+                        <ul class="pull-right list-inline m-b-0">
+                            <li>
+                                <a href="#">About</a>
+                            </li>
+                            <li>
+                                <a href="#">Help</a>
+                            </li>
+                            <li>
+                                <a href="#">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- End Footer -->
+
+    </div>
+    <!-- end container -->
+
+
+
+    <!-- Right Sidebar -->
+    <div class="side-bar right-bar">
+        <a href="javascript:void(0);" class="right-bar-toggle">
+            <i class="zmdi zmdi-close-circle-o"></i>
+        </a>
+        <h4 class="">Notifications</h4>
+        <div class="notification-list nicescroll">
+            <ul class="list-group list-no-border user-list">
+                <li class="list-group-item">
+                    <a href="#" class="user-list-item">
+                        <div class="avatar">
+                            <img src="/static/images/users/avatar-2.jpg" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Michael Zenaty</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">2 hours ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" class="user-list-item">
+                        <div class="icon bg-info">
+                            <i class="zmdi zmdi-account"></i>
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">New Signup</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">5 hours ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="#" class="user-list-item">
+                        <div class="icon bg-pink">
+                            <i class="zmdi zmdi-comment"></i>
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">New Message received</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">1 day ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item active">
+                    <a href="#" class="user-list-item">
+                        <div class="avatar">
+                            <img src="/static/images/users/avatar-3.jpg" alt="">
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">James Anderson</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">2 days ago</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="list-group-item active">
+                    <a href="#" class="user-list-item">
+                        <div class="icon bg-warning">
+                            <i class="zmdi zmdi-settings"></i>
+                        </div>
+                        <div class="user-desc">
+                            <span class="name">Settings</span>
+                            <span class="desc">There are new settings available</span>
+                            <span class="time">1 day ago</span>
+                        </div>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <!-- /Right-bar -->
+
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script type="text/javascript">
+function applySuccess(l_id) {
+    var flag = confirm('确认成功？')
+    if (flag) {
+        $.ajax({
+            url: '/backend/user/visa-apply/update/'+l_id+'/',
+            type: 'POST',
+            dataType: 'json',
+            data: { status: 1},
+            async: false,
+            success: function(resp) {
+                if (resp.c != 0) {
+                    alert(resp.m);
+                }
+                location.href = '/backend/user/visa-apply/';
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

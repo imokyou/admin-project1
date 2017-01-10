@@ -1,4 +1,5 @@
 # coding: utf-8
+import traceback
 import requests
 from datetime import datetime
 from ipware.ip import get_ip
@@ -10,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User as Auth_user
 from django.conf import settings
-from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank, UserMessage, UserFeedback, UserWithDraw
+from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank, UserMessage, UserFeedback, UserWithDraw, UserVisaApply
 from lib import utils
 from lib.pagination import Pagination
 from lib.permissions import staff_required
@@ -879,3 +880,71 @@ def withdraw_reject(request, f_id):
         next_url = '/backend/user/withdraw/'
     finally:
         return HttpResponseRedirect(next_url)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def visa_apply(request):
+    try:
+        p = int(request.GET.get('p', 1))
+        n = int(request.GET.get('n', 25))
+        username = request.GET.get('username', '')
+        status = request.GET.get('status', -1)
+
+        q = UserVisaApply.objects
+        if username:
+            try:
+                u = Auth_user.objects.get(username=username)
+                q = q.filter(user_id=u.id)
+            except:
+                pass
+        if status != -1:
+            q = q.filter(status=status)
+
+        form_initial = {'username': username, 'status': status}
+        form = VisaSearchForm(initial=form_initial)
+
+        data = {
+            'index': 'user',
+            'paging': Pagination(request, q.count()),
+            'forms': form,
+            'list': {
+                'p': p,
+                'n': n,
+                'data': q.all().order_by('-id')[(p - 1) * n:p * n],
+            }
+        }
+        return render(request, 'backend/user/visa_apply.html', data)
+    except:
+        traceback.print_exc()
+        return utils.ErrResp(errors.FuncFailed)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def visa_detail(request, apply_id):
+    try:
+        data = {
+            'info': {}
+        }
+        data['info'] = UserVisaApply.objects.get(id=int(apply_id))
+    except:
+        pass
+    finally:
+        return render(request, 'backend/user/visa_detail.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def visa_update(request, f_id):
+    try:
+        vapply = UserVisaApply.objects.get(id=f_id)
+        vapply.status = request.POST.get('status', vapply.status)
+        vapply.save()
+    except:
+        traceback.print_exc()
+        return utils.ErrResp(errors.FuncFailed)
+    return utils.NormalResp()

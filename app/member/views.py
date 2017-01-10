@@ -1,4 +1,5 @@
 # coding=utf8
+import traceback
 import requests
 import json
 from ipware.ip import get_ip
@@ -11,7 +12,7 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
 from django.db.models import Count, Sum
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBCDPriceLog, UserOrderSell, CBCDInit, UserOrderBuy, UserPayment
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBCDPriceLog, UserOrderSell, CBCDInit, UserOrderBuy, UserPayment, UserVisaApply
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
@@ -1030,5 +1031,37 @@ def payment_notify(request):
     return HttResponse('yes')
 
 
-
-
+@csrf_exempt
+@login_required(login_url='/login/')
+def visa_apply(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'visa',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'data': {},
+        'errmsg': ''
+    }
+    if request.method == 'POST':
+        try:
+            uapply = UserVisaApply(
+                user=request.user,
+                first_name=request.POST.get('first_name', ''),
+                last_name= request.POST.get('last_name', ''),
+                age=request.POST.get('age', 0),
+                email=request.POST.get('email', ''),
+                phone=request.POST.get('phone', ''),
+                id_card=request.POST.get('id_card', ''),
+                address=request.POST.get('address', ''),
+                city=request.POST.get('city', ''),
+                provincy=request.POST.get('provincy', ''),
+                country=request.POST.get('country', ''),
+                zip_code=request.POST.get('zip_code', '')
+            )
+            uapply.save()
+            return utils.NormalResp()
+        except:
+            traceback.print_exc()
+            return utils.ErrResp(errors.FuncFailed)
+    else:
+        return render(request, 'frontend/member/visa_apply.html', data)

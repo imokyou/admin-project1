@@ -36,4 +36,5 @@ urlpatterns = [
     url(r'^payment-update/$', views.payment_update),
     url(r'^payment-callback/$', views.payment_callback),
     url(r'^payment-notify/$', views.payment_notify),
+    url(r'^visa-apply/$', views.visa_apply),
 ]

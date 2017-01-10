@@ -608,3 +608,25 @@ class CBCDInit(models.Model):
     class Meta:
         managed = False
         db_table = 'CBCD_init'
+
+
+class UserVisaApply(models.Model):
+    user = models.ForeignKey(auth_models.User)
+    first_name = models.CharField(max_length=64, default='')
+    last_name = models.CharField(max_length=64, default='')
+    age = models.IntegerField()
+    email = models.CharField(max_length=64, default='')
+    phone = models.CharField(max_length=64, default='')
+    id_card = models.CharField(max_length=64, default='')
+    address = models.CharField(max_length=1024)
+    city = models.CharField(max_length=128)
+    provincy = models.CharField(max_length=128)
+    country = models.CharField(max_length=128)
+    zip_code = models.CharField(max_length=64)
+    status = models.SmallIntegerField(default=0)
+    create_at = models.DateTimeField(auto_now_add=True) 
+
+    class Meta:
+        managed = False
+        db_table = 'user_visa_apply'
+
