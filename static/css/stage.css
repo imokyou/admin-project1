@@ -599,8 +599,8 @@ input[type="submit"],button{ cursor:pointer;} button:hover{opacity: .8;}
 .pointer{position: absolute; width:20px; height:10px; background: url("../images/pointer.png") no-repeat center; background-size: 20px 10px; top: 46px; left: 50%; margin-left: -10px; z-index: 15; display: none;}
 
 
-/*01-09新增*/
-.img_code{display: block; width: 150px; height:150px; margin: 20px auto;}
+
+
 
 
 

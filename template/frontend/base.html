@@ -27,10 +27,15 @@
     <div class="top_pic"></div>
     <div class="header_re clearfloat">
         <a href="#" class="logo_re"><img src="/static/pic/logo_re.png"> </a>
-        <ul class="flag_ul mr15 m15">
-            <li><img src="/static/images/flag_usa.png"></li>
-            <li class="ml15"><img src="/static/images/flag_china.png"></li>
-        </ul>
+        <div class="language_box">
+            <h5 id="language"><span>中文</span><img src="/static/images/sjx.png"></h5>
+            <span class="pointer"></span>
+            <ul class="language_list">
+                <li>中文</li>
+                <li>English</li>
+                <li>韩文</li>
+            </ul>
+        </div>
         <ul class="nav_bar_re">
             <li>
                 <a href="/" {% if index == 'home' %}class="om"{% endif %}>
@@ -148,7 +153,7 @@
                     </a>
                 </li>
             </ul>
-            <p>您的120x60的旗帜在这里低至5分钱每一天！</p>
+            
         </div>
         <!--在线留言-->
         <div class="message mt20 bg0a">
@@ -173,11 +178,12 @@
         <a href="/privacy/">隐私政策<img src="/static/pic/icon_pdf.png"></a>
         <a href="/contract/">条款和条件<img src="/static/pic/icon_pdf.png"></a>
         <a href="/about-us/">联系我们</a>
-        <a href="/copyright/">版权所有<img src="/static/pic/icon_pdf.png"></a>
     </div>
     <p>Copyright © 2012-2016 capitalrev.com .All rights reserved.<br>
-        © Global Action Cash 2011 - 2016 </p>
+        © Global Action Cash 2011 - 2017 </p>
 </div>
+<script src="/static/js/jquery-2.1.3.min.js"></script>
+<script src="/static/js/common.js"></script>
 {% block script %} {% endblock %}
 </body>
 </html>
