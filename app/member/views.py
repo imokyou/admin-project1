@@ -3,6 +3,8 @@ import traceback
 import requests
 import json
 from ipware.ip import get_ip
+from captcha.models import CaptchaStore  
+from captcha.helpers import captcha_image_url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -1034,16 +1036,35 @@ def payment_notify(request):
 @csrf_exempt
 @login_required(login_url='/login/')
 def visa_apply(request):
+    hashkey = CaptchaStore.generate_key()  
+    captcha_url = captcha_image_url(hashkey)
+
     data = {
         'index': 'member',
         'sub_index': 'visa',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
+        'hashkey': hashkey,
+        'captcha_url': captcha_url,
         'data': {},
         'errmsg': ''
     }
+    
     if request.method == 'POST':
         try:
+            exists = UserVisaApply.objects.filter(user=request.user).exists()
+            if exists:
+                return utils.ErrResp(errors.VisaApplyExists)
+
+            captcha_code = request.POST.get('captcha_code', '')
+            captcha_code_key = request.POST.get('captcha_code_key', '')
+            cs = CaptchaStore.objects.filter(hashkey=captcha_code_key)
+            true_key = cs[0].response
+            print true_key, captcha_code.lower()
+            if captcha_code.lower() != true_key:
+                return utils.ErrResp(errors.CaptchCodeInvalid)
+            CaptchaStore.objects.filter(hashkey=captcha_code_key).delete()
+                
             uapply = UserVisaApply(
                 user=request.user,
                 first_name=request.POST.get('first_name', ''),
@@ -1065,3 +1086,11 @@ def visa_apply(request):
             return utils.ErrResp(errors.FuncFailed)
     else:
         return render(request, 'frontend/member/visa_apply.html', data)
+
+@csrf_exempt
+def refresh_captcha(request):  
+    to_json_response = dict()  
+    to_json_response['status'] = 1  
+    to_json_response['new_cptch_key'] = CaptchaStore.generate_key()  
+    to_json_response['new_cptch_image'] = captcha_image_url(to_json_response['new_cptch_key'])  
+    return HttpResponse(json.dumps(to_json_response), content_type='application/json') 

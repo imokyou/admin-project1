@@ -1,6 +1,6 @@
 {% extends "frontend/member/base.html" %}
 
-{% block title %}资本国度-会员中心-设置{% endblock %}
+{% block title %}资本国度-万事达卡申请{% endblock %}
 {% block body %}
 <!--middle-->
 <div class="main_middle middle_box">
@@ -45,29 +45,31 @@
         </li>
         <li>
             <span>市</span>
-            <input type="text" id="city" value="" name="city">
+            <select id="city" name="city" class="dfinput" style="width:114px;"></select>
         </li>
         <li>
             <span>州/省</span>
-            <input type="text" id="provincy" value="" name="provincy">
+            <select id="provincy" name="provincy" class="dfinput" style="width:114px;"></select>
         </li>
         <li>
             <span>国家</span>
-            <select id="country" name="country">
-                <option value="China">中国</option>
-                <option value="JP">日本</option>
-                <option value="USA">美国</option>
+            <select id="country" name="country" class="dfinput" style="width:114px;">
             </select>
         </li>
         <li>
             <span>邮政编码</span>
             <input type="text" id="zip_code" value="" name="zip_code">
         </li>
-        <!--<li>-->
-            <!--<span>验证码</span>-->
-            <!--<input class="w120" type="text">-->
-            <!--<div class="verfiry_code"><img src="images/verfiry.png"></div>-->
-        <!--</li>-->
+        <li>
+            <span>验证码</span>
+            <input id="id_reg_captcha_0" name="captcha_0" type="hidden" value="{{ hashkey }}">  
+            <input class="w120" type="text" id="id_reg_captcha_1" name="id_reg_captcha_1">
+            <div class="verfiry_code">
+                <a href="#" class="next-captcha">
+                    <img src="{{ captcha_url }}" class="captcha" alt="captcha">
+                </a>
+            </div>
+        </li>
         <li class="mt30">
             <span></span>
             <button class="btn_keep" onclick="apply()"></button>
@@ -78,7 +80,30 @@
 {% endblock %}
 
 {% block script %}
+<script type="text/javascript" src="/static/js/pc.js"></script>    
+<script type="text/javascript" src="/static/js/pcEn.js"></script>
 <script type="text/javascript">
+$(document).ready(function(){
+    new PCAS("country","provincy","city");
+    // new PCASEN("c_countryEn","c_provinceEn","c_cityEn");
+
+    // 刷新验证码  
+    $(".next-captcha").click(function(event){  
+        $.getJSON("/member/refresh-captcha/", function(json) {  
+            // This should update your captcha image src and captcha hidden input  
+            // debugger;  
+            var status = json['status'];  
+            var new_cptch_key = json['new_cptch_key'];  
+            var new_cptch_image = json['new_cptch_image'];  
+            id_captcha_0 = $("#id_reg_captcha_0");  
+            img = $(".captcha");  
+            id_captcha_0.attr("value", new_cptch_key);  
+            img.attr("src", new_cptch_image);  
+        });
+        event.preventDefault();
+    });
+});
+
 function apply() {
     var first_name = $('#first_name').val();
     var last_name = $('#last_name').val();
@@ -91,6 +116,7 @@ function apply() {
     var provincy = $('#provincy').val();
     var country = $('#country').val();
     var zip_code = $('#zip_code').val();
+    var captcha_code = $('#id_reg_captcha_1').val();
 
     if ($.trim(first_name) == '') {
         alert('请输入名');
@@ -124,16 +150,16 @@ function apply() {
         alert('请输入市');
         return false;
     }
-    if ($.trim(provincy) == '') {
-        alert('请输入州/省');
-        return false;
-    }
     if ($.trim(country) == '') {
         alert('请输入国家');
         return false;
     }
     if ($.trim(zip_code) == '') {
         alert('请输入邮政编码');
+        return false;
+    }
+    if ($.trim(captcha_code) == '') {
+        alert('请输入验证码');
         return false;
     }
     var params = {
@@ -147,7 +173,9 @@ function apply() {
         city: city,
         provincy: provincy,
         country: country,
-        zip_code: zip_code
+        zip_code: zip_code,
+        captcha_code: captcha_code,
+        captcha_code_key: $('#id_reg_captcha_0').val()
     }
     $.ajax({
         url: '/member/visa-apply/',

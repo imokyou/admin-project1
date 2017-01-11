@@ -2,6 +2,7 @@
 from django import forms
 from django.forms import TextInput, Textarea
 from django.contrib.auth.models import User as Auth_user
+from captcha.fields import CaptchaField  
 
 
 class ChatForm(forms.Form):
@@ -108,3 +109,4 @@ class WithDrawForm(forms.Form):
                                widget=forms.PasswordInput(
                                    attrs={"placeholder": "你的登陆密码"}),
                                error_messages={'required': '密码不能为空'})
+

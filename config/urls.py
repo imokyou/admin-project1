@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^data/', include('app.data.urls')),
     url(r'^backend/', include('app.backend.urls')),
     url(r'^redactor/', include('app.redactor.urls')),
+    url(r'^captcha/', include('captcha.urls')),
 ]
