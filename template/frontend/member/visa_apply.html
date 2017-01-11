@@ -17,9 +17,9 @@
         <li>
             <span>年龄</span>
             <select id="age" name="age">
-                <option value="18">18</option>
-                <option value="19">19</option>
-                <option value="20">20</option>
+            {% for age in ages %}
+                <option value="{{ age }}">{{ age }}</option>
+            {% endfor %}
             </select>
         </li>
         <li>
@@ -53,8 +53,7 @@
         </li>
         <li>
             <span>国家</span>
-            <select id="country" name="country" class="dfinput" style="width:114px;">
-            </select>
+            <select id="country" name="country" class="dfinput" style="width:114px;"></select>
         </li>
         <li>
             <span>邮政编码</span>

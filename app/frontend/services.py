@@ -27,12 +27,12 @@ def _get_reg_params(request):
     return params
 
 
-def reg(form, request):
+def reg(request):
     '''会员注册
     @param1:  form
     @return: boolean True/False
     '''
-    data = form.cleaned_data
+    data = request.POST
     u = Auth_user.objects.create_user(data['username'],
                                       data['email'],
                                       data['password'])
@@ -42,7 +42,7 @@ def reg(form, request):
 
     unifo = UserInfo(
         user=u,
-        phone_number=data['phone_number'],
+        phone_number=data['phone'],
         address1=data['address1'],
         address2=data['address2'],
         city=data['city'],

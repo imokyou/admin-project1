@@ -1046,6 +1046,7 @@ def visa_apply(request):
         'news': News.objects.all().order_by('-id')[0:10],
         'hashkey': hashkey,
         'captcha_url': captcha_url,
+        'ages': range(18, 61),
         'data': {},
         'errmsg': ''
     }
