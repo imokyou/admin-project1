@@ -118,9 +118,10 @@ def getMonthFirstDayAndLastDay(year=None, month=None):
 
 
 def verify_captcha(captcha_code, captcha_code_key):
-    cs = CaptchaStore.objects.filter(hashkey=captcha_code_key)
-    true_key = cs[0].response
-    if cs.expiration < timezone.now().date:
+    cs = CaptchaStore.objects.filter(hashkey=captcha_code_key).first()
+    true_key = cs.response
+    current_time = timezone.now()
+    if cs.expiration < current_time:
         return False
     if captcha_code.lower() != true_key:
         return False

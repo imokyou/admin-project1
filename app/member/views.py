@@ -157,8 +157,8 @@ def chat(request):
 @login_required(login_url='/login/')
 def shop(request):
     data = {
-        'index': 'member',
-        'sub_index': 'log',
+        'index': 'member_shop',
+        'sub_index': 'home',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10]
     }
@@ -402,6 +402,7 @@ def change_recommend_user(request):
     return render(request, 'frontend/member/change_recommend_user.html', data)
 
 
+@csrf_exempt
 @login_required(login_url='/login/')
 def setting(request):
     data = {
@@ -411,11 +412,14 @@ def setting(request):
         'news': News.objects.all().order_by('-id')[0:10],
         'changePwdForm': ChangePwdForm(),
         'changeInfoForm': ChangeUserInfoForm(),
-        'data': {
-            'userinfo': {}
-        },
+        'userinfo': {},
         'errmsg': ''
     }
+    uinfo = UserInfo.objects.get(user=request.user)
+    data['userinfo'] = {
+        'phone': uinfo.phone_number
+    }
+
     if request.method == 'POST':
         if request.POST.get('ctype') == 'changepwd':
             data['changePwdForm'] = ChangePwdForm(request.POST)
@@ -430,12 +434,22 @@ def setting(request):
                     u.save()
                     auth_logout(request)
                     return HttpResponseRedirect('/login/')
-        elif request.POST.get('ctype') == 'changinfo':
-            data['changeInfoForm'] = ChangeUserInfoForm(request.POST)
-            if data['changeInfoForm'].is_valid():
-                pass
-
-    return render(request, 'frontend/member/settings.html', data)
+        elif request.POST.get('ctype', '') == 'changeinfo':
+            try:
+                uinfo = UserInfo.objects.get(user=request.user)
+                uinfo.city = request.POST.get('city', uinfo.city)
+                uinfo.provincy = request.POST.get('provincy', uinfo.provincy)
+                uinfo.country = request.POST.get('country', uinfo.country)
+                uinfo.phone_number = request.POST.get('phone', uinfo.phone_number)
+                uinfo.bank_code = request.POST.get('bank_code', uinfo.bank_code)
+                uinfo.bank_card = request.POST.get('bank_card', uinfo.bank_card)
+                uinfo.save()
+                return utils.NormalResp()
+            except:
+                traceback.print_exc()
+                return utils.ErrResp(errors.FuncFailed)
+    else:
+        return render(request, 'frontend/member/settings.html', data)
 
 
 @login_required(login_url='/login/')
@@ -482,7 +496,13 @@ def withdraw(request):
         'data': {'withdraws': []}
     }
     ubalance = services.get_balance(request.user)
-    data['form'] = WithDrawForm(initial={'cash': ubalance['cash']})
+    uinfo = UserInfo.objects.get(user=request.user)
+    initial = {
+        'cash': ubalance['cash'],
+        'pay_type': uinfo.bank_code,
+        'pay_account': uinfo.bank_card,
+    }
+    data['form'] = WithDrawForm(initial=initial)
 
     withdraws = UserWithDraw.objects.filter(user=request.user).order_by('-id')
     for w in withdraws:
@@ -862,16 +882,16 @@ def payment(request):
 
 @login_required(login_url='/login/')
 def payment_center(request):
-    if not request.GET.get('point', 0):
-        return utils.ErrResp(errors.ArgMiss)
     if not request.GET.get('amount', 0):
         return utils.ErrResp(errors.MonenyNotZero)
     bonus_id = request.GET.get('bonus_id', 0)
-    ubonus = UserBonus.objects.filter(user=request.user).filter(id=bonus_id).first()
-    if not ubonus:
-        return utils.ErrResp(errors.ArgMiss)
-    if ubonus.status == 1:
-        return utils.ErrResp(errors.ArgMiss)
+    pay_type = request.GET.get('pay_type', '')
+    if not pay_type:
+        ubonus = UserBonus.objects.filter(user=request.user).filter(id=bonus_id).first()
+        if not ubonus:
+            return utils.ErrResp(errors.ArgMiss)
+        if ubonus.status == 1:
+            return utils.ErrResp(errors.ArgMiss)
 
     # 生成订单写入数据库
     upayment = UserPayment(
@@ -882,8 +902,11 @@ def payment_center(request):
         pay_type='CSPAY',
         ip=get_ip(request),
         request_url=settings.PAYMENT_API,
-        callback=settings.SITE_URL+'member/bonus/update/?id='+bonus_id
+        callback=settings.SITE_URL+'member/bonus/update/?id=%s' % bonus_id
     )
+    if pay_type:
+        upayment.pay_type=pay_type
+        upayment.callback = ''
     upayment.save()
 
     # 组织参数及签名
@@ -1107,32 +1130,33 @@ def find_password(request):
         try:
             captcha_code = request.POST.get('captcha_code', '')
             captcha_code_key = request.POST.get('captcha_code_key', '')
-            username = request.POST.get('username', '')
             email = request.POST.get('email', '')
             if not utils.verify_captcha(captcha_code, captcha_code_key):
                 return utils.ErrResp(errors.CaptchCodeInvalid)
-            uexists = Auth_user.objects.filter(username=username).exists()
-            if not uexists:
-                return utils.ErrResp(errors.UserNotExists)
-            eexists = Auth_user.objects.filter(email=email).exists()
-            if not eexists:
+            try:
+                u = Auth_user.objects.get(email=email)
+            except:
                 return utils.ErrResp(errors.EmailNotExists)
+                
             uresetpwd = UserResetPwd(
-                username=username,
+                username=u.username,
                 email=email
             )
             uresetpwd.save()
 
             # 发邮件
             resetpwd_dt = dict({
-                'url': '/member/reset-pwd?hashkey=%s' % uresetpwd.hashkey
+                'title': '重置密码',
+                'email': email,
+                'username': u.username,
+                'reset_url': '/member/reset-pwd?hashkey=%s' % uresetpwd.hashkey
             })
 
             import email_template
             subject = email_template.resetpwd_template['subject']
             subject = subject.format(**resetpwd_dt)
 
-            html = email_template.resetpwd_dt['single']
+            html = email_template.resetpwd_template['password']
             html = html.format(**resetpwd_dt)
             utils.mailgun_send_email([email], subject, html)
             return utils.NormalResp()
@@ -1168,7 +1192,7 @@ def reset_password(request):
         try:
             captcha_code = request.POST.get('captcha_code', '')
             captcha_code_key = request.POST.get('captcha_code_key', '')
-            pwd_hashkey = request.POST.get('hashkey', '')
+            pwd_hashkey = request.POST.get('pwd_hashkey', '')
             password = request.POST.get('password', '')
             if not utils.verify_captcha(captcha_code, captcha_code_key):
                 return utils.ErrResp(errors.CaptchCodeInvalid)
@@ -1190,7 +1214,57 @@ def reset_password(request):
             traceback.print_exc()
             return utils.ErrResp(errors.FuncFailed)
     else:
-        return render(request, 'frontend/member/rest_password.html', data)
+        return render(request, 'frontend/member/reset_password.html', data)
+
+
+@csrf_exempt
+def find_username(request):
+    hashkey = CaptchaStore.generate_key()
+    captcha_url = captcha_image_url(hashkey)
+
+    data = {
+        'index': 'member',
+        'sub_index': 'visa',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'hashkey': hashkey,
+        'captcha_url': captcha_url,
+        'ages': range(18, 61),
+        'data': {},
+        'errmsg': ''
+    }
+    if request.method == 'POST':
+        try:
+            captcha_code = request.POST.get('captcha_code', '')
+            captcha_code_key = request.POST.get('captcha_code_key', '')
+            email = request.POST.get('email', '')
+            if not utils.verify_captcha(captcha_code, captcha_code_key):
+                return utils.ErrResp(errors.CaptchCodeInvalid)
+            try:
+                u = Auth_user.objects.get(email=email)
+            except:
+                return utils.ErrResp(errors.EmailNotExists)
+                
+            # 发邮件
+            resetpwd_dt = dict({
+                'title': '找回账号',
+                'email': email,
+                'username': u.username
+            })
+
+            import email_template
+            subject = email_template.resetpwd_template['subject']
+            subject = subject.format(**resetpwd_dt)
+
+            html = email_template.resetpwd_template['account']
+            html = html.format(**resetpwd_dt)
+            utils.mailgun_send_email([email], subject, html)
+            return utils.NormalResp()
+        except:
+            traceback.print_exc()
+            return utils.ErrResp(errors.FuncFailed)
+    else:
+        return render(request, 'frontend/member/find_username.html', data)
 
 
 @csrf_exempt

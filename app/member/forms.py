@@ -81,8 +81,10 @@ class ChangeUserInfoForm(forms.Form):
 
 class WithDrawForm(forms.Form):
     PAY_TYPE = [
-      (1, '支付宝'),
-      (2, '银行卡')
+      ('CSPAY', '银联'),
+      ('BITCOIN', '比特币'),
+      ('PM', '完美货币'),
+      ('VISA', '万事达卡'),
     ]
     cash = forms.CharField(max_length=64,
                            min_length=4,
@@ -97,11 +99,11 @@ class WithDrawForm(forms.Form):
     pay_type = forms.ChoiceField(label="",
                                  choices=PAY_TYPE,
                                  required=False,
-                                 widget=forms.Select())
+                                 widget=forms.Select(attrs={'readonly': 'readonly'}))
     pay_account = forms.CharField(max_length=64,
                                   min_length=4,
                                   required=True,
-                                  widget=TextInput(),
+                                  widget=TextInput(attrs={'readonly': 'readonly'}),
                                   error_messages={'required': '收款账号不能为空'})
     password = forms.CharField(max_length=64,
                                min_length=4,

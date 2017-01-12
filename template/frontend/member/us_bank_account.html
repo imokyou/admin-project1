@@ -8,40 +8,65 @@
     <ul class="fund_ul mt70">
         <li class="mt15">
             <span>方法:</span>
-            <select>
-                <option value="">点击选择</option>
-                <option value="">方法一</option>
-                <option value="">方法二</option>
-                <option value="">方法三</option>
+            <select class="w350" id='paytype'>
+                <option value="CSPAY">银联</option>
+                <option value="BITCOIN">比特币</option>
+                <option value="PM">完美货币</option>
             </select>
         </li>
         <li class="mt15">
            <span>量:</span>
-           <input type="text" placeholder="0.00">
+           <input type="text" value="20.00" id="money">
         </li>
         <li class="mt15">
             <span></span>
             <p>最低存款：＄20.00</p>
         </li>
-        <li><button class="btn_sent mauto mt30"></button></li>
+        <li><button class="btn_sent mauto mt30" onclick="payinfo()"></button></li>
     </ul>
 
 </div><!--end of middle-->
 
 
 <!--付款确认弹窗-->
-<div class="popup" id="pop">
+<div class="popup" id="pop" style="display:none">
     <h1>付款确认<button id="btn_close" onclick="javascript:document.getElementById('pop').style.display='none'"></button></h1>
     <div class="pop_body">
         <div class="pay_info">
-            <h4>公司账户:</h4>
-            <p>银联账户：<span>42002563300125255</span></p>
-            <p>开户人：<span>周小红</span></p>
+            <p>充值方法：<span id="c_paytype"></span></p>
+            <p>充值金额：<span id="c_money">20</span></p>
         </div>
         <p class="pop_tip">注意：打完款请联系客服！</p>
     </div>
     <div class="pop_bottom">
-        <button class="pop_sure">确认</button>
+        <button class="pop_sure" onclick="pay()">确认</button>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function payinfo() {
+    var paytype = $('#paytype').val();
+    var money = $('#money').val();
+
+    var c_paytype = ''
+    if (paytype == 'CSPAY') {
+        c_paytype = '银联';
+    } else if (paytype == 'BITCOIN') {
+        c_paytype = '比特币';
+    } else {
+        c_paytype = '完美货币'
+    }
+    $('#c_paytype').html(c_paytype);
+    $('#c_money').html(money);
+    $('#pop').show();
+}
+
+function pay() {
+    var paytype = $('#paytype').val();
+    var money = $('#money').val();
+    location.href="/member/payment-center/?amount="+money+"&point=0&pay_type="+paytype;
+}
+</script>
 {% endblock %}

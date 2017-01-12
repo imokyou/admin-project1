@@ -20,7 +20,11 @@
                 <input class="w350" type="text" value={{ Amount }} readonly="readonly">
             </li>
         </ul>
+        {% if point >= 1 %}
         <p class="recharge_tip">需要充值：&yen;<span>{{ Amount }}</span>&nbsp;&nbsp;才能兑换<span>{{ point }}</span>资本兑</p>
+        {% else %}
+        <p class="recharge_tip">充值：&yen;<span>{{ Amount }}</span></p>
+        {% endif %}
         <!--新增二维码-->
         <div style="text-align:center;display:none" id="bit-coin-code">
             <img class="img_code" src="/static/images/qr_code.jpg">

@@ -39,5 +39,6 @@ urlpatterns = [
     url(r'^visa-apply/$', views.visa_apply),
     url(r'^refresh-captcha/$', views.refresh_captcha),
     url(r'^find-password/$', views.find_password),
+    url(r'^find-username/$', views.find_username),
     url(r'^reset-password/$', views.reset_password),
 ]

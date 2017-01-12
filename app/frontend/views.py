@@ -91,34 +91,44 @@ def register(request):
         return render(request, 'frontend/register.html', data)
 
 
+@csrf_exempt
 def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/member/')
+
+    hashkey = CaptchaStore.generate_key()  
+    captcha_url = captcha_image_url(hashkey)
+
     data = {
         'index': 'login',
         'statics_info': Statics.objects.order_by('-id').first(),
         'chatlist': UserFeedback.objects.order_by('-id')[0:10],
         'form': LoginForm(),
+        'hashkey': hashkey,
+        'captcha_url': captcha_url,
         'errmsg': ''
     }
 
     if request.method == 'POST':
-        data['form'] = LoginForm(request.POST)
-        if data['form'].is_valid():
-            user = authenticate(username=request.POST['username'],
-                                password=request.POST['password'])
-            if user is not None and user.is_active:
-                auth_login(request, user)
+        captcha_code = request.POST.get('captcha_code', '')
+        captcha_code_key = request.POST.get('captcha_code_key', '')
+        if not utils.verify_captcha(captcha_code, captcha_code_key):
+            return utils.ErrResp(errors.CaptchCodeInvalid)
+        user = authenticate(username=request.POST.get('username', ''),
+                            password=request.POST.get('password', ''))
+        if user is not None and user.is_active:
+            auth_login(request, user)
 
-                log = UserOplog(
-                    user_id=user.id,
-                    optype=1,
-                    content=request.META['HTTP_USER_AGENT'],
-                    ip=get_ip(request),
-                )
-                log.save()
-
-                return HttpResponseRedirect('/member/')
+            log = UserOplog(
+                user_id=user.id,
+                optype=1,
+                content=request.META['HTTP_USER_AGENT'],
+                ip=get_ip(request),
+            )
+            log.save()
+            return utils.NormalResp()
+        else:
+            return utils.ErrResp(errors.LoginFailed)
     return render(request, 'frontend/login.html', data)
 
 
