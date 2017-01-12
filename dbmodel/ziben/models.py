@@ -1,6 +1,7 @@
 # coding=utf-8
+import uuid
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import models as auth_models
@@ -624,9 +625,27 @@ class UserVisaApply(models.Model):
     country = models.CharField(max_length=128)
     zip_code = models.CharField(max_length=64)
     status = models.SmallIntegerField(default=0)
-    create_at = models.DateTimeField(auto_now_add=True) 
+    create_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
         db_table = 'user_visa_apply'
 
+
+class UserResetPwd(models.Model):
+    username = models.CharField(max_length=64, default='')
+    email = models.CharField(max_length=128, default='')
+    hashkey = models.CharField(max_length=256, default='')
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField()
+    expire_at = models.DateTimeField()
+    status = models.SmallIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        self.hashkey = uuid.uuid1()
+        self.expire_at = timezone.now() + timedelta(hours=1)
+        super(UserResetPwd, self).save(*args, **kwargs)
+
+    class Meta:
+        managed = False
+        db_table = 'user_reset_pwd'

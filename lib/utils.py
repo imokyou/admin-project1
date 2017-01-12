@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import requests
 import pytz
 import traceback
 import random
@@ -7,10 +8,12 @@ import json
 import datetime
 import calendar
 from urlparse import urlparse
+from captcha.models import CaptchaStore
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils.http import is_safe_url
 from django.utils import timezone
+from django.conf import settings
 
 
 # 响应相关
@@ -112,6 +115,32 @@ def getMonthFirstDayAndLastDay(year=None, month=None):
     lastDay = datetime.date(year=year, month=month, day=monthRange)
 
     return firstDay, lastDay
+
+
+def verify_captcha(captcha_code, captcha_code_key):
+    cs = CaptchaStore.objects.filter(hashkey=captcha_code_key)
+    true_key = cs[0].response
+    if cs.expiration < timezone.now().date:
+        return False
+    if captcha_code.lower() != true_key:
+        return False
+
+    cs.delete()
+    return True
+
+
+def mailgun_send_email(to, subject, html, from_email=''):
+    if not from_email:
+        from_email = settings.EMAIL_HOST
+    return requests.post(
+        settings.MAILGUN_MESSAGE_URL,
+        auth=("api", settings.MAILGUN_API),
+        data={"from": from_email,
+              "to": to,
+              "subject": subject,
+              "html": html,
+              "o:testmode": False,
+              })
 
 
 def debug():

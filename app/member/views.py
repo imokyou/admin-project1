@@ -3,7 +3,7 @@ import traceback
 import requests
 import json
 from ipware.ip import get_ip
-from captcha.models import CaptchaStore  
+from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
 from django.db.models import Count, Sum
-from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBCDPriceLog, UserOrderSell, CBCDInit, UserOrderBuy, UserPayment, UserVisaApply
+from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBCDPriceLog, UserOrderSell, CBCDInit, UserOrderBuy, UserPayment, UserVisaApply, UserResetPwd
 from lib import utils
 from lib.pagination import Pagination
 from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
@@ -1036,7 +1036,7 @@ def payment_notify(request):
 @csrf_exempt
 @login_required(login_url='/login/')
 def visa_apply(request):
-    hashkey = CaptchaStore.generate_key()  
+    hashkey = CaptchaStore.generate_key()
     captcha_url = captcha_image_url(hashkey)
 
     data = {
@@ -1050,7 +1050,6 @@ def visa_apply(request):
         'data': {},
         'errmsg': ''
     }
-    
     if request.method == 'POST':
         try:
             exists = UserVisaApply.objects.filter(user=request.user).exists()
@@ -1065,7 +1064,6 @@ def visa_apply(request):
             if captcha_code.lower() != true_key:
                 return utils.ErrResp(errors.CaptchCodeInvalid)
             CaptchaStore.objects.filter(hashkey=captcha_code_key).delete()
-                
             uapply = UserVisaApply(
                 user=request.user,
                 first_name=request.POST.get('first_name', ''),
@@ -1088,10 +1086,117 @@ def visa_apply(request):
     else:
         return render(request, 'frontend/member/visa_apply.html', data)
 
+
 @csrf_exempt
-def refresh_captcha(request):  
-    to_json_response = dict()  
-    to_json_response['status'] = 1  
-    to_json_response['new_cptch_key'] = CaptchaStore.generate_key()  
-    to_json_response['new_cptch_image'] = captcha_image_url(to_json_response['new_cptch_key'])  
-    return HttpResponse(json.dumps(to_json_response), content_type='application/json') 
+def find_password(request):
+    hashkey = CaptchaStore.generate_key()
+    captcha_url = captcha_image_url(hashkey)
+
+    data = {
+        'index': 'member',
+        'sub_index': 'visa',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'hashkey': hashkey,
+        'captcha_url': captcha_url,
+        'ages': range(18, 61),
+        'data': {},
+        'errmsg': ''
+    }
+    if request.method == 'POST':
+        try:
+            captcha_code = request.POST.get('captcha_code', '')
+            captcha_code_key = request.POST.get('captcha_code_key', '')
+            username = request.POST.get('username', '')
+            email = request.POST.get('email', '')
+            if not utils.verify_captcha(captcha_code, captcha_code_key):
+                return utils.ErrResp(errors.CaptchCodeInvalid)
+            uexists = Auth_user.objects.filter(username=username).exists()
+            if not uexists:
+                return utils.ErrResp(errors.UserNotExists)
+            eexists = Auth_user.objects.filter(email=email).exists()
+            if not eexists:
+                return utils.ErrResp(errors.EmailNotExists)
+            uresetpwd = UserResetPwd(
+                username=username,
+                email=email
+            )
+            uresetpwd.save()
+
+            # 发邮件
+            resetpwd_dt = dict({
+                'url': '/member/reset-pwd?hashkey=%s' % uresetpwd.hashkey
+            })
+
+            import email_template
+            subject = email_template.resetpwd_template['subject']
+            subject = subject.format(**resetpwd_dt)
+
+            html = email_template.resetpwd_dt['single']
+            html = html.format(**resetpwd_dt)
+            utils.mailgun_send_email([email], subject, html)
+            return utils.NormalResp()
+        except:
+            traceback.print_exc()
+            return utils.ErrResp(errors.FuncFailed)
+    else:
+        return render(request, 'frontend/member/find_password.html', data)
+
+
+@csrf_exempt
+def reset_password(request):
+    hashkey = CaptchaStore.generate_key()
+    captcha_url = captcha_image_url(hashkey)
+
+    pwd_hashkey = request.GET.get('hashkey', '')
+    try:
+        uhashkey = UserResetPwd.objects.get(hashkey=pwd_hashkey)
+    except:
+        return utils.ErrResp(errors.FuncFailed)
+    data = {
+        'index': 'member',
+        'sub_index': 'visa',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'hashkey': hashkey,
+        'captcha_url': captcha_url,
+        'pwd_hashkey': pwd_hashkey,
+        'data': {},
+        'errmsg': ''
+    }
+    if request.method == 'POST':
+        try:
+            captcha_code = request.POST.get('captcha_code', '')
+            captcha_code_key = request.POST.get('captcha_code_key', '')
+            pwd_hashkey = request.POST.get('hashkey', '')
+            password = request.POST.get('password', '')
+            if not utils.verify_captcha(captcha_code, captcha_code_key):
+                return utils.ErrResp(errors.CaptchCodeInvalid)
+            try:
+                uhashkey = UserResetPwd.objects.get(hashkey=pwd_hashkey)
+                if uhashkey.status != 0 or uhashkey.expire_at < timezone.now():
+                    return utils.ErrResp(errors.FuncFailed)
+                u = Auth_user.objects.get(username=uhashkey.username)
+                u.set_password(password)
+                u.save()
+
+                uhashkey.update_at = timezone.now()
+                uhashkey.status = 1
+                uhashkey.save()
+            except Exception, e:
+                raise e
+            return utils.NormalResp()
+        except:
+            traceback.print_exc()
+            return utils.ErrResp(errors.FuncFailed)
+    else:
+        return render(request, 'frontend/member/rest_password.html', data)
+
+
+@csrf_exempt
+def refresh_captcha(request):
+    to_json_response = dict()
+    to_json_response['status'] = 1
+    to_json_response['new_cptch_key'] = CaptchaStore.generate_key()
+    to_json_response['new_cptch_image'] = captcha_image_url(to_json_response['new_cptch_key'])
+    return HttpResponse(json.dumps(to_json_response), content_type='application/json')
