@@ -1,0 +1,31 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Match{% endblock %}</title>
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0; ">
+    <h2 class="middle_tit_h2 plr20">winner<span>Will get different commission incentives, 30 update</span></h2>
+    <table class="match_table">
+        <thead>
+            <tr>
+                <td>location</td>
+                <td>username</td>
+                <td>Recommend</td>
+                <td>Commission</td>
+                <td>reward</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in ranklist.data %}
+        <tr>
+            <td class="no_left_border">#1</td>
+            <td>{{ r.user.username }}</td>
+            <td>{{ r.recommend_users }}</td>
+            <td>{{ r.commission }}</td>
+            <td>${{ r.reward }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div><!--end of middle-->
+{% endblock %}

@@ -55,10 +55,24 @@
                 </a>
             </li>
         </ul>
-        <ul class="flag_ul">
-            <li><img src="/static/images/flag_usa.png"></li>
-            <li class="ml15"><img src="/static/images/flag_china.png"></li>
-        </ul>
+        <div class="language_box">
+            <h5 id="language">
+                {% if request.session.lang == 'cn' %}
+                <span>中文</span>
+                {% endif %}
+
+                {% if request.session.lang == 'en' %}
+                <span>English</span>
+                {% endif %}
+                <img src="/static/images/sjx.png">
+            </h5>
+            <span class="pointer"></span>
+            <ul class="language_list">
+                <li data="cn">中文</li>
+                <li data="en">English</li>
+                <!-- <li data="en-us">韩文</li> -->
+            </ul>
+        </div>
     </div>  <!--end of header-->
     <!--main Content-->
     <div class="content clearfloat">

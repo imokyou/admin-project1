@@ -1,0 +1,24 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Rental broker{% endblock %}</title>
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">Rental broker</h2>
+    <div class="lease_box mauto">
+        <h4>Rental object</h4>
+        <form name="sellingForm" method="POST">
+            {% csrf_token %}
+            <select name="user_id">
+                {% for uc in data.uconnect %}
+                <option value="{{ uc.user_id }}">{{ uc.username }}</option>
+                {% endfor %}
+            </select>
+            <h5>Purchase balance：＄0.000000</h5>
+           <button class="btn_globe mauto mt30 mb20">Rent now</button>
+        </form>
+        <p>Rental available amount of investment of 5% references</p>
+    </div>
+</div><!--end of middle-->
+
+{% endblock %}

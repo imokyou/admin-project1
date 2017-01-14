@@ -1,0 +1,30 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - My capital(CBDC){% endblock %}</title>
+
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0;">
+<h2 class="middle_tit_h2 plr20">My capital(CBDC)</h2>
+    <div class="capital_box">
+        <div class="captial_total">
+            <div class="captial_total_l fl">
+                <h2>{{ data.num }}</h2>
+                <p>My capital(CBDC)</p>
+            </div>
+            <time>{% now 'Y-m-d' %}</time>
+        </div>
+        <ul class="trade_price">
+            <li>
+                <h4>{{ data.price_buy }}</h4>
+                <p>Buying unit price</p>
+            </li>
+            <li>
+                <h4>{{ data.price_sell }}</h4>
+                <p>Sell unit price</p>
+            </li>
+        </ul>
+    </div>
+</div><!--end of middle-->
+
+{% endblock %}

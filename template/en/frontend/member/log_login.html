@@ -1,0 +1,44 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Login history{% endblock %}</title>
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="min-height:828px;">
+    <div class="middle_tit_h2">Login history
+        <div class="page">
+            {% if paging.has_previous %}
+                <a href="{{paging.prev_url}}">
+                    Prev
+                </a>
+            {% endif %}
+
+            {% if paging.has_next %}
+                <a href="{{paging.next_url}}">
+                    Next
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+        <table class="referral_table mt20" style="table-layout: auto;">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td class="w250">user agent</td>
+                    <td>IP address</td>
+                    <td>Date</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in loglist.data %}
+                <tr>
+                    <td><img src="/static/images/check.png"></td>
+                    <td class="w250">{{ log.content }}</td>
+                    <td>{{ log.ip }}</td>
+                    <td>{{ log.create_time | date:'Y-m-d' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div><!--end of middle-->
+{% endblock %}

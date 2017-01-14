@@ -34,7 +34,8 @@ $('.language_list li').on('click',function(){
     var $text =$(this).text();
     $('#language span').text($text);
     $('.language_list,.pointer').hide()
+    location.href="/set-lang/?changelang=1&lang="+$(this).attr('data');
 })
-    
+
 });
 

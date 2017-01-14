@@ -1,0 +1,87 @@
+{% extends "en/frontend/base.html" %}
+
+<title>{% block title %}Capital country Home - Support{% endblock %}</title>
+{% block body %}
+
+<div class="middle" style="background-color: transparent;">
+    <div class="support_box">
+        <ul class="support_ul">
+            <li><a href=""><img src="/static/pic/support001.gif"></a></li>
+            <li class="mt10"><a href=""><img src="/static/pic/support002.gif"></a></li>
+            <li class="mt10"><a href=""><img src="/static/pic/support003.gif"></a></li>
+        </ul>
+    </div>
+    <div class="ticket">
+        <h1 class="side_tit">Create Tickets</h1>
+        <div class="ticket_box">
+            <div class="create_ticket">
+                <div class="create_top">
+                    <h2>Create Tickets</h2>
+                    <select name="" id="">
+                        <option value="">浏览门票</option>
+                    </select>
+                </div>
+                <p>Your account has been marked as“You have switched to your geographic position. If you want to check in, please ask administrators for help.”If you want any help, please send us your help ticket at any time.</p>
+            </div>
+        </div>
+        <div class="tik_table">
+            <h4>Discipline Records：</h4>
+            <table class="referral_table">
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Problems</td>
+                    <td>Create problem</td>
+                    <td>State</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for d in data %}
+                <tr>
+                    <td>{{ d.username }}</td>
+                    <td>{{ d.title }}</td>
+                    <td>{{ d.create_time }}</td>
+                    <td>{{ d.status }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="info_box">
+            <form name="feedbackForm" method="POST">
+                {% csrf_token %}
+                {% if errmsg %}
+                    <p class="err-msg" style="margin: 5px 0 0 30px">{{ errmsg|escape }}</p>
+                {% endif %}
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <p class="err-msg" style="margin: 5px 0 0 30px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+
+                {% if form.content.errors %}
+                    {% for error in form.content.errors %}
+                        <p class="err-msg" style="margin: 5px 0 0 30px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+                <ul class="create_info">
+                    <li>
+                        <span>Discipline</span>
+                        {{ form.title }}
+                    </li>
+                    <li>
+                        <span>Department</span>
+                        {{ form.ctype }}
+                    </li>
+                    <li>
+                        <span>Information</span>
+                        {{ form.content }}
+                    </li>
+                </ul>
+                <p>Please briefly type your problems you have，we will reply to you as soon as possible.</p>
+                <button class="btn_globe mauto" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div><!--end of middle-->
+{% endblock %}

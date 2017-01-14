@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {% block keywords %}<meta name="keywords" content="your tags">{% endblock %}
+    {% block description %}<meta name="description" content="150 words">{% endblock %}
+    <meta name="renderer" content="webkit">
+    <meta name="x5-orientation" content="portrait">
+    <link rel="stylesheet" href="/static/en/css/stage.css">
+    <title>{% block title %}Capital country Home{% endblock %}</title>
+    <!--[if lt IE 9]>
+        <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        p.err-msg {
+            margin-left:  110px;
+            margin-top: 5px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container_re bg_hei">
+    <div class="top_ad"><a href="#"><img src="/static/pic/support001.png"></a></div>
+    <div class="top_pic"></div>
+    <div class="header_re clearfloat">
+        <a href="#" class="logo_re"><img src="/static/pic/logo_re.png"> </a>
+        <div class="language_box">
+            <h5 id="language">
+                {% if request.session.lang == 'cn' %}
+                <span>中文</span>
+                {% endif %}
+                {% if request.session.lang == 'en' %}
+                <span>English</span>
+                {% endif %}
+                <img src="/static/images/sjx.png">
+            </h5>
+            <span class="pointer"></span>
+            <ul class="language_list">
+                <li data="cn">中文</li>
+                <li data="en">English</li>
+                <!-- <li data="en-us">韩文</li> -->
+            </ul>
+        </div>
+        <ul class="nav_bar_re">
+            <li>
+                <a href="/" {% if index == 'home' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">home
+                </a>
+            </li>
+            <li>
+                <a href="/about-us/" {% if index == 'about_us' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">Ahout
+                </a>
+            </li>
+            <li>
+                <a href="/register/" {% if index == 'register' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">Register
+                </a>
+            </li>
+            <li>
+                <a href="/login/" {% if index == 'login' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">Login
+                </a>
+            </li>
+            <li>
+                <a href="/video/" {% if index == 'video' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">Video
+                </a>
+            </li>
+            <li>
+                <a href="/faq/" {% if index == 'faq' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">FAQ
+                </a>
+            </li>
+            <li>
+                <a href="/support"  {% if index == 'support' %}class="om"{% endif %}>
+                    <img src="/static/pic/nav_squar.png">Support
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--end of header_re-->
+    <div class="main clearfloat mt20">
+    <!--left-->
+    <div class="side fl">
+        <div class="census bg0a">
+            <h1 class="side_tit">STATS</h1>
+            <ul class="census_ul">
+                <li><p>MEMBERS</p><span>{{ statics_info.members }}</span></li>
+                <li><p>ONLINE</p><span>{{ statics_info.online }}</span></li>
+                <li><p>HITS</p><span>{{ statics_info.hits }}</span></li>
+                <li><p>TATOL PAID</p><span>${{ statics_info.total_paid }}</span></li>
+                <li><p>OFFERS</p><span>{{ statics_info.offers }}</span></li>
+                <li><img src="/static/pic/border_grey.png"></li>
+                <li><p>PTS VALUES</p><span>$3.81和62186.95</span></li>
+                <li><p>PTC VALUES</p><span>$0.04</span></li>
+            </ul>
+        </div>
+        <div class="diary bg0a mt20">
+            <h1 class="side_tit">LAST10 CREDITED</h1>
+            <ul class="diary_ul">
+                <li>
+                    <a href="http://www.gpt1.com" target="_blank"> Clover GPT - International GPT#1</a>
+                </li>
+                <li>
+                    <a href="https://bitday.biz/" target="_blank">High Return on the Capital of Opinions Survey- Advanced</a>
+                </li>
+                <li>
+                    <a href="http://highestpaygpt.com/home?refid=20" target="_blank">Daily Survey+ Highestpaygpt + Daily Pay + Daily Lowest Pay</a>
+                </li>
+                <li>
+                    <a href="http://finosity.com/freeaccess/400in4hours.php?t=13m121115bn468400in4hoursint" target="_blank">Daily Survey+Finosity + Daily Pay+Lowest Bonus</a>
+                </li>
+                <li>
+                    <a href="https://theminers.biz" target="_blank">Capital Router of Opinions Survey- Advanced</a>
+                </li>
+                <li>
+                    <a href="https://freebitco.in" target="_blank">Win Free Bitcoins Every Other Hour</a>
+                </li>
+                <li>
+                    <a href="http://superpay.me/" target="_blank">Capital Router of Opinions Survey- Advanced</a>
+                </li>
+                <li>
+                    <a href="http://myinfinitedownline.com/?ref=christinersilva" target="_blank">Clover GPT - International GPT！</a>
+                </li>
+                <li>
+                    <a href="http://aglocoptr.com/" target="_blank">aglocoptr ***Great Site*** </a>
+                </li>
+                <li>
+                    <a href="http://offernation.com" target="_blank">offernation</a>
+                </li>
+                <li>
+                    <a href="http://point.st" target="_blank">Banners，Click，Facebook Likes，Surveys and so on.</a>
+                </li>
+                <li>
+                    <a href="https://mintvine.com" target="_blank">Use MintVine to get millions of bonus.</a>
+                </li>
+            </ul>
+            <a href="#" class="more">More>></a>
+        </div>
+    </div><!--end of left-->
+    {% block body %} {% endblock %}
+    <!--right-->
+    <div class="side fr">
+        <div class="sponsor bg0a">
+            <h1 class="side_tit">SPONSERS</h1>
+            <ul class="sponsor_ul">
+                <li>
+                    <a href="http://www.racehost.com/" target="_blank">
+                        <img src="/static/pic/sponsors001.gif">
+                    </a>
+                </li>
+                <li>
+                    <a href="http://poker.williamhill.com/" target="_blank">
+                        <img src="/static/pic/sponsors002.gif">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.skinnybodycare.com/" target="_blank">
+                        <img src="/static/pic/sponsors003.gif">
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--在线留言-->
+        <div class="message mt20 bg0a">
+            <h1 class="side_tit">Message Board</h1>
+            <ul class="message_ul">
+                {% for ch in chatlist %}
+                <li>
+                   <h6><i></i>{{ ch.create_time | date:'Y-m-d H:i:s' }}</h6>
+                    <p>{{ ch.user.username }}</p>
+                    <span>{{ ch.title }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <a href="/login/" class="more">you must log in to post</a>
+        </div>
+    </div>
+</div>
+</div>
+<div class="footer_re">
+    <div class="footer_re_nav">
+        <a href="/risk-disclosure/">Risk Disclosure<img src="/static/pic/icon_pdf.png"></a>
+        <a href="/privacy/">Privacy Policy<img src="/static/pic/icon_pdf.png"></a>
+        <a href="/contract/">Contact<img src="/static/pic/icon_pdf.png"></a>
+        <a href="/support/">Support</a>
+    </div>
+    <p>Copyright © 2012-2017 capitalrev.com .All rights reserved.<br>
+        © Global Action Cash 2011 - 2017 </p>
+</div>
+<script src="/static/js/jquery-2.1.3.min.js"></script>
+<script src="/static/js/common.js"></script>
+{% block script %} {% endblock %}
+</body>
+</html>

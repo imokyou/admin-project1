@@ -1,9 +1,8 @@
 # coding: utf-8
 from ipware.ip import get_ip
-from captcha.models import CaptchaStore  
+from captcha.models import CaptchaStore
 from captcha.helpers import captcha_image_url
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User as Auth_user
@@ -12,7 +11,6 @@ from dbmodel.ziben.models import Statics, UserInfo, UserOplog, UserFeedback
 from forms import RegForm, LoginForm, FeedbackForm
 from config import errors
 import services
-
 
 
 @csrf_exempt
@@ -27,19 +25,19 @@ def home(request):
         'chatlist': UserFeedback.objects.order_by('-id')[0:10],
     }
 
-    return render(request, 'frontend/index.html', data)
+    return utils.crender(request, 'frontend/index.html', data)
 
 
 def about_us(request):
     data = {
         'index': 'about_us'
     }
-    return render(request, 'frontend/about_us.html', data)
+    return utils.crender(request, 'frontend/about_us.html', data)
 
 
 @csrf_exempt
 def register(request):
-    hashkey = CaptchaStore.generate_key()  
+    hashkey = CaptchaStore.generate_key()
     captcha_url = captcha_image_url(hashkey)
 
     invite_code = request.GET.get('invite_code', '')
@@ -84,11 +82,11 @@ def register(request):
         if captcha_code.lower() != true_key:
             return utils.ErrResp(errors.CaptchCodeInvalid)
         CaptchaStore.objects.filter(hashkey=captcha_code_key).delete()
-        
+
         services.reg(request)
         return utils.NormalResp()
     else:
-        return render(request, 'frontend/register.html', data)
+        return utils.crender(request, 'frontend/register.html', data)
 
 
 @csrf_exempt
@@ -96,7 +94,7 @@ def login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/member/')
 
-    hashkey = CaptchaStore.generate_key()  
+    hashkey = CaptchaStore.generate_key()
     captcha_url = captcha_image_url(hashkey)
 
     data = {
@@ -129,7 +127,7 @@ def login(request):
             return utils.NormalResp()
         else:
             return utils.ErrResp(errors.LoginFailed)
-    return render(request, 'frontend/login.html', data)
+    return utils.crender(request, 'frontend/login.html', data)
 
 
 def logout(request):
@@ -141,7 +139,7 @@ def video(request):
     data = {
         'index': 'video'
     }
-    return render(request, 'frontend/video.html', data)
+    return utils.crender(request, 'frontend/video.html', data)
 
 
 def faq(request):
@@ -151,7 +149,7 @@ def faq(request):
     }
     statics_info = Statics.objects.order_by('-id').first()
     data['statics_info'] = statics_info
-    return render(request, 'frontend/faq.html', data)
+    return utils.crender(request, 'frontend/faq.html', data)
 
 
 def support(request):
@@ -190,24 +188,35 @@ def support(request):
                 fb.save()
                 return HttpResponseRedirect('/support/')
 
-    return render(request, 'frontend/support.html', data)
+    return utils.crender(request, 'frontend/support.html', data)
 
 
 def risk_disclosure(request):
     data = {}
-    return render(request, 'frontend/risk_disclosure.html', data)
+    return utils.crender(request, 'frontend/risk_disclosure.html', data)
 
 
 def privacy(request):
     data = {}
-    return render(request, 'frontend/privacy.html', data)
+    return utils.crender(request, 'frontend/privacy.html', data)
 
 
 def contract(request):
     data = {}
-    return render(request, 'frontend/contract.html', data)
+    return utils.crender(request, 'frontend/contract.html', data)
 
 
 def copyright(request):
     data = {}
-    return render(request, 'frontend/copyright.html', data)
+    return utils.crender(request, 'frontend/copyright.html', data)
+
+
+def set_lang(request):
+    request.session['lang'] = request.GET.get('lang', 'cn')
+    try:
+        next_url = request.META['HTTP_REFERER']
+    except:
+        import traceback
+        traceback.print_exc()
+        next_url = '/'
+    return HttpResponseRedirect(next_url)

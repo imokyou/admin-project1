@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="/static/en/css/stage.css">
+    <title>{% block title %}Capital country Home{% endblock %}</title>
+    <!--[if lt IE 9]>
+    <script src="/static/js/html5shiv.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        p.err-msg {
+            margin-top: 5px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<!--Big container-->
+<div class="container bg_hei mt70 fillet_lr">
+    <div class="header prl30 clearfloat">
+        <a href="/" class="logo"><img src="/static/images/logo.png"> </a>
+        <ul class="nav_bar">
+            <li>
+                <a href="/member/" {% if index == 'member' %}class="om"{% endif %}>
+                    <i class="{% if index == 'member' %}icon_nav02{% else %}icon_nav01{% endif %} icon_01"></i>Home
+                </a>
+            </li>
+            <li>
+                <a href="/member/seller/" {% if index == 'member_seller' %}class="om"{% endif %}>
+                    <i class="{% if index == 'member_seller' %}icon_nav02{% else %}icon_nav01{% endif %} icon_02"></i>Business
+                </a>
+            </li>
+            <!--
+            <li>
+                <a href="#">
+                    <i class="{% if index == 'member' %}icon_nav02{% else %}icon_nav01{% endif %} icon_03"></i>投票
+                </a>
+            </li>
+            -->
+            <li>
+                <a href="/member/shop/" {% if index == 'member_shop' %}class="om"{% endif %}>
+                    <i class="{% if index == 'member_shop' %}icon_nav02{% else %}icon_nav01{% endif %} icon_04"></i>Shop
+                </a>
+            </li>
+            <li>
+                <a href="/member/chat/" {% if index == 'member_chat' %}class="om"{% endif %}>
+                    <i class="{% if index == 'member_chat' %}icon_nav02{% else %}icon_nav01{% endif %} icon_05"></i>Chat
+                </a>
+            </li>
+            <li>
+                <a href="/member/mailbox/received/" {% if index == 'member_mailbox' %}class="om"{% endif %}>
+                    <i class="{% if index == 'member_mailbox' %}icon_nav02{% else %}icon_nav01{% endif %} icon_06"></i>Inbox
+                </a>
+            </li>
+        </ul>
+        <div class="language_box">
+            <h5 id="language">
+                {% if request.session.lang == 'cn' %}
+                <span>中文</span>
+                {% endif %}
+                {% if request.session.lang == 'en' %}
+                <span>English</span>
+                {% endif %}
+                <img src="/static/images/sjx.png">
+            </h5>
+            <span class="pointer"></span>
+            <ul class="language_list">
+                <li data="cn">中文</li>
+                <li data="en">English</li>
+                <!-- <li data="en-us">韩文</li> -->
+            </ul>
+        </div>
+    </div>  <!--end of header-->
+    <!--main Content-->
+    <div class="content clearfloat">
+        <!--left slide-->
+        <div class="left_slide">
+            <div class="user">
+                <h1 class="user_pic"><img src="/static/images/tx_01.jpg"></h1>
+                <h2>{{ user.first_name }} {{ user.last_name }} </h2>
+                <p>Account: {{ user.username }}</p>
+            </div>
+            <ul class="left_slide_ul">
+                <li><img src="/static/images/icon_user.png"><span>{{ statics.recommend_users }}</span></li>
+                <li><img src="/static/images/icon_dollar.png"><span>${{ statics.balance }}</span></li>
+                <li><img src="/static/images/icon_b.png"><span>${{ statics.point }}</span></li>
+            </ul>
+            <ul class="left_nav">
+                <li>
+                    <h5 {% if sub_index == 'home' %}class="in"{% endif %}>Menu</h5>
+                    <dl class="in">
+                        <dd><a href="/member/rank/">Match</a></dd>
+                        <dd><a href="/member/selling/">Rental broker</a></dd>
+                        <dd><a href="/member/buying/">Buy Referrals</a></dd>
+                        <dd><a href="/member/promotion/">Your Referrals</a></dd>
+                        <dd><a href="/member/change-recommend-user/" >Referral</a></dd>
+                        <dd><a href="/member/setting/">Settings</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'my-cbcd' %}class="in"{% endif %}>My CBCD</h5>
+                    <dl>
+                        <dd><a href="/member/cbcd/current/">My CBCD</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'bonus' %}class="in"{% endif %}>Subscription</h5>
+                    <dl>
+                        <dd><a href="/member/bonus/">Subscription</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'balance' %}class="in"{% endif %}>Statistics</h5>
+                    <dl>
+                        <!--
+                        <dd><a href="为了莱杰">为了莱杰</a></dd> -->
+                        <dd><a href="/member/dashboard/">Panel</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'deposite' %}class="in"{% endif %}>Deposit</h5>
+                    <dl>
+                        <dd><a href="/member/us-bank-account/">Increase capital</a></dd>
+                        <dd><a href="/member/withdraw/">Take back</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'hall' %}class="in"{% endif %}>Exchange</h5>
+                    <dl>
+                        <dd><a href="/member/trading-hall/">exchange</a></dd>
+                        <dd><a href="/member/trading-hall/buy/">exchange-buy</a></dd>
+                        <dd><a href="/member/trading-hall/sell/">exchange-sell</a></dd>
+                        <dd><a href="/member/cbcd-order/">State of capital</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'log' %}class="in"{% endif %}>Journal</h5>
+                    <dl>
+                        <dd><a href="/member/news/">News</a></dd>
+                        <dd><a href="/member/chat/">Sending box</a></dd>
+                        <dd><a href="/member/mailbox/received/">Inbox</a></dd>
+                        <dd><a href="/member/log/payment/">History of deposit</a></dd>
+                        <dd><a href="/member/log/withdraw/">Recover history</a></dd>
+                        <dd><a href="/member/log/login/">Login history</a></dd>
+                    </dl>
+                </li>
+                <li><h5 {% if sub_index == 'visa' %}class="in"{% endif %}>MasterCard</h5>
+                    <dl>
+                        <dd><a href="/member/visa-apply/">MasterCard</a></dd>
+                    </dl>
+                </li>
+                <li><h5>Logout</h5>
+                    <dl>
+                        <dd><a href="/logout/">Logout</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div><!--end of left_slide-->
+        <!--middle-->
+        {% block body %} {% endblock %}
+        <!--right slide-->
+        <div class="right_slide">
+            <div class="right_slide_box">
+                <h1><img src="/static/images/icon_stats.png">STATS</h1>
+                <ul class="stats_ul">
+                    <li><span>-online members:</span><p>{{ statics.online }}</p></li>
+                    <li><span>-regist. members:</span><p>{{ statics.member }}</p></li>
+                    <li><span>-already paid:</span><p>{{ statics.total_paid }}</p></li>
+                </ul>
+            </div>
+            <div class="right_slide_box mt10">
+                <h1><img src="/static/images/icon_news.png">NEW</h1>
+                <ul class="new_ul">
+                    {% for ne in news %}
+                    <li><a href="#">{{ ne.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="right_slide_box mt10">
+                <h1><img src="/static/images/icon_sponsors.png">sponsors</h1>
+                <ul class="sponsors_ul">
+                    <li><a href="http://www.racehost.com/" target="_blank"><img src="/static/pic/sponsors001.gif"></a></li>
+                    <li><a href="http://poker.williamhill.com/" target="_blank"><img src="/static/pic/sponsors002.gif"></a></li>
+                    <li><a href="https://www.skinnybodycare.com/" target="_blank"><img src="/static/pic/sponsors003.gif"></a></li>
+                </ul>
+            </div>
+        </div><!--end of right slide-->
+    </div> <!--end of main Content-->
+</div>
+<!--footer-->
+<div class="footer_re">
+    <div class="footer_re_nav">
+        <a href="/risk-disclosure/">Risk Disclosure<img src="/static/pic/icon_pdf.png"></a>
+        <a href="/privacy/">Privacy Policy<img src="/static/pic/icon_pdf.png"></a>
+        <a href="/contract/">Contact<img src="/static/pic/icon_pdf.png"></a>
+        <a href="/support/">Support</a>
+    </div>
+    <p>Copyright © 2012-2017 capitalrev.com .All rights reserved.<br>
+        © Global Action Cash 2011 - 2017 </p>
+</div>
+<script src="/static/js/jquery-2.1.3.min.js"></script>
+{% block script %} {% endblock %}
+<script src="/static/js/common.js"></script>
+</body>
+</html>

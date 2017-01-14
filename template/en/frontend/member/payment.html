@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<form action="{{ api }}" method="post" id="payform">
+		<input type="hidden" name="MerNo" value="{{ MerNo }}">
+		<input type="hidden" name="Amount" value="{{ Amount }}">
+		<input type="hidden" name="BillNo" value="{{ BillNo }}">
+		<input type="hidden" name="ReturnURL" value="{{ ReturnURL }}">
+		<input type="hidden" name="NotifyURL" value="{{ NotifyURL }}">
+		<input type="hidden" name="MD5info" value="{{ MD5info }}">
+		<input type="hidden" name="PayType" value="{{ PayType }}">
+		<!--
+		<input type="hidden" name="PaymentType" value="">
+		<input type="hidden" name="MerRemark" value="">
+		<input type="hidden" name="products" value="">
+		-->
+		<input type="submit" name="b1" value="95epay(Credit Card)">
+	</form>
+</body>
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript">
+//setTimeout("$('#payform').submit()", 1000);
+</script>
+</html>

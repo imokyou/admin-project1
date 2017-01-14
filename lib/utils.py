@@ -11,6 +11,7 @@ from urlparse import urlparse
 from captcha.models import CaptchaStore
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.utils.http import is_safe_url
 from django.utils import timezone
 from django.conf import settings
@@ -146,3 +147,15 @@ def mailgun_send_email(to, subject, html, from_email=''):
 
 def debug():
     traceback.print_exc()
+
+
+def crender(request, template_file, data):
+    try:
+        t_template_file = template_file
+        lang = request.session['lang']
+        if lang and lang != 'cn':
+            t_template_file = '%s/%s' % (lang, template_file)
+    except:
+        traceback.print_exc()
+    print t_template_file
+    return render(request, t_template_file, data)

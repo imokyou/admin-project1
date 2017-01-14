@@ -21,12 +21,21 @@
     <div class="header_re clearfloat">
         <a href="#" class="logo_re"><img src="/static/pic/logo_re.png"> </a>
         <div class="language_box">
-            <h5 id="language"><span>中文</span><img src="/static/images/sjx.png"></h5>
+            <h5 id="language">
+                {% if request.session.lang == 'cn' %}
+                <span>中文</span>
+                {% endif %}
+
+                {% if request.session.lang == 'en' %}
+                <span>English</span>
+                {% endif %}
+                <img src="/static/images/sjx.png">
+            </h5>
             <span class="pointer"></span>
             <ul class="language_list">
-                <li>中文</li>
-                <li>English</li>
-                <li>韩文</li>
+                <li data="cn">中文</li>
+                <li data="en">English</li>
+                <!-- <li data="en-us">韩文</li> -->
             </ul>
         </div>
         <ul class="nav_bar_re">

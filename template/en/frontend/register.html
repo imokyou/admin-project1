@@ -1,0 +1,251 @@
+{% extends "en/frontend/base.html" %}
+<title>{% block title %}Capital country Home - Register{% endblock %}</title>
+{% block body %}
+
+<!--main content-->
+<div class="middle">
+    <h1 class="side_tit">Register</h1>
+    <p>{{ errmsg }}</p>
+    <form name="regform" method="POST">
+        {% csrf_token %}
+        <ul class="setting_ul mt30" style="padding-left:15px;">
+            <li>
+                <span>name</span>
+                <input id="first_name" maxlength="64" name="first_name" type="text" />
+            </li>
+            <li>
+                <span>surname</span>
+                <input id="last_name" maxlength="64" name="last_name" type="text" />
+            </li>
+            <li>
+                <span>username</span>
+                <input id="username" maxlength="64" name="username" type="text" />
+            </li>
+            <li>
+                <span>password</span>
+                <input id="password" maxlength="64" name="password" type="password" />
+            </li>
+            <li>
+                <span>confirm password</span>
+                <input id="confirm_password" maxlength="64" name="confirm_password" type="password" />
+            </li>
+            <li>
+                <span>Email</span>
+                <input id="email" maxlength="64" name="email" type="text" />
+            </li>
+            <li>
+                <span>Phone number</span>
+                <input id="phone" maxlength="64" name="phone" type="text" />
+            </li>
+
+            <li class="mt30">
+                <span></span>
+                <h2>address</h2>
+            </li>
+            <li>
+                <span>address1</span>
+                <input id="address1" name="address1" type="text" />
+            </li>
+            <li>
+                <span>address2</span>
+                <input id="address2" name="address2" type="text" />
+            </li>
+            <li>
+                <span>city</span>
+                <select id="city" name="city" class="dfinput" style="width:114px;"></select>
+            </li>
+            <li>
+                <span>province</span>
+                <select id="provincy" name="provincy" class="dfinput" style="width:114px;"></select>
+            </li>
+            <li>
+                <span>Country</span>
+                <select id="country" name="country" class="dfinput" style="width:114px;"></select>
+            </li>
+            <li>
+                <span>Postcode</span>
+                <input id="zip_code" maxlength="64" name="zip_code" type="text" />
+            </li>
+            <li class="mt30">
+                <span></span>
+                <h2>Additional fields</h2>
+            </li>
+            <li>
+                <span>sex</span>
+                <select id="sexal" name="sexal">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </li>
+            <li>
+                <span>age</span>
+                <select id="age" name="age">
+                {% for age in ages %}
+                    <option value="{{ age }}">{{ age }}</option>
+                {% endfor %}
+                </select>
+            </li>
+            <li>
+                <span>Whether real information</span>
+                <label><input id="is_info_real" name="is_info_real" type="checkbox" /><i>Yes, I use real information</i></label>
+            </li>
+            <li>
+                <span>referee</span>
+                <input id="recommend_user" maxlength="64" name="recommend_user" readonly="readonly" type="text" />
+            </li>
+            <li>
+                <span>Safety code</span>
+                <input id="id_reg_captcha_0" name="captcha_0" type="hidden" value="{{ hashkey }}">
+                <input class="w120" type="text" id="id_reg_captcha_1" name="id_reg_captcha_1">
+                <div class="verfiry_code">
+                    <a href="#" class="next-captcha">
+                        <img src="{{ captcha_url }}" class="captcha" alt="captcha">
+                    </a>
+                </div>
+            </li>
+            <li>
+                <span></span>
+                <label><input id="is_agree" name="is_agree" type="checkbox" /><i>I have read and agree to the terms and conditions</i></label>
+            </li>
+        </ul>
+        <button class="btn_jicun mt40 mauto" type="button" onclick="reg();"></button>
+    </form>
+</div><!--end of middle-->
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/js/pc.js"></script>
+<script type="text/javascript" src="/static/js/pcEn.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    new PCASEN("c_countryEn","c_provinceEn","c_cityEn");
+
+    $(".next-captcha").click(function(event){
+        $.getJSON("/member/refresh-captcha/", function(json) {
+            // This should update your captcha image src and captcha hidden input
+            // debugger;
+            var status = json['status'];
+            var new_cptch_key = json['new_cptch_key'];
+            var new_cptch_image = json['new_cptch_image'];
+            id_captcha_0 = $("#id_reg_captcha_0");
+            img = $(".captcha");
+            id_captcha_0.attr("value", new_cptch_key);
+            img.attr("src", new_cptch_image);
+        });
+        event.preventDefault();
+    });
+});
+
+function reg() {
+    var first_name = $('#first_name').val();
+    var last_name = $('#last_name').val();
+    var username = $('#username').val();
+    var password = $('#password').val();
+    var confirm_password = $('#confirm_password').val();
+    var email = $('#email').val();
+    var phone = $('#phone').val();
+    var address1 = $('#address1').val();
+    var address2 = $('#address2').val();
+    var city = $('#city').val();
+    var provincy = $('#provincy').val();
+    var country = $('#country').val();
+    var zip_code = $('#zip_code').val();
+    var age = $('#age').val();
+    var sexal = $('#sexal').val();
+    var recommend_user = $('#recommend_user').val();
+    var captcha_code = $('#id_reg_captcha_1').val();
+
+    if ($.trim(first_name) == '') {
+        alert('please enter name');
+        return false;
+    }
+    if ($.trim(last_name) == '') {
+        alert('please enter surname');
+        return false;
+    }
+    if ($.trim(username) == '') {
+        alert('please enter username');
+        return false;
+    }
+    if ($.trim(password) == '' || $.trim(confirm_password) == '') {
+        alert('please enter password ');
+        return false;
+    }
+    if ($.trim(password) != $.trim(confirm_password)) {
+        alert('password and confirm password not match');
+        return false;
+    }
+    if ($.trim(age) == '') {
+        alert('please enter age');
+        return false;
+    }
+    if ($.trim(email) == '') {
+        alert('please enter email');
+        return false;
+    }
+    if ($.trim(phone) == '') {
+        alert('please enter phone');
+        return false;
+    }
+    if ($.trim(city) == '') {
+        alert('please select city');
+        return false;
+    }
+    if ($.trim(country) == '') {
+        alert('please select country');
+        return false;
+    }
+    if ($.trim(zip_code) == '') {
+        alert('please enter zip code');
+        return false;
+    }
+    if ($.trim(captcha_code) == '') {
+        alert('please enter safety code');
+        return false;
+    }
+    if (!$('#is_info_real').is(':checked')) {
+        alert('please confirm real information');
+        return false;
+    }
+    if (!$('#is_agree').is(':checked')) {
+        alert('please confirm terms and conditions');
+        return false;
+    }
+
+    var params = {
+        first_name: first_name,
+        last_name: last_name,
+        username: username,
+        password: password,
+        confirm_password: confirm_password,
+        email: email,
+        phone: phone,
+        address1: address1,
+        address2: address2,
+        city: city,
+        provincy: provincy,
+        country: country,
+        zip_code: zip_code,
+        age: age,
+        sexal: sexal,
+        recommend_user: recommend_user,
+        captcha_code: captcha_code,
+        captcha_code_key: $('#id_reg_captcha_0').val()
+    }
+    $.ajax({
+        url: '/register/',
+        type: 'POST',
+        dataType: 'json',
+        data: params,
+        success: function(resp) {
+            if (resp.c == 0) {
+                alert('success')
+                location.href="/member/login/";
+            } else {
+                alert('register failed');
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

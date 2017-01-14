@@ -1,0 +1,139 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Setting{% endblock %}</title>
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">Setting</h2>
+    <ul class="setting_ul mt30" style="padding-left:80px;">
+        <li>
+            <span>name</span>
+            <input type="text" name="first_name" id="first_name" readonly="readonly" value="{{ request.user.first_name }}">
+        </li>
+        <li>
+            <span>surname</span>
+            <input type="text" name="last_name" id="last_name" readonly="readonly" value="{{ request.user.last_name }}">
+        </li>
+        <li>
+            <span>Email</span>
+            <input type="text" name="email" id="email" readonly="readonly" value="{{ request.user.email }}">
+        </li>
+        <li>
+            <span>City</span>
+            <select id="city" name="city" class="dfinput"></select>
+        </li>
+        <li>
+            <span>Provincy</span>
+            <select id="provincy" name="provincy" class="dfinput"></select>
+        </li>
+        <li>
+            <span>Country</span>
+            <select id="country" name="country" class="dfinput"></select>
+        </li>
+        <li>
+            <span>Phone number</span>
+            <input type="text" value="{{ userinfo.phone }}" name="phone" id="phone" >
+        </li>
+        <li>
+            <span>ATM address</span>
+            <select name="bank_code" id="bank_code">
+                <option value="PM">完美货币</option>
+                <option value="BITCOIN">比特币</option>
+                <option value="CSPAY">银联</option>
+                <option value="VISA">万事达卡</option>
+            </select>
+        </li>
+        <li>
+            <span>Account</span>
+            <input type="text" name="bank_card" id="bank_card">
+        </li>
+        <li>
+            <span></span>
+            <input type="hidden" name="ctype" value="changeinfo" />
+            <button class="btn_globe" style="margin-left: 150px;"  type="button" onclick="change_info();">keep</button>
+        </li>
+
+        <form name="ChangePwdForm" method="POST">
+            {% csrf_token %}
+            <li class="mt30">
+                <span></span>
+                <h2>Password</h2>
+                {% if errmsg %}
+                    <p class="err-msg" style="margin-left:100px">{{ errmsg|escape }}</p>
+                {% endif %}
+            </li>
+            <li>
+                <span>Old password</span>
+                {{ changePwdForm.password }}
+                {% if changePwdForm.password.errors %}
+                    {% for error in changePwdForm.password.errors %}
+                        <p class="err-msg" style="margin-left:100px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>New password</span>
+                {{ changePwdForm.new_password }}
+                {% if changePwdForm.new_password.errors %}
+                    {% for error in changePwdForm.new_password.errors %}
+                        <p class="err-msg" style="margin-left:100px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <span>Confirm new password</span>
+                {{ changePwdForm.cnew_password }}
+                {% if changePwdForm.cnew_password.errors %}
+                    {% for error in changePwdForm.cnew_password.errors %}
+                        <p class="err-msg" style="margin-left:100px">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li class="mt30">
+                <span></span>
+                <input type="hidden" name="ctype" value="changepwd" />
+                <button class="btn_globe" style="margin-left: 150px;"  type="submit" >keep</button>
+            </li>
+        </form>
+    </ul>
+</div><!--end of middle-->
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/js/pc.js"></script>
+<script type="text/javascript" src="/static/js/pcEn.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    new PCASEN("country","provincy","city");
+});
+
+function change_info() {
+    var flag = confirm('Are you sure?')
+    if (flag) {
+        var params = {
+            city: $('#city').val(),
+            provincy: $('#provincy').val(),
+            country: $('#country').val(),
+            phone: $('#phone').val(),
+            bank_code: $('#bank_code').val(),
+            bank_card: $('#bank_card').val(),
+            ctype: 'changeinfo'
+        }
+        $.ajax({
+            url: '/member/setting/',
+            type: 'POST',
+            dataType: 'json',
+            data: params,
+            success: function(resp) {
+                if (resp.c == 0) {
+                    alert('success')
+                } else {
+                    alert('failed');
+                }
+            }
+        });
+    }
+}
+
+</script>
+{% endblock %}

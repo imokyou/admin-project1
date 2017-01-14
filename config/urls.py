@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^video/', app.frontend.views.video),
     url(r'^faq/', app.frontend.views.faq),
     url(r'^support/', app.frontend.views.support),
+    url(r'^set-lang/', app.frontend.views.set_lang),
     url(r'^risk-disclosure/', app.frontend.views.risk_disclosure),
     url(r'^privacy/', app.frontend.views.privacy),
     url(r'^contract/', app.frontend.views.contract),
@@ -24,4 +25,5 @@ urlpatterns = [
     url(r'^backend/', include('app.backend.urls')),
     url(r'^redactor/', include('app.redactor.urls')),
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
 ]

@@ -1,0 +1,101 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Take back{% endblock %}</title>
+
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">Take back</h2>
+    <form name="withDrawForm" method="POST">
+    {% csrf_token %}
+     <div class="step_box">
+         <div class="step">
+             <h2 class="y">01</h2>
+             <p class="h">Essential information</p>
+         </div>
+         <div class="line"></div>
+         <div class="step">
+             <h2>02</h2>
+             <p>Transfer details</p>
+         </div>
+         <div class="line"></div>
+         <div class="step">
+             <h2>03</h2>
+             <p>confirm</p>
+         </div>
+     </div>
+    <ul class="sh_info_ul">
+        <li>
+            <span>Cash balance:</span>
+            {{ form.cash }}
+        </li>
+        <li>
+            <span>Recycling amount:</span>
+            {{ form.amount }}
+            {% if form.amount.errors %}
+                {% for error in form.amount.errors %}
+                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
+        </li>
+        <li>
+            <span>go to:</span>
+            {{ form.pay_type }}
+
+            {% if form.pay_type.errors %}
+                {% for error in form.pay_type.errors %}
+                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
+        </li>
+        <li>
+            <span>Account:</span>
+            {{ form.pay_account }}
+
+            {% if form.pay_account.errors %}
+                {% for error in form.pay_account.errors %}
+                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
+        </li>
+        <li>
+            <span>key:</span>
+            {{ form.password }}
+
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
+            {% if errmsg %}
+                <p class="err-msg" style="margin-left:0px">{{ errmsg|escape }}</p>
+            {% endif %}
+        </li>
+    </ul>
+    <button class="btn_globe mauto mt20" type="submit">Continue</button>
+    </form>
+    <table class="referral_table mt30">
+        <thead>
+        <tr>
+            <td>Order number</td>
+            <td>Date</td>
+            <td>Amount recovered</td>
+            <td>state</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for w in data.withdraws %}
+        <tr>
+            <td>{{ w.order_id }}</td>
+            <td>{{ w.create_time | date:'Y-m-d' }}</td>
+            <td>{{ w.amount }}</td>
+            <td>{{ w.status }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div><!--end of middle-->
+
+
+{% endblock %}

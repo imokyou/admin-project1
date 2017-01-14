@@ -1,0 +1,73 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Instrument panel{% endblock %}</title>
+
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box02">
+    <div class="middle_tit_h2">Instrument panel</div>
+    <div class="user_box">
+        <div class="user_info_box">
+            <div class="header_pic"><img src="/static/images/tx_01.jpg"></div>
+            <div class="user_info">
+                <h2>{{ request.user.username }}</h2>
+                <p>date joined: {{ request.user.date_joined | date:'Y-m-d'}}</p>
+                <span>Member:standard</span>
+            </div>
+        </div>
+        <div class="date">
+            <h2>{% now 'd' %}</h2>
+            <p>{{ data.curr_weekday.en }}</p>
+            <span>{% now 'Y-m' %}</span>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <ul class="dashboard_tab ">
+            <li><span>outline</span></li>
+        </ul>
+        <div class="dashboard_box">
+            <div class="dashboard_item">
+                <div class="profit_box">
+                    <h4>Earnings balance statistics</h4>
+                    <ul class="profit_ul">
+                        <li class="w50">
+                            <h5>${{ data.balance.cash }}</h5>
+                            <p>Cash balance</p>
+                        </li>
+                        <li class="w50">
+                            <h5>$0</h5>
+                            <p>Receive cash</p>
+                        </li>
+                        <li class="w50">
+                            <h5>${{ data.balance.invite_benifit }}</h5>
+                            <p>Recommended profit</p>
+                        </li>
+                        <li class="w50">
+                            <h5>$0</h5>
+                            <p>CBDC (capital) quantity</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="profit_box">
+                    <h4>Introduce statistics</h4>
+                    <ul class="profit_ul">
+                        <li class="w33">
+                            <h5>{{ data.invite_users }}</h5>
+                            <p>Direct referrals</p>
+                        </li>
+                        <li class="w33">
+                            <h5>{{ data.buy_users }}</h5>
+                            <p>Rent referrals</p>
+                        </li>
+                        <li class="w33">
+                            <h5>{{ data.total_users }}</h5>
+                            <p>Current team number</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!--end of middle-->
+{% endblock %}

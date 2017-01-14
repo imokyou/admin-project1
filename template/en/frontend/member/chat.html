@@ -1,0 +1,43 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - chat{% endblock %}</title>
+{% block body %}
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2"><img src="/static/images/icon_message.png">Write message</h2>
+    <form name="write_message" method="POST">
+        {% csrf_token %}
+        <ul class="write_message">
+            <li class="mb20">
+                {{ form.username }}
+
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li class="mb20">
+                {{ form.title }}
+
+                {% if form.title.errors %}
+                    {% for error in form.title.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                {{ form.message }}
+
+                {% if form.message.errors %}
+                    {% for error in form.message.errors %}
+                        <p class="err-msg">{{ error|escape }}</p>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li class="mt30">
+                <button class="btn_globe mt20 mb20 mauto" type="submit">send</button>
+            </li>
+        </ul>
+    </form>
+</div><!--end of middle-->
+{% endblock %}

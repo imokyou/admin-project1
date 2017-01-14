@@ -1,0 +1,75 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Increase capital{% endblock %}</title>
+
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2">Increase capital</h2>
+    <ul class="fund_ul mt70">
+        <li class="mt15">
+            <span>Method:</span>
+            <select class="w350" id='paytype'>
+                <option value="CSPAY">CSPAY</option>
+                <option value="BITCOIN">BITCOIN</option>
+                <option value="PM">PM</option>
+            </select>
+        </li>
+        <li class="mt15">
+           <span>amount:</span>
+           <input type="text" value="20.00" id="money">
+        </li>
+        <li class="mt15">
+            <span></span>
+            <p> Minimum deposit：＄20.00</p>
+        </li>
+        <li>
+            <button class="btn_globe mauto mt30" onclick="payinfo()">Send</button>
+        </li>
+    </ul>
+
+</div><!--end of middle-->
+
+
+<!--付款确认弹窗-->
+<div class="popup" id="pop" style="display:none">
+    <h1>Payment confirmation<button id="btn_close" onclick="javascript:document.getElementById('pop').style.display='none'"></button></h1>
+    <div class="pop_body">
+        <div class="pay_info">
+            <p>Method：<span id="c_paytype"></span></p>
+            <p>amount：<span id="c_money">20</span></p>
+        </div>
+        <p class="pop_tip">Note: please contact customer service！</p>
+    </div>
+    <div class="pop_bottom">
+        <button class="pop_sure" onclick="pay()">confirm</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+function payinfo() {
+    var paytype = $('#paytype').val();
+    var money = $('#money').val();
+
+    var c_paytype = ''
+    if (paytype == 'CSPAY') {
+        c_paytype = 'CSPAY';
+    } else if (paytype == 'BITCOIN') {
+        c_paytype = 'BITCOIN';
+    } else {
+        c_paytype = 'PM'
+    }
+    $('#c_paytype').html(c_paytype);
+    $('#c_money').html(money);
+    $('#pop').show();
+}
+
+function pay() {
+    var paytype = $('#paytype').val();
+    var money = $('#money').val();
+    location.href="/member/payment-center/?amount="+money+"&point=0&pay_type="+paytype;
+}
+</script>
+{% endblock %}

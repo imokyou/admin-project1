@@ -1,0 +1,106 @@
+{% extends "en/frontend/base.html" %}
+
+<title>{% block title %}Capital country Home - Login{% endblock %}</title>
+{% block body %}
+
+<!--main content-->
+<div class="middle">
+    <h1 class="side_tit">Login</h1>
+    <div class="login_box">
+        <form name="loginform" method="POST">
+            {% csrf_token %}
+            <ul class="login_ul">
+                <li>
+                    <h4>username<a href="#"></a></h4>
+                    <input type="text" name="username" id="username" value="" />
+                    <a href="/member/find-username/">Forgot username?</a>
+                </li>
+                <li>
+                    <h4>password<a href="#"></a></h4>
+                    <input type="password" name="password" id="password" value="" />
+                    <a href="/member/find-password/">Forget password?</a>
+                </li>
+                <li>
+                    <h5>Safety code</h5>
+                    <input id="id_reg_captcha_0" name="captcha_0" type="hidden" value="{{ hashkey }}">
+                    <input class="w150" type="text" id="id_reg_captcha_1" name="id_reg_captcha_1">
+                    <div class="captcha">
+                        <a href="#" class="next-captcha">
+                            <img src="{{ captcha_url }}" class="captcha-img" alt="captcha">
+                        </a>
+                    </div>
+                </li>
+                <!-- <li><input type="checkbox">Remember me</li> -->
+                <li style="padding-left:90px;">
+                    <button type="button" class="btn_globe" onclick="login()">Login</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</div><!--end of middle-->
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $(".next-captcha").click(function(event){
+        refresh_code();
+        event.preventDefault();
+    });
+});
+
+function refresh_code() {
+    $.getJSON("/member/refresh-captcha/", function(json) {
+        // This should update your captcha image src and captcha hidden input
+        // debugger;
+        var status = json['status'];
+        var new_cptch_key = json['new_cptch_key'];
+        var new_cptch_image = json['new_cptch_image'];
+        id_captcha_0 = $("#id_reg_captcha_0");
+        img = $(".captcha-img");
+        id_captcha_0.attr("value", new_cptch_key);
+        img.attr("src", new_cptch_image);
+    });
+}
+
+function login() {
+    var username = $('#username').val();
+    var password = $('#password').val();
+    var captcha_code = $('#id_reg_captcha_1').val();
+
+    if ($.trim(username) == '') {
+        alert('please enter username');
+        return false;
+    }
+    if ($.trim(password) == '') {
+        alert('please enter password');
+        return false;
+    }
+    if ($.trim(captcha_code) == '') {
+        alert('please enter safety code');
+        return false;
+    }
+
+    var params = {
+        username: username,
+        password: password,
+        captcha_code: captcha_code,
+        captcha_code_key: $('#id_reg_captcha_0').val()
+    }
+    $.ajax({
+        url: '/login/',
+        type: 'POST',
+        dataType: 'json',
+        data: params,
+        success: function(resp) {
+            if (resp.c == 0) {
+                location.href='/member/'
+            } else {
+                refresh_code();
+                alert('Login Failed');
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

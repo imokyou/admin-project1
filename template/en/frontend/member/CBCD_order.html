@@ -1,0 +1,48 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - State of capital{% endblock %}</title>
+
+{% block body %}
+<div class="main_middle middle_box">
+    <h2 class="middle_tit_h2 mb20">State of capital</h2>
+    <div class="cap_table_box">
+        <table class="cap_table fl mr10 ">
+            <thead>
+            <tr>
+                <td class="no_left_border">Status</td>
+                <td>Unit price</td>
+                <td>Number</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ob in data.orderbuy %}
+              <tr>
+                  <td class="no_left_border">Buy</td>
+                  <td>{{ ob.price }}</td>
+                  <td>{{ ob.num }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="cap_table fl">
+            <thead>
+            <tr>
+                <td class="no_left_border">Status</td>
+                <td>Unit price</td>
+                <td>Number</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for os in data.ordersell %}
+              <tr>
+                  <td class="no_left_border">Sell</td>
+                  <td>{{ os.price }}</td>
+                  <td>{{ os.num }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div><!--end of middle-->
+{% endblock %}

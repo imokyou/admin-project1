@@ -33,8 +33,9 @@ def home(request):
         'index': 'member',
         'sub_index': 'home'
     }
+
     data['statics'] = services.get_statics(request.user.id)
-    return render(request, 'frontend/member/index.html', data)
+    return utils.crender(request, 'frontend/member/index.html', data)
 
 
 @login_required(login_url='/login/')
@@ -57,7 +58,7 @@ def log(request, logtype):
         'data': q.all().order_by('-id')[(p - 1) * n:p * n]
     }
 
-    return render(request, 'frontend/member/log_%s.html' % logtype, data)
+    return utils.crender(request, 'frontend/member/log_%s.html' % logtype, data)
 
 
 @login_required(login_url='/login/')
@@ -80,7 +81,7 @@ def log_payment(request):
         'data': q.all().order_by('-id')[(p - 1) * n:p * n]
     }
 
-    return render(request, 'frontend/member/log_payment.html', data)
+    return utils.crender(request, 'frontend/member/log_payment.html', data)
 
 
 @login_required(login_url='/login/')
@@ -102,7 +103,7 @@ def log_withdraw(request):
         'data': q.all().order_by('-id')[(p - 1) * n:p * n]
     }
 
-    return render(request, 'frontend/member/log_withdraw.html', data)
+    return utils.crender(request, 'frontend/member/log_withdraw.html', data)
 
 @login_required(login_url='/login/')
 def news(request):
@@ -116,13 +117,15 @@ def news(request):
     n = 20
     p = request.GET.get('p', 1)
     q = News.objects
+    if request.session['lang'] == 'en':
+        q = q.filter(category=2)
 
     data['news'] = {
         'paging': Pagination(request, q.count()),
         'data': q.all().order_by('-id')[(p - 1) * n:p * n]
     }
 
-    return render(request, 'frontend/member/news.html', data)
+    return utils.crender(request, 'frontend/member/news.html', data)
 
 
 @login_required(login_url='/login/')
@@ -150,7 +153,7 @@ def chat(request):
             m.save()
             return HttpResponseRedirect('/member/chat/')
 
-    return render(request, 'frontend/member/chat.html', data)
+    return utils.crender(request, 'frontend/member/chat.html', data)
 
 
 
@@ -163,7 +166,7 @@ def shop(request):
         'news': News.objects.all().order_by('-id')[0:10]
     }
 
-    return render(request, 'frontend/member/shop.html', data)
+    return utils.crender(request, 'frontend/member/shop.html', data)
 
 
 @login_required(login_url='/login/')
@@ -190,7 +193,7 @@ def mailbox(request, ctype):
         'data': q.all().order_by('-id')[(p - 1) * n:p * n]
     }
 
-    return render(request, 'frontend/member/mailbox.html', data)
+    return utils.crender(request, 'frontend/member/mailbox.html', data)
 
 
 @login_required(login_url='/login/')
@@ -211,7 +214,7 @@ def rank(request):
         'data': q.all().order_by('-id')[(p - 1) * n:p * n]
     }
 
-    return render(request, 'frontend/member/rank.html', data)
+    return utils.crender(request, 'frontend/member/rank.html', data)
 
 
 @login_required(login_url='/login/')
@@ -223,7 +226,7 @@ def seller(request):
         'news': News.objects.all().order_by('-id')[0:10]
     }
 
-    return render(request, 'frontend/member/seller.html', data)
+    return utils.crender(request, 'frontend/member/seller.html', data)
 
 
 @login_required(login_url='/login/')
@@ -258,7 +261,7 @@ def promotion(request):
             'invite_benifit': invite_benifit
         })
 
-    return render(request, 'frontend/member/promotion.html', data)
+    return utils.crender(request, 'frontend/member/promotion.html', data)
 
 
 @login_required(login_url='/login/')
@@ -293,7 +296,7 @@ def selling(request):
             .filter(user_id=user_id).update(is_selling=1)
         return HttpResponseRedirect('/member/selling/')
 
-    return render(request, 'frontend/member/selling.html', data)
+    return utils.crender(request, 'frontend/member/selling.html', data)
 
 
 @login_required(login_url='/login/')
@@ -336,7 +339,7 @@ def buying(request):
         else:
             data['errmsg'] = '余额不足，请充值'
 
-    return render(request, 'frontend/member/buying.html', data)
+    return utils.crender(request, 'frontend/member/buying.html', data)
 
 
 @login_required(login_url='/login/')
@@ -399,7 +402,7 @@ def change_recommend_user(request):
                 else:
                     data['errmsg'] = '你的转介次数已满3次，不能再次转介'
 
-    return render(request, 'frontend/member/change_recommend_user.html', data)
+    return utils.crender(request, 'frontend/member/change_recommend_user.html', data)
 
 
 @csrf_exempt
@@ -449,28 +452,38 @@ def setting(request):
                 traceback.print_exc()
                 return utils.ErrResp(errors.FuncFailed)
     else:
-        return render(request, 'frontend/member/settings.html', data)
+        return utils.crender(request, 'frontend/member/settings.html', data)
 
 
 @login_required(login_url='/login/')
 def dashboard(request):
-    weekday2name = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天']
+    weekday2name = {
+        'cn': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'],
+        'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    }
     data = {
         'index': 'member',
         'sub_index': 'balance',
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
-        'data': {}
+        'data': {
+            'curr_weekday': {
+                'cn': '',
+                'en': ''
+            }
+        },
+
     }
     curr_weekday = timezone.now().weekday()
-    data['data']['curr_weekday'] = weekday2name[curr_weekday]
+    data['data']['curr_weekday']['cn'] = weekday2name['cn'][curr_weekday]
+    data['data']['curr_weekday']['en'] = weekday2name['en'][curr_weekday]
     data['data']['invite_users'] = UserConnection.objects \
         .filter(parent=request.user).count()
     data['data']['buy_users'] = UserConnectionBuying.objects \
         .filter(parent=request.user).count()
     data['data']['total_users'] = data['data']['invite_users'] + data['data']['buy_users']
     data['data']['balance'] = services.get_balance(request.user)
-    return render(request, 'frontend/member/dashboard.html', data)
+    return utils.crender(request, 'frontend/member/dashboard.html', data)
 
 
 @login_required(login_url='/login/')
@@ -482,7 +495,7 @@ def us_bank_account(request):
         'news': News.objects.all().order_by('-id')[0:10],
         'data': {}
     }
-    return render(request, 'frontend/member/us_bank_account.html', data)
+    return utils.crender(request, 'frontend/member/us_bank_account.html', data)
 
 
 @login_required(login_url='/login/')
@@ -534,7 +547,7 @@ def withdraw(request):
             else:
                 data['errmsg'] = '密码不正确'
 
-    return render(request, 'frontend/member/withdraw.html', data)
+    return utils.crender(request, 'frontend/member/withdraw.html', data)
 
 
 @csrf_exempt
@@ -605,7 +618,7 @@ def bonus(request):
             }
             return utils.NormalResp(resp)
 
-    return render(request, 'frontend/member/bonus.html', data)
+    return utils.crender(request, 'frontend/member/bonus.html', data)
 
 
 @login_required(login_url='/login/')
@@ -634,7 +647,7 @@ def cbcd_price(request):
         .filter(buyer_user=request.user) \
         .all().order_by('-id')[0:15]
 
-    return render(request, 'frontend/member/cbcd_price.html', data)
+    return utils.crender(request, 'frontend/member/cbcd_price.html', data)
 
 
 @login_required(login_url='/login/')
@@ -653,7 +666,7 @@ def cbcd_order(request):
     data['data']['orderbuy'] = UserOrderBuy.objects \
         .all().order_by('-id')[0:15]
 
-    return render(request, 'frontend/member/CBCD_order.html', data)
+    return utils.crender(request, 'frontend/member/CBCD_order.html', data)
 
 
 @csrf_exempt
@@ -776,7 +789,7 @@ def trading_hall(request, ctype):
     data['data']['price_up'] = data['data']['price_current'] - data['data']['price_open']
     data['data']['ratio'] = (data['data']['price_current'] - data['data']['price_init'])*100 / data['data']['price_init']
 
-    return render(request, 'frontend/member/trading_hall.html', data)
+    return utils.crender(request, 'frontend/member/trading_hall.html', data)
 
 
 @login_required(login_url='/login/')
@@ -813,7 +826,7 @@ def trading_hall_home(request):
         .all().order_by('id')[0:5]
     data['data']['orderbuy'] = UserOrderBuy.objects \
         .all().order_by('-id')[0:5]
-    return render(request, 'frontend/member/trading_hall_home.html', data)
+    return utils.crender(request, 'frontend/member/trading_hall_home.html', data)
 
 
 @login_required(login_url='/login/')
@@ -841,7 +854,7 @@ def cbcd_current(request):
     data['data']['price_buy'] = current_order['price']
     data['data']['price_sell'] = current_order['price']
 
-    return render(request, 'frontend/member/cbcd_current.html', data)
+    return utils.crender(request, 'frontend/member/cbcd_current.html', data)
 
 
 @login_required(login_url='/login/')
@@ -877,7 +890,7 @@ def payment(request):
     data['NotifyURL'] = settings.PAYMENT_NOTIFYURL
     data['api'] = settings.PAYMENT_API
 
-    return render(request, 'frontend/member/payment.html', data)
+    return utils.crender(request, 'frontend/member/payment.html', data)
 
 
 @login_required(login_url='/login/')
@@ -922,7 +935,7 @@ def payment_center(request):
     data['NotifyURL'] = settings.PAYMENT_NOTIFYURL
     data['api'] = settings.PAYMENT_API
     data['point'] = upayment.point
-    return render(request, 'frontend/member/payment_center.html', data)
+    return utils.crender(request, 'frontend/member/payment_center.html', data)
 
 
 @csrf_exempt
@@ -1107,7 +1120,7 @@ def visa_apply(request):
             traceback.print_exc()
             return utils.ErrResp(errors.FuncFailed)
     else:
-        return render(request, 'frontend/member/visa_apply.html', data)
+        return utils.crender(request, 'frontend/member/visa_apply.html', data)
 
 
 @csrf_exempt
@@ -1164,7 +1177,7 @@ def find_password(request):
             traceback.print_exc()
             return utils.ErrResp(errors.FuncFailed)
     else:
-        return render(request, 'frontend/member/find_password.html', data)
+        return utils.crender(request, 'frontend/member/find_password.html', data)
 
 
 @csrf_exempt
@@ -1214,7 +1227,7 @@ def reset_password(request):
             traceback.print_exc()
             return utils.ErrResp(errors.FuncFailed)
     else:
-        return render(request, 'frontend/member/reset_password.html', data)
+        return utils.crender(request, 'frontend/member/reset_password.html', data)
 
 
 @csrf_exempt
@@ -1264,7 +1277,7 @@ def find_username(request):
             traceback.print_exc()
             return utils.ErrResp(errors.FuncFailed)
     else:
-        return render(request, 'frontend/member/find_username.html', data)
+        return utils.crender(request, 'frontend/member/find_username.html', data)
 
 
 @csrf_exempt

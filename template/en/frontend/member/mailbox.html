@@ -1,0 +1,32 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - Inbox{% endblock %}</title>
+
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box">
+    {% if ctype == 'received' %}
+    <h2 class="middle_tit_h2">Inbox<i>({{ maillist.tot }})</i></h2>
+    {% elif ctype == 'sended' %}
+    <h2 class="middle_tit_h2">发件箱<i>({{ maillist.tot }})</i></h2>
+    {% endif %}
+    <ul class="mail_list">
+        {% for mail in maillist.data %}
+        <li>
+            <div class="mail_header">
+                <div class="sender">
+                    <div class="sender_pic"><img src="/static/images/mail_tx.jpg"></div>
+                    <div class="sender_name">
+                        <h4>{{ mail.from_user.username }}</h4>
+                        <p>From：{{ mail.from_user.username }}</p>
+                    </div>
+                </div>
+                <div class="sender_time">{{ mail.create_time | date:'Y-m-d H:i:s' }}</div>
+            </div>
+            <h3 class="mail_tit">{{ mail.title }}</h3>
+            <p>{{ mail.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div><!--end of middle-->
+{% endblock %}

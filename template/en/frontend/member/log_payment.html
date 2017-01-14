@@ -1,0 +1,45 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - History of deposit{% endblock %}</title>
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="min-height:828px;">
+    <div class="middle_tit_h2">History of deposit
+        <div class="page">
+            {% if paging.has_previous %}
+                <a href="{{paging.prev_url}}">
+                    Prev
+                </a>
+            {% endif %}
+
+            {% if paging.has_next %}
+                <a href="{{paging.next_url}}">
+                    Next
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+        <table class="referral_table mt20">
+            <thead>
+                <tr>
+                    <td>Date</td>
+                    <td>order</td>
+                    <td>Method</td>
+                    <td>Account</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for l in loglist.data %}
+             <tr>
+                 <td>{{ l.create_at | date:'Y-m-d' }}</td>
+                 <td>{{ l.order_id }}</td>
+                 <td>{{ l.pay_type }}</td>
+                 <td>{{ l.amount }}</td>
+             </tr>
+             {% endfor %}
+            </tbody>
+        </table>
+
+</div><!--end of middle-->
+{% endblock %}

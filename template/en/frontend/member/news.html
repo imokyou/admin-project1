@@ -1,0 +1,34 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - news{% endblock %}</title>
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="min-height:828px;">
+    <div class="middle_tit_h2">news
+        <div class="page">
+            {% if paging.has_previous %}
+                <a href="{{paging.prev_url}}">
+                    上一页
+                </a>
+            {% endif %}
+
+            {% if paging.has_next %}
+                <a href="{{paging.next_url}}">
+                    下一页
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <ul class="news_list">
+        {% for n in news.data %}
+        <li><a href="#">
+            <div class="news_tit">
+                <h5>{{ n.title }}</h5>
+                <time>{{ n.create_time | date:'Y-m-d' }}</time>
+            </div>
+            <p>{{ n.content }}</p>
+        </a></li>
+        {% endfor %}
+    </ul>
+</div><!--end of middle-->
+{% endblock %}

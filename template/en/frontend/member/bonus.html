@@ -1,0 +1,78 @@
+{% extends "en/frontend/member/base.html" %}
+
+<title>{% block title %}Capital country Home - subscription{% endblock %}</title>
+
+{% block body %}
+<div class="main_middle middle_box pre" id="main_mid" style="padding:0;">
+<h2 class="middle_tit_h2 plr20">subscription</h2>
+    <div class="turnplate_box">
+        <canvas id="myCanvas" width="300px" height="300px">抱歉！浏览器不支持。</canvas>
+        <canvas id="myCanvas01" width="200px" height="200px">抱歉！浏览器不支持。</canvas>
+        <canvas id="myCanvas03" width="200px" height="200px">抱歉！浏览器不支持。</canvas>
+        <canvas id="myCanvas02" width="150px" height="150px">抱歉！浏览器不支持。</canvas>
+        <button id="tupBtn" class="turnplatw_btn"></button>
+    </div>
+    <div class="luck_box">
+        <h5>Draw in CBDC：<b><span id="bonus_point">0</span></b></h5>
+        <h6>About need：<span>$<span id="bonus_money">0</span></span></h6>
+        <input type="hidden" value='0' id="bonus_id">
+        <button class="btn_globe mauto" onclick="gopay()">在线充值</button>
+    </div>
+</div><!--end of middle-->
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/canvas.js"></script>
+<script type="text/javascript">
+    function gopay() {
+        
+        if ($('#bonus_money').text().trim() != '0') {
+            var url = '/member/payment-center/?amount='+$('#bonus_money').text().trim()+'&point='+$('#bonus_point').text().trim()+'&bonus_id='+$('#bonus_id').val();
+            location.href = url;
+        }
+    }
+
+    window.alert = function(str)
+    {
+        var shield = document.createElement("DIV");
+        shield.id = "shield";
+        shield.style.position = "absolute";
+        shield.style.left = "50%";
+        shield.style.top = "50%";
+        shield.style.width = "280px";
+        shield.style.height = "150px";
+        shield.style.marginLeft = "-140px";
+        shield.style.marginTop = "-110px";
+        shield.style.zIndex = "25";
+
+        var alertFram = document.createElement("DIV");
+        alertFram.id="alertFram";
+        alertFram.style.position = "absolute";
+        alertFram.style.width = "400px";
+        alertFram.style.height = "150px";
+        alertFram.style.left = "50%";
+        alertFram.style.top = "50%";
+        alertFram.style.marginLeft = "-200px";
+        alertFram.style.marginTop = "-110px";
+        alertFram.style.textAlign = "center";
+        alertFram.style.lineHeight = "150px";
+        alertFram.style.zIndex = "300";
+        
+        strHtml = "<ul style=\"list-style:none;margin:0;padding:0;width:100%\">\n";
+        strHtml += " <li style=\"background:#fff;text-align:center; font-size:16px;font-weight:bold;height:40px;line-height:40px;border-bottom:1px solid #ccc;color:#333\">中奖提醒</li>\n";
+        strHtml += " <li style=\"background:#fff;text-align:center; font-size:16px;height:95px;line-height:95px;color:#333;\"><b style='color:red;'>"+str+"</b></li>\n";
+        strHtml += " <li style=\"background-color:#f5f5f5; padding:15px 0;\"><input type=\"button\" value=\"确 定\" onclick=\"doOk()\" style=\"display:block; width: 110px; height: 32px; line-height: 32px; text-align: center; background:-webkit-linear-gradient(#fefefe, #f1f1f1);background:-moz-linear-gradient(#fefefe, #f1f1f1) ;background:linear-gradient(#fefefe, #f1f1f1);color:#666; border-radius: 4px; margin:0 auto; border:1px solid #ccc;\"/></li>\n";
+        strHtml += "</ul>\n";
+        alertFram.innerHTML = strHtml;
+        var main_mid =document.getElementById('main_mid');
+        main_mid.appendChild(alertFram);
+        main_mid.appendChild(shield);
+        this.doOk = function(){
+            alertFram.style.display = "none";
+            shield.style.display = "none";
+        };
+        alertFram.focus();
+        document.body.onselectstart = function(){return false;};
+    }
+</script>
+{% endblock %}

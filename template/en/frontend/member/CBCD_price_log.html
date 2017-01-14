@@ -1,0 +1,27 @@
+{% extends "frontend/member/base.html" %}
+
+{% block title %}资本国度-资本兑交易状态{% endblock %}
+{% block body %}
+<!--middle-->
+<div class="main_middle middle_box" style="padding:0; background-image:none;">
+    <h2 class="middle_tit_h2 bg_1e">资本兑交易状态</h2>
+    <table class="match_table">
+        <thead>
+            <tr>
+                <td class="no_left_border">单位价</td>
+                <td>买入/卖出</td>
+                <td>数量</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in data.pricelist %}
+        <tr>
+            <td class="no_left_border">0.38</td>
+            <td>卖出</td>
+            <td>250151</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div><!--end of middle-->
+{% endblock %}

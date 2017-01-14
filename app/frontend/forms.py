@@ -5,22 +5,19 @@ from django.contrib.auth import authenticate
 
 
 class RegForm(forms.Form):
-    first_name = forms.CharField(max_length=64, required=True, error_messages={'required': '名不能为空'})
-    last_name = forms.CharField(max_length=64, required=True, error_messages={'required': '姓不能为空'})
+    first_name = forms.CharField(max_length=64, required=True)
+    last_name = forms.CharField(max_length=64, required=True)
     username = forms.CharField(max_length=25,
                                min_length=4,
-                               required=True,
-                               error_messages={'required': '用户名不能为空'})
+                               required=True)
     password = forms.CharField(max_length=16,
                                min_length=6,
-                               widget=forms.PasswordInput(),
-                               error_messages={'required': '密码不能为空'})
+                               widget=forms.PasswordInput())
     confirm_password = forms.CharField(max_length=16,
                                        min_length=6,
-                                       widget=forms.PasswordInput(),
-                                       error_messages={'required': '确认密码不能为空'})
-    email = forms.CharField(max_length=64, required=True, error_messages={'required': '邮件不能为空'})
-    phone_number = forms.CharField(max_length=15, required=True, error_messages={'required': '电话号码不能为空'})
+                                       widget=forms.PasswordInput())
+    email = forms.CharField(max_length=64, required=True)
+    phone_number = forms.CharField(max_length=15, required=True)
     address1 = forms.CharField(max_length=64, required=False)
     address2 = forms.CharField(max_length=64, required=False)
     city = forms.CharField(max_length=64, required=False)
@@ -30,12 +27,12 @@ class RegForm(forms.Form):
     sexal = forms.CharField(max_length=64, required=False)
     age = forms.CharField(max_length=64, required=False)
     # network_type = forms.CharField(max_length=64)
-    is_info_real = forms.BooleanField(error_messages={'required': '请勾选该选项'})
+    is_info_real = forms.BooleanField()
     recommend_user = forms.CharField(max_length=64,
                                      required=False,
                                      widget=forms.TextInput(
                                         attrs={'readonly': 'readonly'}))
-    is_agree = forms.BooleanField(error_messages={'required': '请勾选该选项'})
+    is_agree = forms.BooleanField()
 
     def clean(self):
         cleaned_data = super(RegForm, self).clean()
@@ -86,13 +83,11 @@ class LoginForm(forms.Form):
 
 class FeedbackForm(forms.Form):
     CHOICES = [
-        (1, '类型一')
+        (1, '1')
     ]
     ctype = forms.ChoiceField(label="",
                               choices=CHOICES,
                               widget=forms.Select())
-    title = forms.CharField(max_length=256,
-                            error_messages={'required': '标题不能为空'})
+    title = forms.CharField(max_length=256)
     content = forms.CharField(max_length=1024,
-                              widget=forms.Textarea(attrs={'rows': 6}),
-                              error_messages={'required': '内容不能为空'})
+                              widget=forms.Textarea(attrs={'rows': 6}))
