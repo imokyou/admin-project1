@@ -30,6 +30,50 @@ class ChatForm(forms.Form):
         return username
 
 
+class ChatForm(forms.Form):
+    username = forms.CharField(max_length=64,
+                               min_length=4,
+                               required=True,
+                               widget=TextInput(
+                                   attrs={'placeholder': 'username...'}),
+                               error_messages={'required': '收件人不能为空'})
+    title = forms.CharField(max_length=256,
+                            required=True,
+                            widget=TextInput(
+                                attrs={'placeholder': 'title...'}),
+                            error_messages={'required': '标题不能为空'})
+    message = forms.CharField(required=True,
+                              widget=Textarea(
+                                attrs={'placeholder': 'message...'}),
+                              error_messages={'required': '内容不能为空'})
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        u = Auth_user.objects.filter(username=username).first()
+        if not u:
+            raise forms.ValidationError("用户不存在")
+
+
+class EnChatForm(forms.Form):
+    username = forms.CharField(max_length=64,
+                               min_length=4,
+                               required=True,
+                               widget=TextInput(
+                                   attrs={'placeholder': 'username...'}))
+    title = forms.CharField(max_length=256,
+                            required=True,
+                            widget=TextInput(
+                                attrs={'placeholder': 'title...'}))
+    message = forms.CharField(required=True,
+                              widget=Textarea(
+                                attrs={'placeholder': 'message...'}))
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        u = Auth_user.objects.filter(username=username).first()
+        if not u:
+            raise forms.ValidationError("username not exists")
+
 class ChangeRecommendForm(forms.Form):
     username = forms.CharField(max_length=64,
                                min_length=4,
@@ -63,8 +107,22 @@ class ChangePwdForm(forms.Form):
                                     widget=forms.PasswordInput(),
                                     error_messages={'required': '确认密码不能为空'})
 
+class EnChangePwdForm(forms.Form):
+    password = forms.CharField(max_length=64,
+                               min_length=4,
+                               required=True,
+                               widget=forms.PasswordInput())
+    new_password = forms.CharField(max_length=64,
+                                   min_length=4,
+                                   required=True,
+                                   widget=forms.PasswordInput())
+    cnew_password = forms.CharField(max_length=64,
+                                    min_length=4,
+                                    required=True,
+                                    widget=forms.PasswordInput())
+
     def clean(self):
-        cleaned_data = super(ChangePwdForm, self).clean()
+        cleaned_data = super(EnChangePwdForm, self).clean()
         new_password = cleaned_data.get("new_password")
         cnew_password = cleaned_data.get("cnew_password")
 

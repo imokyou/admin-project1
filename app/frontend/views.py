@@ -175,7 +175,10 @@ def support(request):
 
     if request.method == 'POST':
         if not request.user.is_authenticated():
-            data['errmsg'] = '请先登陆'
+            if request.session['lang'] == 'cn':
+                data['errmsg'] = '请先登陆'
+            else:
+                data['errmsg'] = 'Log in First'
         else:
             data['form'] = FeedbackForm(request.POST)
             if data['form'].is_valid():

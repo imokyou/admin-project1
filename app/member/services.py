@@ -207,3 +207,11 @@ def get_sign(data, sign_key):
     finally:
         return result
 
+def get_news(request):
+    q = News.objects
+    if request.session['lang'] == 'cn':
+        q = q.filter(category=1)
+    else:
+        q = q.filter(category=2)
+    return q.order_by('-id')[0:10]
+

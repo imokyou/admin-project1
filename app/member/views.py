@@ -17,7 +17,7 @@ from django.db.models import Count, Sum
 from dbmodel.ziben.models import UserOplog, News, UserMessage, UserPromoteRank, UserInfo, UserBalance, UserConnection, UserSellingMall, UserConnectionBuying, UserChangeRecommend, UserWithDraw, SiteSetting, UserBonus, CBCDPriceLog, UserOrderSell, CBCDInit, UserOrderBuy, UserPayment, UserVisaApply, UserResetPwd
 from lib import utils
 from lib.pagination import Pagination
-from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm
+from forms import ChatForm, ChangeRecommendForm, ChangePwdForm, ChangeUserInfoForm, WithDrawForm, EnChangePwdForm,EnChatForm
 import services
 from config import errors
 
@@ -44,7 +44,7 @@ def log(request, logtype):
         'index': 'member',
         'sub_index': 'log',
         'statics': services.get_statics(request.user.id),
-        'news': News.objects.all().order_by('-id')[0:10]
+        'news': services.get_news(request)
     }
 
     n = 20
@@ -67,7 +67,7 @@ def log_payment(request):
         'index': 'member',
         'sub_index': 'log',
         'statics': services.get_statics(request.user.id),
-        'news': News.objects.all().order_by('-id')[0:10]
+        'news': services.get_news()
     }
 
     n = 20
@@ -137,8 +137,15 @@ def chat(request):
         'news': News.objects.all().order_by('-id')[0:10],
         'form': ChatForm()
     }
+    if request.session['lang'] == 'cn':
+        data['form'] = ChatForm()
+    else:
+        data['form'] = EnChatForm()
     if request.method == 'POST':
-        data['form'] = ChatForm(request.POST)
+        if request.session['lang'] == 'cn':
+            data['form'] = ChatForm(request.POST)
+        else:
+            data['form'] = EnChatForm(request.POST)
         if data['form'].is_valid():
             to_user = Auth_user.objects \
                 .get(username=request.POST.get('username'))
@@ -237,7 +244,8 @@ def promotion(request):
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10],
         'data': {
-            'uconnect': []
+            'uconnect': [],
+            'ucount': 0
         }
     }
     invite_code = UserInfo.objects.get(user=request.user).invite_code
@@ -260,6 +268,7 @@ def promotion(request):
             'last_login': last_login,
             'invite_benifit': invite_benifit
         })
+    data['data']['ucount'] = len(data['data']['uconnect'])
 
     return utils.crender(request, 'frontend/member/promotion.html', data)
 
@@ -418,19 +427,27 @@ def setting(request):
         'userinfo': {},
         'errmsg': ''
     }
+    if request.session['lang'] == 'cn':
+        data['changePwdForm'] = ChangePwdForm()
+    else:
+        data['changePwdForm'] = EnChangePwdForm()
     uinfo = UserInfo.objects.get(user=request.user)
-    data['userinfo'] = {
-        'phone': uinfo.phone_number
-    }
+    data['userinfo'] = uinfo
 
     if request.method == 'POST':
         if request.POST.get('ctype') == 'changepwd':
-            data['changePwdForm'] = ChangePwdForm(request.POST)
+            if request.session['lang'] == 'cn':
+                data['changePwdForm'] = ChangePwdForm(request.POST)
+            else:
+                data['changePwdForm'] = EnChangePwdForm(request.POST)
             if data['changePwdForm'].is_valid():
                 user = authenticate(username=request.user.username,
                                     password=request.POST['password'])
                 if not user:
-                    data['errmsg'] = '原密码输入有误'
+                    if request.session['lang'] == 'cn':
+                        data['errmsg'] = '原密码输入有误'
+                    else:
+                        data['errmsg'] = 'old password invalid'
                 else:
                     u = Auth_user.objects.get(username=request.user.username)
                     u.set_password(request.POST['new_password'])
@@ -451,8 +468,7 @@ def setting(request):
             except:
                 traceback.print_exc()
                 return utils.ErrResp(errors.FuncFailed)
-    else:
-        return utils.crender(request, 'frontend/member/settings.html', data)
+    return utils.crender(request, 'frontend/member/settings.html', data)
 
 
 @login_required(login_url='/login/')

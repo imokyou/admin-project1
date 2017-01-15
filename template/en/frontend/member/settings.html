@@ -32,20 +32,43 @@
         </li>
         <li>
             <span>Phone number</span>
-            <input type="text" value="{{ userinfo.phone }}" name="phone" id="phone" >
+            <input type="text" value="{{ userinfo.phone_number }}" name="phone" id="phone" >
         </li>
         <li>
             <span>ATM address</span>
             <select name="bank_code" id="bank_code">
-                <option value="PM">完美货币</option>
+                {% if userinfo.bank_code == 'PM' %}
+                <option value="PM" selected="selected">完美货币</option>
                 <option value="BITCOIN">比特币</option>
                 <option value="CSPAY">银联</option>
                 <option value="VISA">万事达卡</option>
+                {% endif %}
+
+                {% if userinfo.bank_code == 'BITCOIN' %}
+                <option value="PM">完美货币</option>
+                <option value="BITCOIN" selected="selected">比特币</option>
+                <option value="CSPAY">银联</option>
+                <option value="VISA">万事达卡</option>
+                {% endif %}
+
+                {% if userinfo.bank_code == 'CSPAY' %}
+                <option value="PM">完美货币</option>
+                <option value="BITCOIN">比特币</option>
+                <option value="CSPAY" selected="selected">银联</option>
+                <option value="VISA">万事达卡</option>
+                {% endif %}
+
+                {% if userinfo.bank_code == 'VISA' %}
+                <option value="PM">完美货币</option>
+                <option value="BITCOIN">比特币</option>
+                <option value="CSPAY">银联</option>
+                <option value="VISA" selected="selected">万事达卡</option>
+                {% endif %}
             </select>
         </li>
         <li>
             <span>Account</span>
-            <input type="text" name="bank_card" id="bank_card">
+            <input type="text" name="bank_card" id="bank_card" value="{{ userinfo.bank_card }}">
         </li>
         <li>
             <span></span>
@@ -104,7 +127,7 @@
 <script type="text/javascript" src="/static/js/pcEn.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-    new PCASEN("country","provincy","city");
+    new PCASEN("country","provincy","city", "{{ userinfo.country }}", "{{ userinfo.provincy }}", "{{ userinfo.city }}");
 });
 
 function change_info() {
