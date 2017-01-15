@@ -5,7 +5,7 @@ import random
 import hashlib
 from django.utils import timezone
 from django.db.models import Sum
-from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting, CBCDInit, CBCDPriceLog,UserOrderSell
+from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting, CBCDInit, CBCDPriceLog,UserOrderSell, News
 from lib import utils
 
 
