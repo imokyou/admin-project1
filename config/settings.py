@@ -222,3 +222,5 @@ SEND_EMAIL_MAILGUN = True
 MAILGUN_MESSAGE_URL = 'https://api.mailgun.net/v3/js101.us/messages'
 MAILGUN_API = 'key-9cd9e8c978d5d4836c637202ae0b39d7'
 EMAIL_HOST = 'notification@zibenguodu.com'
+
+DATA_PATH = os.path.join(BASE_DIR, "data")
