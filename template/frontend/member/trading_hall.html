@@ -6,7 +6,11 @@
    <h2 class="middle_tit_h2">交易所</h2>
    <div class="trade mt20">
        <div class="trade_tit clearfloat">
-           <h4>CBCD买</h4>
+          {% if ctype == 'buy' %}
+          <h4>CBCD买</h4>
+          {% else %}
+          <h4>CBCD卖</h4>
+          {% endif %}
            <button><img src="/static/images/icon_refresh.png">刷新</button>
        </div>
        <div class="bourse_box clearfloat">

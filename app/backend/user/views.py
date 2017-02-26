@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User as Auth_user
 from django.conf import settings
+from django.utils import timezone
 from dbmodel.ziben.models import UserInfo, UserBalance, UserOplog, UserRevenue, UserPayment, UserConnection, InviteCode, Bank, UserMessage, UserFeedback, UserWithDraw, UserVisaApply
 from lib import utils
 from lib.pagination import Pagination
@@ -496,6 +497,7 @@ def payment(request):
                 'id': p.id,
                 'user_id': p.user.id,
                 'order_id': p.order_id,
+                'partner_order_id': p.partner_order_id,
                 'username': p.user.username,
                 'payout': float(p.amount),
                 'point': int(p.point),
@@ -540,9 +542,9 @@ def payment_success(request):
                 ubalance.point = ubalance.point + upayment.point
             else:
                 if upayment.currency == 1:
-                    ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                    ubalance.cash = int(upayment['amount'])/ settings.CURRENCY_RATIO
                 else:
-                    ubalance.cash = int(params['Amount'])
+                    ubalance.cash = int(upayment['amount'])
             ubalance.save()
 
             if upayment.callback:
@@ -622,6 +624,7 @@ def mailbox(request):
         n = int(request.GET.get('n', 25))
         from_user = request.GET.get('from_user', '')
         to_user = request.GET.get('to_user', '')
+        ctype = request.GET.get('ctype', 'member')
 
         q = UserMessage.objects
         if from_user:
@@ -636,8 +639,12 @@ def mailbox(request):
                 q = q.filter(to_user_id=u.id)
             except:
                 pass
+        if ctype:
+            q = q.filter(ctype=ctype)
 
-        form_initial = {'from_user': from_user, 'to_user': to_user}
+        form_initial = {'from_user': from_user,
+                        'to_user': to_user,
+                        'ctype': ctype}
         form = MailboxSearchForm(initial=form_initial)
 
         data = {
@@ -668,8 +675,11 @@ def mailbox(request):
                 'from_user': m.from_user.username,
                 'to_user': m.to_user.username,
                 'title': m.title,
+                'ctype': m.ctype,
                 'send_time': send_time,
-                'read_time': read_time
+                'read_time': read_time,
+                'status_name': UserMessage.STATUS[m.status],
+                'status': m.status
             }
             data['mail_list']['data'].append(d)
         return render(request, 'backend/user/mailbox.html', data)
@@ -692,6 +702,38 @@ def mailinfo(request, mail_id):
         pass
     finally:
         return render(request, 'backend/user/mailinfo.html', data)
+
+
+@csrf_exempt
+@login_required(login_url='/backend/login/')
+@staff_required()
+def mailreply(request, mail_id):
+    try:
+        data = {
+            'mail_info': {}
+        }
+        data['mail_info'] = UserMessage.objects.get(id=int(mail_id))
+        if request.method == 'POST':
+            if data['mail_info'].status != 2:
+                m = UserMessage(
+                    from_user_id=1,
+                    to_user_id=data['mail_info'].from_user_id,
+                    title='回复：'+data['mail_info'].title.encode('UTF-8'),
+                    content=request.POST.get('content'),
+                    ctype='member',
+                    create_time=timezone.now(),
+                    status=0
+                )
+                m.save()
+
+                data['mail_info'].status = 2
+                data['mail_info'].save()
+
+            return HttpResponseRedirect('/backend/user/mailbox/?ctype=company')
+    except:
+        traceback.print_exc()
+    finally:
+        return render(request, 'backend/user/mailreply.html', data)
 
 
 @csrf_exempt

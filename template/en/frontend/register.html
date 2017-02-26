@@ -91,7 +91,7 @@
             </li>
             <li>
                 <span>referee</span>
-                <input id="recommend_user" maxlength="64" name="recommend_user" readonly="readonly" type="text" />
+                <input id="recommend_user" maxlength="64" name="recommend_user" readonly="readonly" type="text" value="{{ recommend_user }}" />
             </li>
             <li>
                 <span>Safety code</span>
@@ -108,7 +108,9 @@
                 <label><input id="is_agree" name="is_agree" type="checkbox" /><i>I have read and agree to the terms and conditions</i></label>
             </li>
         </ul>
+        {% ifnotequal recommend_user '' %}
         <button class="btn_jicun mt40 mauto" type="button" onclick="reg();"></button>
+        {% endifnotequal %}
     </form>
 </div><!--end of middle-->
 {% endblock %}

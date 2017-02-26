@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^relation/$', views.relation),
     url(r'^mailbox/$', views.mailbox),
     url(r'^mailinfo/(\d)/$', views.mailinfo),
+    url(r'^mailreply/(\d)/$', views.mailreply),
     url(r'^mail/drop/(\d)/$', views.maildrop),
     url(r'^feedback/$', views.feedback),
     url(r'^feedback/info/(\d)/$', views.feedback_info),

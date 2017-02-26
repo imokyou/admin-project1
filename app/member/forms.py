@@ -24,34 +24,11 @@ class ChatForm(forms.Form):
 
     def clean_username(self):
         username = self.cleaned_data['username']
-        u = Auth_user.objects.filter(username=username).first()
-        if not u:
-            raise forms.ValidationError("用户不存在")
+        if username != 'company':
+            u = Auth_user.objects.filter(username=username).first()
+            if not u:
+                raise forms.ValidationError("用户不存在")
         return username
-
-
-class ChatForm(forms.Form):
-    username = forms.CharField(max_length=64,
-                               min_length=4,
-                               required=True,
-                               widget=TextInput(
-                                   attrs={'placeholder': 'username...'}),
-                               error_messages={'required': '收件人不能为空'})
-    title = forms.CharField(max_length=256,
-                            required=True,
-                            widget=TextInput(
-                                attrs={'placeholder': 'title...'}),
-                            error_messages={'required': '标题不能为空'})
-    message = forms.CharField(required=True,
-                              widget=Textarea(
-                                attrs={'placeholder': 'message...'}),
-                              error_messages={'required': '内容不能为空'})
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        u = Auth_user.objects.filter(username=username).first()
-        if not u:
-            raise forms.ValidationError("用户不存在")
 
 
 class EnChatForm(forms.Form):
@@ -73,6 +50,7 @@ class EnChatForm(forms.Form):
         u = Auth_user.objects.filter(username=username).first()
         if not u:
             raise forms.ValidationError("username not exists")
+
 
 class ChangeRecommendForm(forms.Form):
     username = forms.CharField(max_length=64,

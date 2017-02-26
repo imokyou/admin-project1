@@ -8,6 +8,7 @@
         {% csrf_token %}
         <ul class="write_message">
             <li class="mb20">
+                <p style="color:red">如发送给公司，收件人请填：company</p>
                 {{ form.username }}
 
                 {% if form.username.errors %}

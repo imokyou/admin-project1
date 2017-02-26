@@ -18,6 +18,11 @@ BANK_CODE = [
     ('CCTV', 'xx银行')
 ]
 
+MAIL_TYPE = [
+  ('member', '发给会员'),
+  ('company', '发给公司')
+]
+
 
 class SearchForm(forms.Form):
     CHOICES = [
@@ -212,6 +217,11 @@ class MailboxSearchForm(forms.Form):
     to_user = forms.CharField(label="",
                               required=False,
                               widget=forms.TextInput(
+                                  attrs={'class': 'form-control'}))
+    ctype = forms.ChoiceField(label="",
+                              choices=MAIL_TYPE,
+                              required=False,
+                              widget=forms.Select(
                                   attrs={'class': 'form-control'}))
 
 

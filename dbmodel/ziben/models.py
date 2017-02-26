@@ -336,13 +336,15 @@ class UserMessage(models.Model):
     title = models.CharField(max_length=256)
     content = models.CharField(max_length=1024)
     status = models.SmallIntegerField()
+    ctype = models.CharField(max_length=32, default='member')
     create_time = models.DateTimeField(auto_now_add=True)
     read_time = models.DateTimeField()
 
     # 定义状态
     STATUS = {
         0: '未读',
-        1: '已读'
+        1: '已读',
+        2: '已回复'
     }
 
     class Meta:

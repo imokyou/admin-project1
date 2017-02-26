@@ -67,7 +67,7 @@ def log_payment(request):
         'index': 'member',
         'sub_index': 'log',
         'statics': services.get_statics(request.user.id),
-        'news': services.get_news()
+        'news': services.get_news(request)
     }
 
     n = 20
@@ -147,16 +147,29 @@ def chat(request):
         else:
             data['form'] = EnChatForm(request.POST)
         if data['form'].is_valid():
-            to_user = Auth_user.objects \
-                .get(username=request.POST.get('username'))
-            m = UserMessage(
-                to_user_id=to_user.id,
-                from_user_id=request.user.id,
-                title=request.POST.get('title'),
-                content=request.POST.get('message'),
-                create_time=timezone.now(),
-                status=0
-            )
+            username = request.POST.get('username')
+            if username == 'company':
+                m = UserMessage(
+                    to_user_id=1,
+                    from_user_id=request.user.id,
+                    title=request.POST.get('title'),
+                    content=request.POST.get('message'),
+                    ctype='company',
+                    create_time=timezone.now(),
+                    status=0
+                )
+            else:
+                to_user = Auth_user.objects \
+                    .get(username=username)
+                m = UserMessage(
+                    to_user_id=to_user.id,
+                    from_user_id=request.user.id,
+                    title=request.POST.get('title'),
+                    content=request.POST.get('message'),
+                    ctype='member',
+                    create_time=timezone.now(),
+                    status=0
+                )
             m.save()
             return HttpResponseRedirect('/member/chat/')
 
@@ -188,7 +201,7 @@ def mailbox(request, ctype):
 
     n = 20
     p = request.GET.get('p', 1)
-    q = UserMessage.objects
+    q = UserMessage.objects.filter(ctype='member')
     if ctype == 'sended':
         q = q.filter(from_user_id=request.user.id)
     elif ctype == 'received':
@@ -689,22 +702,23 @@ def cbcd_order(request):
 @login_required(login_url='/login/')
 def cbcd_sell(request):
     if request.method == 'POST':
-        if not services.is_hall_open():
-            return utils.ErrResp(errors.HallNotOpened)
+        # if not services.is_hall_open():
+        #     return utils.ErrResp(errors.HallNotOpened)
 
         num = int(request.POST.get('num'))
         price = float(request.POST.get('price'))
 
         current_order = services.get_current_order()
         if int(price*1000) >= int(current_order['price'] * 1000 * 1.1):
-            return utils.ErrResp(errors.PriceTooHigh) 
+            return utils.ErrResp(errors.PriceTooHigh)
         if int(price*1000) <= int(current_order['price'] * 1000 * 0.9):
             return utils.ErrResp(errors.PriceTooLow)
         try:
             ubalance = UserBalance.objects.get(user=request.user)
         except:
             return utils.ErrResp(errors.CBCDLimit)
-        if not ubalance.point or int(ubalance.point) < num:
+
+        if not ubalance.point or int(ubalance.point*0.05) < num:
             return utils.ErrResp(errors.CBCDLimit)
         ubalance.point = ubalance.point - num
         ubalance.save()

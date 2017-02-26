@@ -92,7 +92,7 @@
             </li>
             <li>
                 <span>推荐人会员#</span>
-                <input id="recommend_user" maxlength="64" name="recommend_user" readonly="readonly" type="text" />
+                <input id="recommend_user" maxlength="64" name="recommend_user" readonly="readonly" type="text" value="{{ recommend_user }}" />
             </li>
             <li>
                 <span>安全码</span>
@@ -109,7 +109,9 @@
                 <label><input id="is_agree" name="is_agree" type="checkbox" /><i>我已阅读并同意 条款和条件与全球行动现金</i></label>
             </li>
         </ul>
+        {% ifnotequal recommend_user '' %}
         <button class="btn_jicun mt40 mauto" type="button" onclick="reg();"></button>
+        {% endifnotequal %}
     </form>
 </div><!--end of middle-->
 {% endblock %}

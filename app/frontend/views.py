@@ -53,6 +53,7 @@ def register(request):
         'index': 'register',
         'statics_info': Statics.objects.order_by('-id').first(),
         'chatlist': UserFeedback.objects.order_by('-id')[0:10],
+        'recommend_user': recommend_user,
         'form': RegForm(initial={'recommend_user': recommend_user}),
         'ages': range(18, 61),
         'hashkey': hashkey,
