@@ -17,7 +17,7 @@
         </li>
         <li class="mt15">
            <span>amount:</span>
-           <input type="text" value="1.00" id="money">
+           <input type="text" value="1" id="money" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
         </li>
         <li class="mt15">
             <span></span>
