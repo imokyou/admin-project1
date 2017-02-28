@@ -130,7 +130,8 @@ class UserInfo(models.Model):
     }
 
     def save(self, *args, **kwargs):
-        self.invite_code = InviteCode.objects.pop()
+        if not self.invite_code:
+            self.invite_code = InviteCode.objects.pop()
         super(UserInfo, self).save(*args, **kwargs)
 
         Statics.objects.member_counter()
