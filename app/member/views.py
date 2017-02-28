@@ -359,7 +359,10 @@ def buying(request):
                 .filter(user_id=user_id).delete()
             return HttpResponseRedirect('/member/buying/')
         else:
-            data['errmsg'] = '余额不足，请充值'
+            should_pay = int(ssetings.user_buy_price)*settings.CURRENCY_RATIO
+            ubalance = services.get_balance(request.user)
+            need_pay = should_pay - float(ubalance['cash'])
+            data['errmsg'] = '余额不足，请充值: %s元' % need_pay
 
     return utils.crender(request, 'frontend/member/buying.html', data)
 
