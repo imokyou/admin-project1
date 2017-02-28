@@ -163,6 +163,7 @@ def get_current_order():
 
 
 def is_hall_open():
+    return True
     result = False
     utc_hour = timezone.now().hour
     if utc_hour <= 3 or utc_hour >= 15:
