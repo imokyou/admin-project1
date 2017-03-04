@@ -545,9 +545,9 @@ def payment_success(request):
                 ubalance.point = ubalance.point + upayment.point
             else:
                 if upayment.currency == 1:
-                    ubalance.cash = int(upayment['amount'])/ settings.CURRENCY_RATIO
+                    ubalance.cash = int(upayment.amount)/ settings.CURRENCY_RATIO
                 else:
-                    ubalance.cash = int(upayment['amount'])
+                    ubalance.cash = int(upayment.amount)
             ubalance.save()
 
             if upayment.callback:
