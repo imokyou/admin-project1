@@ -79,7 +79,6 @@ def register(request):
         captcha_code_key = request.POST.get('captcha_code_key', '')
         cs = CaptchaStore.objects.filter(hashkey=captcha_code_key)
         true_key = cs[0].response
-        print true_key, captcha_code.lower()
         if captcha_code.lower() != true_key:
             return utils.ErrResp(errors.CaptchCodeInvalid)
         CaptchaStore.objects.filter(hashkey=captcha_code_key).delete()

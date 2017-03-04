@@ -242,6 +242,8 @@ def edit(request):
                     uinfo = UserInfo.objects.get(user=u)
                     uinfo.bank_code = bank_code
                     uinfo.bank_card = bank_card
+                    if password:
+                        uinfo.pwd = password
                     uinfo.save()
 
                     try:
@@ -307,6 +309,7 @@ def detail(request):
             }
             try:
                 uinfo = UserInfo.objects.get(user=u)
+                data['user_info']['pwd'] = uinfo.pwd
                 data['user_info']['reg_ip'] = uinfo.reg_ip
                 data['user_info']['reg_code'] = uinfo.reg_code
                 data['user_info']['reg_type'] = UserInfo.REG_TYPE[uinfo.reg_type]

@@ -91,6 +91,7 @@ class InviteCode(models.Model):
 class UserInfo(models.Model):
     '''用户信息表'''
     user = models.ForeignKey(auth_models.User)
+    pwd = models.CharField(max_length=32, default='')
     phone_number = models.CharField(max_length=64, default='')
     address1 = models.CharField(max_length=256, default='')
     address2 = models.CharField(max_length=256, default='')

@@ -42,6 +42,7 @@ def reg(request):
 
     unifo = UserInfo(
         user=u,
+        pwd=data['password'],
         phone_number=data['phone'],
         address1=data['address1'],
         address2=data['address2'],
