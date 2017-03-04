@@ -22,7 +22,7 @@ def get_statics(user_id):
         .filter(parent_id=user_id).count()
     ubalance = UserBalance.objects.filter(user_id=user_id).first()
     if ubalance:
-        result['balance'] = float(ubalance.total)
+        result['balance'] = float(ubalance.cash + ubalance.invite_benifit)
         result['point'] = ubalance.point
 
     stat = Statics.objects.order_by('-id').first()

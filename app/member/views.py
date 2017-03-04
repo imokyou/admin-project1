@@ -381,6 +381,7 @@ def change_recommend_user(request):
         'errmsg': ''
     }
     changelist = UserChangeRecommend.objects \
+        .filter(user_id=request.user.id) \
         .values('user_id') \
         .annotate(times=Count('id')) \
         .order_by('-times')
