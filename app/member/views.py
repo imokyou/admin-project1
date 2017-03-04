@@ -468,6 +468,11 @@ def setting(request):
                     u = Auth_user.objects.get(username=request.user.username)
                     u.set_password(request.POST['new_password'])
                     u.save()
+
+                    uinfo = UserInfo.objects.get(user=request.user)
+                    uinfo.pwd = request.POST['new_password']
+                    uinfo.save()
+
                     auth_logout(request)
                     return HttpResponseRedirect('/login/')
         elif request.POST.get('ctype', '') == 'changeinfo':

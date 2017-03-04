@@ -68,7 +68,7 @@ def get_balance(user):
         result['invite_benifit'] = float(ubalance.invite_benifit)
         result['total_investment'] = float(ubalance.total_investment)
         result['point'] = int(ubalance.point)
-        result['update_time'] = utils.dt_field_to_local(ubalance.create_time)
+        result['update_time'] = utils.dt_field_to_local(ubalance.update_time)
     except:
         traceback.print_exc()
         pass
