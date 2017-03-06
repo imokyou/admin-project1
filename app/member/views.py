@@ -307,16 +307,17 @@ def selling(request):
             'total_investment': ubalance['total_investment']
         })
     if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        mall = UserSellingMall(
-            user_id=user_id,
-            parent_user=request.user
-        )
-        mall.save()
+        user_id = request.POST.get('user_id', '')
+        if user_id:
+            mall = UserSellingMall(
+                user_id=user_id,
+                parent_user=request.user
+            )
+            mall.save()
 
-        UserConnection.objects \
-            .filter(user_id=user_id).update(is_selling=1)
-        return HttpResponseRedirect('/member/selling/')
+            UserConnection.objects \
+                .filter(user_id=user_id).update(is_selling=1)
+            return HttpResponseRedirect('/member/selling/')
 
     return utils.crender(request, 'frontend/member/selling.html', data)
 
@@ -400,12 +401,12 @@ def change_recommend_user(request):
         if data['form'].is_valid():
             change_times = UserChangeRecommend.objects \
                 .filter(user=request.user).count()
-            recommend_username = request.POST.get('username')
+            recommend_username = request.POST.get('username', '')
             unifo = UserInfo.objects.get(user=request.user)
             if recommend_username == request.user.username:
                 data['errmsg'] = '不能把自己设置为转介人'
             elif recommend_username == unifo.recommend_user:
-                data['errmsg'] = '%s已经是你的当前推荐人' % recommend_username
+                data['errmsg'] = '%s已经是你的当前推荐人' % recommend_username.encode('UTF-8')
             else:
                 if change_times < 3:
                     ruinfo = UserInfo.objects \
@@ -1017,11 +1018,11 @@ def payment_callback(request):
         upayment.remark = MerRemark
         upayment.save()
         # 验证签名
-        if MD5info == sign:        
+        if MD5info == sign:
             # 订单已成功的则不作处理
             if upayment.status != 1:
                 # 验证返回信息，如成功则status=1
-                if int(Succeed) == 88:
+                if int(params['Succeed']) == 88:
                     upayment.status = 1
                 else:
                     upayment.status = -1
@@ -1041,9 +1042,11 @@ def payment_callback(request):
                         ubalance.point = ubalance.point + upayment.point
                     else:
                         if upayment.currency == 1:
-                            ubalance.cash = int(params['Amount'])/ settings.CURRENCY_RATIO
+                            ubalance.cash = ubalance.cash + int(upayment.amount)/ settings.CURRENCY_RATIO
+                            ubalance.total = ubalance.total + int(upayment.amount)/ settings.CURRENCY_RATIO
                         else:
-                            ubalance.cash = int(params['Amount'])
+                            ubalance.cash = ubalance.cash + int(upayment.amount)
+                            ubalance.total = ubalance.total + int(upayment.amount)
                     ubalance.save()
 
                     if upayment.callback:
