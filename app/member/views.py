@@ -576,6 +576,7 @@ def withdraw(request):
                         user=request.user,
                         pay_type=request.POST.get('pay_type'),
                         pay_account=request.POST.get('pay_account'),
+                        bank_code=request.POST.get('bank_code', ''),
                         amount=float(request.POST.get('amount'))
                     )
                     udraw.save()

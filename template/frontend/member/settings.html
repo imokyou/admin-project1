@@ -64,6 +64,19 @@
                 <option value="CSPAY">银联</option>
                 <option value="VISA" selected="selected">万事达卡</option>
                 {% endif %}
+
+                {% if userinfo.bank_code == '' %}
+                <option value="PM">完美货币</option>
+                <option value="BITCOIN">比特币</option>
+                <option value="CSPAY">银联</option>
+                <option value="VISA">万事达卡</option>
+                {% endif %}
+            </select>
+        </li>
+        <li>
+            <span>银行</span>
+            <select>
+                <input type="text" name="bank_code" id="bank_code" value="{{ userinfo.bank_code }}">
             </select>
         </li>
         <li>

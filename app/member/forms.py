@@ -136,10 +136,15 @@ class WithDrawForm(forms.Form):
                                  choices=PAY_TYPE,
                                  required=False,
                                  widget=forms.Select(attrs={'readonly': 'readonly'}))
+    bank_code = forms.CharField(max_length=64,
+                                min_length=4,
+                                required=True,
+                                widget=TextInput(),
+                                error_messages={'required': '收款银行不能为空'})
     pay_account = forms.CharField(max_length=64,
                                   min_length=4,
                                   required=True,
-                                  widget=TextInput(attrs={'readonly': 'readonly'}),
+                                  widget=TextInput(),
                                   error_messages={'required': '收款账号不能为空'})
     password = forms.CharField(max_length=64,
                                min_length=4,

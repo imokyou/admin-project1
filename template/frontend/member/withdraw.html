@@ -48,6 +48,16 @@
             {% endif %}
         </li>
         <li>
+            <span>银行:</span>
+            {{ form.bank_code }}
+
+            {% if form.bank_code.errors %}
+                {% for error in form.bank_code.errors %}
+                    <p class="err-msg" style="margin-left:0px">{{ error|escape }}</p>
+                {% endfor %}
+            {% endif %}
+        </li>
+        <li>
             <span>支付宝/银行卡:</span>
             {{ form.pay_account }}
 
