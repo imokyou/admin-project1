@@ -882,7 +882,7 @@ def withdraw(request):
                 'id': w.id,
                 'username': w.user.username,
                 'amount': float(w.amount),
-                'pay_type': UserWithDraw.PAY_TYPE[w.pay_type],
+                'pay_type': w.pay_type,
                 'pay_account': w.pay_account,
                 'order_id': w.order_id,
                 'create_time': create_time,

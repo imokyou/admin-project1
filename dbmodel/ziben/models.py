@@ -416,7 +416,7 @@ class UserWithDraw(models.Model):
     user = models.ForeignKey(auth_models.User)
     order_id = models.CharField(max_length=32)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
-    pay_type = models.SmallIntegerField(default=0)
+    pay_type = models.CharField(max_length=128)
     bank_code = models.CharField(max_length=128)
     pay_account = models.CharField(max_length=128)
     status = models.SmallIntegerField(default=0)
