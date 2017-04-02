@@ -239,7 +239,7 @@ def get_most_sub_member(user_id, area='left'):
     info = UserConnection.objects.filter(parent_id__in=uids).annotate(nums=Count('id')).values('parent_id').order_by('-nums').first()
     if info:
         ret = {
-            'user_id': info['user_id'],
+            'user_id': info['parent_id'],
             'nums': info['nums'] if 'nums' in info else 0
         }
     else:
