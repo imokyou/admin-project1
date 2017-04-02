@@ -23,6 +23,7 @@ def _get_reg_params(request):
     params['sexal'] = request.POST.get('sexal', '')
     params['age'] = request.POST.get('age', '')
     params['recommend_user'] = request.POST.get('recommend_user', '')
+    params['member_area'] = request.POST.get('member_area', 'left')
 
     return params
 
@@ -55,7 +56,8 @@ def reg(request):
         age=data['age'],
         reg_time=timezone.now(),
         reg_ip=get_ip(request),
-        reg_code=''
+        reg_code='',
+        member_area=data['member_area']
     )
     if data['recommend_user']:
         unifo.reg_type = 2

@@ -111,6 +111,7 @@ class UserInfo(models.Model):
     bank_code = models.CharField(max_length=16, default='')
     bank_card = models.CharField(max_length=64, default='')
     status = models.SmallIntegerField(default=1)
+    member_area = models.CharField(max_length=64, default='left')
 
     # 定义注册类型
     REG_TYPE = {
