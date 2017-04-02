@@ -35,6 +35,11 @@ $('.language_list li').on('click',function(){
     $('#language span').text($text);
     $('.language_list,.pointer').hide()
     location.href="/set-lang/?changelang=1&lang="+$(this).attr('data');
+});
+
+$(".area_dl dd").on("click",function(){
+    $('#member_area').val($(this).attr('data'));
+    $(this).addClass("seled").siblings("dd").removeClass("seled")
 })
 
 });

@@ -599,15 +599,28 @@ input[type="submit"],button{ cursor:pointer;} button:hover{opacity: .8;}
 .pointer{position: absolute; width:20px; height:10px; background: url("../images/pointer.png") no-repeat center; background-size: 20px 10px; top: 46px; left: 50%; margin-left: -10px; z-index: 15; display: none;}
 
 
+/*01-09新增*/
+.img_code{display: block; width: 150px; height:150px; margin: 20px auto;}
 
 
+/*0325新增*/
+.area_dl{display: inline-block; width:130px; height: 26px; line-height:26px; font-size: 0; }
+.area_dl dd{display:inline-block;width:60px; border:1px solid #fff;  vertical-align:middle; font-size: 14px; text-align: center; color:#fff; cursor:pointer; }
+.area_dl dd.seled{background-color: #00a8ff; border-color:#00a8ff;}
+.area_dl dd.zuo{border-radius:3px 0 0 3px; border-right:none;}
+.area_dl dd.you{border-radius:0 3px 3px 0; border-left:none;}
+.recorde_width{width:620px; margin: 50px auto;}
+.btn-success{background-color: #2bba4c; color:#fff; border-radius: 3px; width: 50px; line-height:26px;  }
+.btn-failed{background-color:#c42a2a; color:#fff; border-radius: 3px; width: 50px; line-height:26px;}
 
-
-
-
-
-
-
-
-
-
+/*我的下线*/
+.junior_user{width:120px; height:80px; background-color:#fff; border-radius:4px; padding:5px; margin-top:25px;}
+.junior_img{ width:50px; height:50px; border-radius:50%; display:block; margin-left:auto; margin-right:auto; margin-top:-30px; }
+.junior_user h2{font-size:15px; margin:5px 0; color:#353535; font-weight:600; text-align:center;}
+.junior_user ul{overflow:hidden;}
+.junior_user ul li{float:left; width:50%; padding:0 5px; text-align:center; font-size:12px; }
+.junior_user ul li:first-child{border-right:1px solid #ccc;}
+.branch_img{display:block; margin:10px auto;}
+.two_level_box{width:660px; margin:0 auto; }
+.three_level_box{width:430px;  overflow:hidden;}
+.four_level{width:260px;  display:inline-block; overflow:hidden; }

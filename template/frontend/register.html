@@ -91,6 +91,14 @@
                 <label><input id="is_info_real" name="is_info_real" type="checkbox" /><i>是的，我明白，如果我不使用自己的真实信息，我将不<br>会支付和付款被发送之前所有账户都Verifyed</i></label>
             </li>
             <li>
+                <span>选择区域</span>
+                <dl class="area_dl">
+                    <dd class="zuo seled" data='left'>左</dd>
+                    <dd class="you" data='right'>右</dd>
+                </dl>
+                <input type='hidden' id='member_area' value="left" />
+            </li>
+            <li>
                 <span>推荐人会员#</span>
                 <input id="recommend_user" maxlength="64" name="recommend_user" readonly="readonly" type="text" value="{{ recommend_user }}" />
             </li>
