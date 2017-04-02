@@ -24,27 +24,29 @@
             <img class="branch_img" src="/static/images/branch_c.png" alt="">
         {% endif %}
             <div class="two_level">
-            	{% if nets.left2.name%}
+            	
                 <div class="junior_user fl">
+                {% if nets.left2.name%}
                     <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                     <h2>{{ nets.left2.name }}</h2>
                     <ul>
                         <li>L:{{ nets.left2.lnums }}人</li>
                         <li>R:{{ nets.left2.rnums }}人</li>
                     </ul>
+                {% endif %}
                 </div>
-				{% endif %}
-
-				{% if nets.right2.name %}
+				
                 <div class="junior_user fr">
+                {% if nets.right2.name %}
                     <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                     <h2>{{ nets.right2.name }}</h2>
                     <ul>
                         <li>L:{{ nets.right2.lnums }}人</li>
                         <li>R:{{ nets.right2.rnums }}人</li>
                     </ul>
-                </div>
                 {% endif %}
+                </div>
+                
             </div>
         </div>
         
@@ -56,27 +58,30 @@
                 <img class="branch_img" src="/static/images/branch_a.png" alt="">
             {% endif %}
                 <div class="three_level">
-                	{% if nets.left2.left3.name %}
+    
                     <div class="junior_user fl">
+                    {% if nets.left2.left3.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.left2.left3.name }}</h2>
                         <ul>
                             <li>L:{{ nets.left2.left3.lnums }}人</li>
                             <li>R:{{ nets.left2.left3.lnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>
+                    
 
-                    {% if nets.left2.right3.name %}
                     <div class="junior_user fr">
+                    {% if nets.left2.right3.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.left2.right3.name }}</h2>
                         <ul>
                             <li>L:{{ nets.left2.right3.lnums }}人</li>
                             <li>R:{{ nets.left2.right3.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>
+                    
                 </div>
             </div>
 			
@@ -87,27 +92,29 @@
                 <img class="branch_img" src="/static/images/branch_a.png" alt="">
             {% endif %}
                 <div class="three_level">
-                	{% if nets.right2.left3.name %}
+                	
                     <div class="junior_user fl">
+                    {% if nets.right2.left3.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.right2.left3.name }}</h2>
                         <ul>
                             <li>L:{{ nets.right2.left3.lnums }}人</li>
                             <li>R:{{ nets.right2.left3.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
-
-                    {% if nets.right2.right3.name %}
+                    </div>
+                    
                     <div class="junior_user fr">
+                    {% if nets.right2.right3.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.right2.right3.name }}</h2>
                         <ul>
                             <li>L:{{ nets.right2.right3.lnums }}人</li>
                             <li>R:{{ nets.right2.right3.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -120,59 +127,58 @@
             {% endif %}
                 <div class="clearfloat">
 
-                	{% if nets.left2.left3.left4.name %}
                     <div class="junior_user fl">
+                    {% if nets.left2.left3.left4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.left2.left3.left4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.left2.left3.left4.lnums }}人</li>
                             <li>R:{{ nets.left2.left3.left4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
-
-                    {% if nets.left2.left3.right4.name %}
+                    </div>
+                    
                     <div class="junior_user fr">
+                    {% if nets.left2.left3.right4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.left2.left3.right4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.left2.left3.right4.lnums }}人</li>
                             <li>R:{{ nets.left2.left3.right4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>            
                 </div>
             </div>
-			
-	
-
+		
             
             <div style="margin-left:45px;" class="four_level">
             {% if nets.left2.right3.left4.name or nets.left2.right3.right4.name %}
                 <img class="branch_img" src="/static/images/branch_b.png" alt="">
             {% endif %}
                 <div class="clearfloat">
-                	{% if nets.left2.right3.left4.name %}
+                	
                     <div class="junior_user fl">
+                    {% if nets.left2.right3.left4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.left2.right3.left4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.left2.right3.left4.lnums }}人</li>
                             <li>R:{{ nets.left2.right3.left4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
-
-                    {% if nets.left2.right3.right4.name %}
+                    </div>
+                    
                     <div class="junior_user fr">
+                    {% if nets.left2.right3.right4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.left2.right3.right4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.left2.right3.right4.lnums }}人</li>
                             <li>R:{{ nets.left2.right3.right4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>
                 </div>
             </div>
             
@@ -183,58 +189,58 @@
                 <img class="branch_img" src="/static/images/branch_b.png" alt="">
             {% endif %}
                 <div class="clearfloat">
-                	{% if nets.right2.left3.left4.name %}
                     <div class="junior_user fl">
+                    {% if nets.right2.left3.left4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.right2.left3.left4.name }}</h2>
                         <ul>
                             <li>L:152人</li>
                             <li>R:8人</li>
                         </ul>
-                    </div>
                     {% endif %}
-
-                    {% if nets.right2.left3.right4.name %}
+                    </div>
+                    
                     <div class="junior_user fr">
+                    {% if nets.right2.left3.right4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.right2.left3.right4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.right2.left3.right4.lnums }}人</li>
                             <li>R:{{ nets.right2.left3.right4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>
                 </div>
             </div>
             
-	
 			
             <div style="margin-left:42px;" class="four_level">
             {% if  nets.right2.right3.left4.name or nets.right2.right3.right4.name %}
                 <img class="branch_img" src="/static/images/branch_b.png" alt="">
             {% endif %}
-                {% if nets.right2.right3.left4.name %}
+                
                 <div class="clearfloat">
                     <div class="junior_user fl">
+                    {% if nets.right2.right3.left4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.right2.right3.left4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.right2.right3.left4.lnums }}人</li>
                             <li>R:{{ nets.right2.right3.left4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
-
-                    {% if nets.right2.right3.right4.name %}
+                    </div>
+                    
                     <div class="junior_user fr">
+                    {% if nets.right2.right3.right4.name %}
                         <img class="junior_img" src="/static/images/tx_01.jpg" alt="">
                         <h2>{{ nets.right2.right3.right4.name }}</h2>
                         <ul>
                             <li>L:{{ nets.right2.right3.right4.lnums }}人</li>
                             <li>R:{{ nets.right2.right3.right4.rnums }}人</li>
                         </ul>
-                    </div>
                     {% endif %}
+                    </div>
                 </div>
             </div>
             
