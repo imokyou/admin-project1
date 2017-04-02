@@ -1,4 +1,5 @@
 # coding=utf8
+import traceback
 from ipware.ip import get_ip
 from django.contrib.auth.models import User as Auth_user
 from django.utils import timezone
@@ -71,15 +72,16 @@ def reg(request):
             user_grid = UserConnection(
                 parent_id=u_parent.id,
                 user_id=u.id,
-                depth=0,
+                depth=1,
                 create_time=timezone.now(),
-                ratio=100
+                ratio=100,
+                member_area=data['member_area']
             )
             if u_parent_grid:
                 user_grid.depth = u_parent_grid.depth + 1
             user_grid.save()
         except:
-            pass
+            traceback.print_exc()
 
     # 写余额表
     ubalance = UserBalance(

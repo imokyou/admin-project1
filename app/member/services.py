@@ -4,7 +4,8 @@ import bisect
 import random
 import hashlib
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, Count
+from django.contrib.auth.models import User as Auth_user
 from dbmodel.ziben.models import UserInfo, UserBalance, UserConnection, UserRevenue, Statics, SiteSetting, CBCDInit, CBCDPriceLog,UserOrderSell, News
 from lib import utils
 
@@ -215,4 +216,41 @@ def get_news(request):
     else:
         q = q.filter(category=2)
     return q.order_by('-id')[0:10]
+
+def get_sub_member_nums(user_id):
+    ret = {
+        'username': Auth_user.objects.filter(id=user_id).first().username,
+        'user_id': user_id,
+        'lnums': 0,
+        'rnums': 0
+    }
+    q = UserConnection.objects.filter(parent_id=user_id)
+    ret['lnums'] = q.filter(member_area='left').count()
+    ret['rnums'] = q.filter(member_area='right').count()
+    return ret
+
+def get_most_sub_member(user_id, area='left'):
+    uconnet = UserConnection.objects.filter(parent_id=user_id).first()
+    if not uconnet:
+        return None
+    q = UserConnection.objects.filter(parent_id=user_id).filter(member_area=area).all()
+    uids = [x.user_id for x in q]
+
+    info = UserConnection.objects.filter(user_id__in=uids).annotate(nums=Count('id')).values('user_id').order_by('-nums').first()
+    if info:
+        ret = {
+            'user_id': info['user_id'],
+            'nums': info['nums'] if 'nums' in info else 0
+        }
+    else:
+        info = UserConnection.objects.filter(parent_id=user_id).filter(member_area=area).first()
+        if info:
+            ret = {
+                'user_id': info.user_id,
+                'nums': 0
+            }
+        else:
+            return None
+    return ret
+
 

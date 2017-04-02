@@ -369,6 +369,108 @@ def buying(request):
 
 
 @login_required(login_url='/login/')
+def subm(request):
+    data = {
+        'index': 'member',
+        'sub_index': 'home',
+        'statics': services.get_statics(request.user.id),
+        'news': News.objects.all().order_by('-id')[0:10],
+        'form': ChangeRecommendForm(),
+        'data': {
+            'changelist': []
+        },
+        'errmsg': ''
+    }
+    # 首层
+    nets = {'name': request.user.username, 'user_id': request.user.id, 'lnums': 0, 'rnums': 0}
+    result = services.get_sub_member_nums(request.user.id)
+    nets['lnums'], nets['rnums'] = result['lnums'], result['rnums']
+
+    # 第二层
+    # 左
+    left2user = services.get_most_sub_member(request.user.id, 'left')
+    if left2user:
+        result = services.get_sub_member_nums(left2user['user_id'])
+        nets['left2'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+    # 右
+    right2user = services.get_most_sub_member(request.user.id, 'right')
+    if right2user:
+        result = services.get_sub_member_nums(right2user['user_id'])
+        nets['right2'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+    # 第三层
+    if 'left2' in nets:
+        left2l3user = services.get_most_sub_member(nets['left2']['user_id'], 'left')
+        if left2l3user:
+            result = services.get_sub_member_nums(left2l3user['user_id'])
+            nets['left2']['left3'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+        left2r3user = services.get_most_sub_member(nets['left2']['user_id'], 'right')
+        if left2r3user:
+            result = services.get_sub_member_nums(left2r3user['user_id'])
+            nets['left2']['right3'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+    if 'right2' in nets:
+        right2l3user = services.get_most_sub_member(nets['right2']['user_id'], 'left')
+        if right2l3user:
+            result = services.get_sub_member_nums(right2l3user['user_id'])
+            nets['right2']['left3'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+        right2r3user = services.get_most_sub_member(nets['right2']['user_id'], 'right')
+        if right2r3user:
+            result = services.get_sub_member_nums(right2r3user['user_id'])
+            nets['right2']['right3'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+
+        # 第四层,左
+        if 'left3' in nets['left2']:
+            left3l4user = services.get_most_sub_member(nets['left2']['left3']['user_id'], 'left')
+            if left3l4user:
+                result = services.get_sub_member_nums(left3l4user['user_id'])
+                nets['left2']['left3']['left4'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+            left3r4user = services.get_most_sub_member(nets['left2']['left3']['user_id'], 'right')
+            if left3r4user:
+                result = services.get_sub_member_nums(left3r4user['user_id'])
+                nets['left2']['left3']['right4'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+        if 'right3' in nets['left2']:
+            right3l4user = services.get_most_sub_member(nets['left2']['right3']['user_id'], 'left')
+            if right3l4user:
+                result = services.get_sub_member_nums(right3l4user['user_id'])
+                nets['left2']['right3']['left4'] = {'name': result['username'], 'user_id': result['user_id'], 'lnums': result['lnums'], 'rnums': result['rnums']}
+
+            right3r4user = services.get_most_sub_member(right3l4user['user_id'], 'right')
+            if right3r4user:
+                result = services.get_sub_member_nums(right3r4user['user_id'])
+                nets['left2']['right3']['rihgt4'] = {'name': result['username'], 'user_id': result['user_id'],  'lnums': result['lnums'], 'rnums': result['rnums']}
+
+        # 第四层,右
+        if 'left3' in nets['right2']:
+            ret = services.get_most_sub_member(nets['right2']['left3']['user_id'], 'left')
+            if ret:
+                result = services.get_sub_member_nums(ret['user_id'])
+                nets['right2']['left3']['left4'] = {'name': result['username'], 'user_id': result['user_id'],  'lnums': result['lnums'], 'rnums': result['rnums']}
+            ret = services.get_most_sub_member(nets['right2']['left3']['user_id'], 'right')
+            if ret:
+                result = services.get_sub_member_nums(ret['user_id'])
+                nets['right2']['left3']['right4'] = {'name': result['username'], 'user_id': result['user_id'],  'lnums': result['lnums'], 'rnums': result['rnums']}
+
+        if 'right3' in nets['right2']:
+            ret = services.get_most_sub_member(nets['right2']['right3']['user_id'], 'left')
+            if ret:
+                result = services.get_sub_member_nums(ret['user_id'])
+                nets['right2']['right3']['left4'] = {'name': result['username'], 'user_id': result['user_id'],  'lnums': result['lnums'], 'rnums': result['rnums']}
+            ret = services.get_most_sub_member(nets['right2']['right3']['user_id'], 'right')
+            if ret:
+                result = services.get_sub_member_nums(ret['user_id'])
+                nets['right2']['right3']['right4'] = {'name': result['username'], 'user_id': result['user_id'],  'lnums': result['lnums'], 'rnums': result['rnums']}
+
+    data['nets'] = nets
+    return utils.crender(request, 'frontend/member/subm.html', data)
+
+
+@login_required(login_url='/login/')
 def change_recommend_user(request):
     data = {
         'index': 'member',
@@ -599,6 +701,8 @@ def bonus(request):
         'statics': services.get_statics(request.user.id),
         'news': News.objects.all().order_by('-id')[0:10]
     }
+    # 查抽奖列表
+    data['bonuslist'] = UserBonus.objects.filter(user_id=request.user.id)
 
     if request.method == 'POST':
         b2c = {

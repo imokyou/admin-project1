@@ -151,6 +151,7 @@ class UserConnection(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     ratio = models.DecimalField(max_digits=7, decimal_places=3, default=0)
     is_selling = models.SmallIntegerField(default=0)
+    member_area = models.CharField(max_length=64, default='left')
 
     IS_SELLING = {
         0: '不在下线大厅',

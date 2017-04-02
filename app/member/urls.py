@@ -41,4 +41,5 @@ urlpatterns = [
     url(r'^find-password/$', views.find_password),
     url(r'^find-username/$', views.find_username),
     url(r'^reset-password/$', views.reset_password),
+    url(r'^subm/$', views.subm),
 ]

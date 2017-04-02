@@ -17,6 +17,31 @@
         <input type="hidden" value='0' id="bonus_id">
         <button class="btn_globe mauto" onclick="gopay()">在线充值</button>
     </div>
+
+    <table class="referral_table recorde_width">
+        <thead>
+            <tr>
+                <td>时间</td>
+                <td>抽奖金额</td>
+                <td>记录</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in bonuslist %}
+            <tr>
+                <td>{{ b.create_time | date:'Y-m-d' }}</td>
+                <td>{{ b.point }}</td>
+                {% if b.status == 1 %}
+                <td><button class="btn-success">成功</button></td>
+                {% endif %}
+
+                {% if b.status == 0 %}
+                <td><button class="btn-failed">失败</button></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div><!--end of middle-->
 {% endblock %}
 
